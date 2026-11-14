@@ -29,3 +29,31 @@ run = "bundle exec ruby -Itest script/m01_conformance.rb"
 [tasks.acceptance]
 description = "Run all seven persisted M0.1 acceptance scenarios offline"
 run = "bundle exec ruby -Itest test/m01_acceptance_test.rb"
+
+[tasks.bench-doctor]
+description = "Inspect benchmark readiness without downloads or model calls"
+run = "bundle exec ruby bin/agru bench doctor"
+
+[tasks.bench-test]
+description = "Run deterministic benchmark infrastructure tests without Docker"
+run = "bundle exec ruby -Itest -e 'Dir[\"test/benchmark/**/*_test.rb\", \"test/benchmark_cli_test.rb\", \"test/benchmark_isolation_test.rb\", \"test/experiment_runner_test.rb\", \"test/m11_adversarial_test.rb\"].sort.each { |file| require_relative file }'"
+
+[tasks.bench-contract]
+description = "Run benchmark adapter and experiment contract tests offline"
+run = "bundle exec ruby -Itest -e 'Dir[\"test/benchmark/registry_test.rb\", \"test/benchmark/experiment_manifest_test.rb\", \"test/benchmark/fixture_adapter_test.rb\"].sort.each { |file| require_relative file }'"
+
+[tasks.bench-official-verify]
+description = "Explicit native protocol validation gate (nonzero while blocked)"
+run = "bundle exec ruby bin/agru bench verify nl2repo --offline"
+
+[tasks.bench-smoke]
+description = "Persist a four-solver deterministic infrastructure experiment"
+run = "bundle exec ruby bin/agru bench run experiments/fixture-infrastructure-smoke.json --offline"
+
+[tasks.bench-acceptance]
+description = "Persist fresh offline matrix, regrade and three-format acceptance evidence"
+run = "bundle exec ruby script/m11_acceptance.rb"
+
+[tasks.verify]
+description = "All offline regressions, acceptance, conformance, lint and specification checks"
+run = ["mise run test", "mise run lint", "mise run smoke", "mise run acceptance", "mise run conformance", "openspec validate m11-benchmark-infrastructure --strict"]

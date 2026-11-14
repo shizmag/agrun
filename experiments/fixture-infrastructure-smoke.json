@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "experiment_id": "fixture-infrastructure-smoke",
+  "benchmark": {
+    "name": "fixture",
+    "revision": "fixture-v1",
+    "task_ids": ["half", "one"]
+  },
+  "solver_ids": ["direct", "single-agent", "fixed-workflow", "compositional-dsl"],
+  "models": [{"id": "fixture-model", "provider": "fixture"}],
+  "repetitions": 2,
+  "limits": {
+    "max_parallel_runs": 1,
+    "max_wall_seconds_per_run": 30,
+    "max_agent_invocations": 4,
+    "max_local_verification_seconds": 10,
+    "max_grading_seconds": 10,
+    "max_retry_attempts": 1
+  },
+  "execution_mode": "offline",
+  "subset_role": "infrastructure-development"
+}

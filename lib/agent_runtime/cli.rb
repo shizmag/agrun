@@ -12,6 +12,7 @@ module AgentRuntime
 
     def run(argv)
       command = argv.shift
+      return Benchmarks::CLI.new.run(argv) if command == "bench"
       options = {root: ".agru", suite: "demo", live: false, solver: "good"}
       parser = OptionParser.new do |opts|
         opts.on("--offline") { options[:live] = false }
