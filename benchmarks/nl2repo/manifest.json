@@ -1,0 +1,3003 @@
+{
+  "schema_version": 1,
+  "benchmark": "NL2Repo-Bench",
+  "audit_date": "2026-11-14",
+  "sources": {
+    "official": {
+      "url": "https://github.com/multimodal-art-projection/NL2RepoBench",
+      "revision": "781a1da1ee41fb8edb0bed22f586d69111610edf"
+    },
+    "adaptation": {
+      "url": "https://github.com/EnvCommons/NL2RepoBench",
+      "revision": "61d26cc0abd084ece8f5d805dcbd3f806a291f15"
+    },
+    "paper": {
+      "url": "https://proceedings.mlr.press/v306/ding26j.html",
+      "publication": "PMLR 306:25035-25054, 2026",
+      "versioned_supplement": "https://arxiv.org/html/2512.12730v2"
+    }
+  },
+  "license": {
+    "status": "unresolved",
+    "adaptation_claim": "Apache-2.0",
+    "official_license_file_at_revision": false,
+    "adaptation_license_file_at_revision": false,
+    "redistribution_authorized": false
+  },
+  "task_count": 104,
+  "expected_test_case_total": 25640,
+  "adaptation_readme_task_count": 103,
+  "adaptation_committed_task_manifest": false,
+  "protocol": {
+    "score_trust": "untrusted",
+    "operational_validation": "not_performed",
+    "trusted_collector_validated": false,
+    "known_valid_positive_control": null,
+    "known_valid_negative_control": null,
+    "image_digests_verified": false,
+    "official_grader_path": "openhands/post_processor.py",
+    "official_grader_sha256": "a681bcb48c6199b74a72c92b97f30b63a6f0da7875428e82c6e370f82000e450",
+    "native_score": "min(sum(first regex match (\\d+) passed per output line of commands containing pytest) / test_case_count, 1)",
+    "native_raw_pass_count_is_trusted": false,
+    "execution_status_separate_from_verdict": true,
+    "hidden_procedure_export_to_solver_allowed": false,
+    "reference_implementation_export_to_solver_allowed": false,
+    "requires_explicit_live_opt_in": true
+  },
+  "tasks": [
+    {
+      "id": "aiofiles",
+      "specification": {
+        "path": "test_files/aiofiles/start.md",
+        "sha256": "2b5671ee2dde81f977c03cf7894494a5f7d68241979ab8c39b0ed570938c55d0"
+      },
+      "test_case_count": 211,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "093434a3ee9e0a010bb2c2aae06c2614dd24894062a1caf26718a01e175569b8",
+        "test_commands.json": "97cf150f7a0ce56f7d5bbb9d6987e62413c1944209b983cbdec9360408693d8d",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/aiofiles:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-aiofiles:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "arguably",
+      "specification": {
+        "path": "test_files/arguably/start.md",
+        "sha256": "b612db8c449a6bfcc63747277ea7246972d60dd232d2f5d7e24bf23d14d9e12f"
+      },
+      "test_case_count": 70,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors test"
+      ],
+      "test_files": [
+        "test"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "ff5a1ae012afa5d4c889c50ad427aaf545d31a4fac04ffc1c4d03d403ba4250a",
+        "test_commands.json": "69c951a45d31bb01099b9f222f19e8682b19c94407e0436fe85ece8248ca92b7",
+        "test_files.json": "ecfd160805b1b0481fd0793c745be3b45d2054582de1c4df5d9b8fa4d78e7fbc"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/arguably:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-arguably:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "arxiv-mcp-server",
+      "specification": {
+        "path": "test_files/arxiv-mcp-server/start.md",
+        "sha256": "5b7583cb0fbb3c984bdd52426a51e34bdf5a914302a182f6b81935640bd6586c"
+      },
+      "test_case_count": 23,
+      "test_commands": [
+        "touch README.md && pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "535fa30d7e25dd8a49f1536779734ec8286108d115da5045d77f3b4185d8f790",
+        "test_commands.json": "4c284fd236e0b4ad61b94ad22958bbc49291e185a335a8e7acfceae8f4bce44c",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/arxiv-mcp-server:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-arxiv-mcp-server:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": true
+    },
+    {
+      "id": "asteval",
+      "specification": {
+        "path": "test_files/asteval/start.md",
+        "sha256": "abf0704a01aa9d8a5c68fb98393a0e85fcfac598b61decaa20fef340ecf340da"
+      },
+      "test_case_count": 227,
+      "test_commands": [
+        "echo \"version = '0.0.1'\" > asteval/version.py",
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "dfe62e836a0a6f2633422230c81287700a56e2639652c73f264e6562220c207a",
+        "test_commands.json": "f902e9c2b50ea1dfc8e683b73b62149293bfb08f66db0bbe958e1ad987e671c6",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/asteval:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-asteval:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "autojump",
+      "specification": {
+        "path": "test_files/autojump/start.md",
+        "sha256": "6229221b75405bfe2759f0e21eaf73db2e21493d9ddd6e04c8b3f1202b242eb0"
+      },
+      "test_case_count": 23,
+      "test_commands": [
+        "python install.py",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "535fa30d7e25dd8a49f1536779734ec8286108d115da5045d77f3b4185d8f790",
+        "test_commands.json": "8812b117616441d90e4786ef205dcccfa678f88302293654a0af435382bb75db",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/autojump:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-autojump:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "autopep8",
+      "specification": {
+        "path": "test_files/autopep8/start.md",
+        "sha256": "5b201c34a1d3e6129a5c2ece83dc5fd46c47435ca1223d743877de304bab4044"
+      },
+      "test_case_count": 564,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors test"
+      ],
+      "test_files": [
+        "test"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "621cb5d0bdea9584dc9f7ede1479e7cca67f8d9778d7e3c8c5cb8aa9eaef47ef",
+        "test_commands.json": "69c951a45d31bb01099b9f222f19e8682b19c94407e0436fe85ece8248ca92b7",
+        "test_files.json": "ecfd160805b1b0481fd0793c745be3b45d2054582de1c4df5d9b8fa4d78e7fbc"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/autopep8:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-autopep8:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "autorccar",
+      "specification": {
+        "path": "test_files/autorccar/start.md",
+        "sha256": "5889b68892c91afe558271bd308f93916aa760bea85e39c8c1087ad96f64ada3"
+      },
+      "test_case_count": 13,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors test"
+      ],
+      "test_files": [
+        "test"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "3fdba35f04dc8c462986c992bcf875546257113072a909c162f7e470e581e278",
+        "test_commands.json": "69c951a45d31bb01099b9f222f19e8682b19c94407e0436fe85ece8248ca92b7",
+        "test_files.json": "ecfd160805b1b0481fd0793c745be3b45d2054582de1c4df5d9b8fa4d78e7fbc"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/autorccar:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-autorccar:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "binaryalert",
+      "specification": {
+        "path": "test_files/binaryalert/start.md",
+        "sha256": "7d9463d69157d6773422cd61db55b89bbef981cb880191d26713d3c78756d0cb"
+      },
+      "test_case_count": 77,
+      "test_commands": [
+        "set AWS_DEFAULT_REGION=us-east-1",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "a88a7902cb4ef697ba0b6759c50e8c10297ff58f942243de19b984841bfe1f73",
+        "test_commands.json": "6bbedac497ddfcade9e2dcfc2240e73391cefd560d5e8b2cc86b67863c90e79e",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/binaryalert:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-binaryalert:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "bleach",
+      "specification": {
+        "path": "test_files/bleach/start.md",
+        "sha256": "15c42460b5730ba71adbc7426879acddab86b1d89dba63264eb1f1165b23dc79"
+      },
+      "test_case_count": 448,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "a4ecdd704d258aa841bb3f9a1e3b0cafc59bd88810e542f8e7a0519809d78fe7",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/bleach:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-bleach:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "boltons",
+      "specification": {
+        "path": "test_files/boltons/start.md",
+        "sha256": "76f13a49d801f1e16192635d6f293066e7e158a883c3cbc0d74e84047a997e76"
+      },
+      "test_case_count": 423,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "814bb6b8dc12188a44b71e378dc20a4292e01979aa9ab95b09b8a681391dfc9d",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/boltons:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-boltons:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "boto",
+      "specification": {
+        "path": "test_files/boto/start.md",
+        "sha256": "60327292dbb1c3ca69611dafc3e03d0bf3cb5dcdfb68c0615774d55849cee001"
+      },
+      "test_case_count": 1014,
+      "test_commands": [
+        "echo 'This is sample RST text.' >> README.rst",
+        "pip install  -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "df4865fca1f159162557359ef967f9502087f57527b0e030e139933e54f3061e",
+        "test_commands.json": "7375f1688d40c981542c21d905787a005c709d0b7d5bf3a65b37e4076a7bbc72",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/boto:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-boto:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "box",
+      "specification": {
+        "path": "test_files/box/start.md",
+        "sha256": "1c1d240518a5923b6bd1e6a604dc6b26cb588b37b4ae5cdcc5d6b9672556ffe3"
+      },
+      "test_case_count": 147,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors test"
+      ],
+      "test_files": [
+        "test"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "1d28c120568c10e19b9d8abe8b66d0983fa3d2e11ee7751aca50f83c6f4a43aa",
+        "test_commands.json": "69c951a45d31bb01099b9f222f19e8682b19c94407e0436fe85ece8248ca92b7",
+        "test_files.json": "ecfd160805b1b0481fd0793c745be3b45d2054582de1c4df5d9b8fa4d78e7fbc"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/box:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-box:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "cachier",
+      "specification": {
+        "path": "test_files/cachier/start.md",
+        "sha256": "969ca5c1234dd69f23ca16e8bd0b4d5420a23543daa61f725c327487ad5d62f6"
+      },
+      "test_case_count": 180,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "7b69759630f869f2723875f873935fed29d2d12b10ef763c1c33b8e0004cb405",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/cachier:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-cachier:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "cerberus",
+      "specification": {
+        "path": "test_files/cerberus/start.md",
+        "sha256": "ff3bb810b88f7d82410ee8ec012f9f328f0b5f7e2f3b3e84a281058a4b3ae1cf"
+      },
+      "test_case_count": 249,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors cerberus/tests cerberus/benchmarks/test_overall_performance_1.py cerberus/benchmarks/test_overall_performance_2.py"
+      ],
+      "test_files": [
+        "cerberus/tests",
+        "cerberus/benchmarks/test_overall_performance_1.py",
+        "cerberus/benchmarks/test_overall_performance_2.py"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "9f484139a27415ae2e8612bf6c65a8101a18eb5e9b7809e74ca63a45a65f17f4",
+        "test_commands.json": "9106f7a7c318678cec6ec6d014296f72b53972425ab5eac9b163db2b9c78a574",
+        "test_files.json": "8d3937786d0e0b87ac0b7334d95ceebcad9a6b6066e066e044c6fe705b99cb53"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/cerberus:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-cerberus:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "cherry",
+      "specification": {
+        "path": "test_files/cherry/start.md",
+        "sha256": "7efc587494e468c4d95bb1b6dc358ff242ac35187121309573e1142e882b9943"
+      },
+      "test_case_count": 34,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "86e50149658661312a9e0b35558d84f6c6d3da797f552a9657fe0558ca40cdef",
+        "test_commands.json": "97cf150f7a0ce56f7d5bbb9d6987e62413c1944209b983cbdec9360408693d8d",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/cherry:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-cherry:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "cookiecutter",
+      "specification": {
+        "path": "test_files/cookiecutter/start.md",
+        "sha256": "7fd1f737aef01ac6482fb6e8ee2354598b18ae5ab8493429b77ecbd17c444278"
+      },
+      "test_case_count": 381,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "392a52e4f77c40bf3321dc2feac356fac2a906a80c961748170af4ce2bce1e6a",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/cookiecutter:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-cookiecutter:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "coverage_shield",
+      "specification": {
+        "path": "test_files/coverage_shield/start.md",
+        "sha256": "95a873506d542282df730dbbf4fba42a1a574ca8bc952cc6e9449fcf5c377294"
+      },
+      "test_case_count": 11,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "4fc82b26aecb47d2868c4efbe3581732a3e7cbcc6c2efb32062c08170a05eeb8",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/coverage_shield:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-coverage_shield:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "databases",
+      "specification": {
+        "path": "test_files/databases/start.md",
+        "sha256": "9333e28f7d3f5e86ba11b51ceefdb604372b0c16273b9b399127bafac1c3cfb8"
+      },
+      "test_case_count": 154,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "1d0ebea552eb43d0b1e1561f6de8ae92e3de7f1abec52399244d1caed7dbdfa6",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/databases:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-databases:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "dbutils",
+      "specification": {
+        "path": "test_files/dbutils/start.md",
+        "sha256": "d3f9f227b0c8d32fbed2638dc9e05b7c18e9731d3af46b42333d3dccdd652fea"
+      },
+      "test_case_count": 140,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "dbae772db29058a88f9bd830e957c695347c41b6162a7eb9a9ea13def34be56b",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/dbutils:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-dbutils:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "decouple",
+      "specification": {
+        "path": "test_files/decouple/start.md",
+        "sha256": "2bfee0380e492edc6813ed73b0e51f7438698da2dc2168ec6d7f3d0b93e51404"
+      },
+      "test_case_count": 67,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "49d180ecf56132819571bf39d9b7b342522a2ac6d23c1418d3338251bfe469c8",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/decouple:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-decouple:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "deepdiff",
+      "specification": {
+        "path": "test_files/deepdiff/start.md",
+        "sha256": "965f7952b2de20d1ec7c401ecc992deb66304d76731205074f14139af9d01dfd"
+      },
+      "test_case_count": 970,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "ce7d916f3b5c6edb421222b8e3b4c69f21bcdd5c38bac9e8a2751f55d865b9dc",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/deepdiff:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-deepdiff:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "deslib",
+      "specification": {
+        "path": "test_files/deslib/start.md",
+        "sha256": "f1145bee3eb3499c53ce65aaa3bfad08309c05e7f9c372d4fb2d4a39b1295a08"
+      },
+      "test_case_count": 532,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "68f10bf021d7734e071e07bbf561aa0f1bfc7974f266f71311b9177b177d39d1",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/deslib:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-deslib:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "dictdatabase",
+      "specification": {
+        "path": "test_files/dictdatabase/start.md",
+        "sha256": "13689fc88b7e6f3cbf8cbdc7c98209f94db7d33fbd4d5f0ddd6bc0d9f26c39d9"
+      },
+      "test_case_count": 594,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "e2fa8f5b4364b8ef4dd1f26ab47105d908d06ec84d835e3d1aac404a63f1464a",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/dictdatabase:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-dictdatabase:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "docopt-ng",
+      "specification": {
+        "path": "test_files/docopt-ng/start.md",
+        "sha256": "9abe880eaded8be348016fb3c6986195148aa8012eafd72783b4c8b5e1575e67"
+      },
+      "test_case_count": 614,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "fa7aec4efb728534ef32c172197c9560097c6d0e4893fe6b20242a566ef033d1",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/docopt-ng:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-docopt-ng:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "emoji",
+      "specification": {
+        "path": "test_files/emoji/start.md",
+        "sha256": "26bcdca4d1ec51bbf83ca6355856a5e67dead48167e147688c956c3c592ed695"
+      },
+      "test_case_count": 102,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests",
+        "utils/testutils.py"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "37834f2f25762f23e1f74a531cbe445db73d6765ebe60878a7dfbecd7d4af6e1",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "54207550ed9869a977196f7bd67920475db4b3bd153f561d929bf1403c861632"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/emoji:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-emoji:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "fastapi-users",
+      "specification": {
+        "path": "test_files/fastapi-users/start.md",
+        "sha256": "25411723fd6040f8eb3b58a3cd9ee4a93cf8f018694e7bf8e50addbc51978b1d"
+      },
+      "test_case_count": 556,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "9d6aa3d89c0171b9c2ccd57e6d41ccec3053d3c3f118386e7f10b89ebaa7b8e4",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/fastapi-users:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-fastapi-users:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "flask-restful",
+      "specification": {
+        "path": "test_files/flask-restful/start.md",
+        "sha256": "0feba264feccfffca17fe8e1c5aac3deed7612a19e530145fa1506655d3b2306"
+      },
+      "test_case_count": 362,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "3963317a2b410e5357f4d839787aedb9ceef495514fe5cd91f846ab3a59621e0",
+        "test_commands.json": "0bd1b3d8d819a9bc29dce9aa35222ac4c7042dbf780304a6e34126f7e1d2dd3b",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/flask-restful:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-flask-restful:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "flasky",
+      "specification": {
+        "path": "test_files/flasky/start.md",
+        "sha256": "ea3afc5869896c2ac86dee75b5c5e32f3642cb13a7160721127ae6bd4b4d46af"
+      },
+      "test_case_count": 34,
+      "test_commands": [
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "86e50149658661312a9e0b35558d84f6c6d3da797f552a9657fe0558ca40cdef",
+        "test_commands.json": "20608bcd217e53ccad3bc43910ba91961259017b78c76266debf93c9d74f7a74",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/flasky:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-flasky:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "freezegun",
+      "specification": {
+        "path": "test_files/freezegun/start.md",
+        "sha256": "17d408720cd3c6238853d5caacffa4fea7776f4c49366b92b819ee64e27def09"
+      },
+      "test_case_count": 133,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "d2f483672c0239f6d7dd3c9ecee6deacbcd59185855625902a8b1c1a3bd67440",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/freezegun:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-freezegun:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "frontmatter",
+      "specification": {
+        "path": "test_files/frontmatter/start.md",
+        "sha256": "bbe70efdae51c6c917901b08151d3940a5ae60a2253ecc4934046370ceb0c235"
+      },
+      "test_case_count": 55,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors /workspace/tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "02d20bbd7e394ad5999a4cebabac9619732c343a4cac99470c03e23ba2bdc2bc",
+        "test_commands.json": "7c51442c79c7435459f8005057cd4ed3750eb2019f17136f4ad73944f809c618",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/frontmatter:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-frontmatter:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "ftfy",
+      "specification": {
+        "path": "test_files/ftfy/start.md",
+        "sha256": "e29c1b819ca6f112ef8eb9ac7b25e738b1728572017d690bb5a8a5c6a1761e21"
+      },
+      "test_case_count": 336,
+      "test_commands": [
+        "pip install  -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "eaa0689a095d4394a05fb51b84b0175a47f68221261377e4829444cbfcae23ca",
+        "test_commands.json": "8e3fb7b291ad567ec29b6e5d4fe9d4c5493de0497fb8d9aaa77257977cd1e028",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/ftfy:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-ftfy:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "funcy",
+      "specification": {
+        "path": "test_files/funcy/start.md",
+        "sha256": "eb6fabfab6b68950392045009e93bdd84fc5f54becbab5ed67f2f2532acb4a2e"
+      },
+      "test_case_count": 203,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "4621c1d55fa4e86ce0dae4288302641baac86dd53f76227c892df9d300682d41",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/funcy:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-funcy:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "fuzzywuzzy",
+      "specification": {
+        "path": "test_files/fuzzywuzzy/start.md",
+        "sha256": "fd7526128764d9cafa87af0d7e7e5ba7489e688bd3d4f8e47062cd530d8368ee"
+      },
+      "test_case_count": 71,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "7f2253d7e228b22a08bda1f09c516f6fead81df6536eb02fa991a34bb38d9be8",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/fuzzywuzzy:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-fuzzywuzzy:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "gitingest",
+      "specification": {
+        "path": "test_files/gitingest/start.md",
+        "sha256": "4843c79021e4e13686b526b75a1ad133b3892d9b4d299f73e41e47c4694119d2"
+      },
+      "test_case_count": 133,
+      "test_commands": [
+        "pip install -e .",
+        "pip install gitpython",
+        "pip install loguru strenum eval-type-backport",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "d2f483672c0239f6d7dd3c9ecee6deacbcd59185855625902a8b1c1a3bd67440",
+        "test_commands.json": "1d311b498e93cc5560051f8506cf8a159851daaceda0058607cc22b79a8d31b6",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/gitingest:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-gitingest:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "google-images-download",
+      "specification": {
+        "path": "test_files/google-images-download/start.md",
+        "sha256": "741982efaff9e00e90852078ddecd031d8e1c793f2bb193c921eb3c0f182695f"
+      },
+      "test_case_count": 30,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "624b60c58c9d8bfb6ff1886c2fd605d2adeb6ea4da576068201b6c6958ce93f4",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/google-images-download:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-google-images-download:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "graphneuralnetwork",
+      "specification": {
+        "path": "test_files/graphneuralnetwork/start.md",
+        "sha256": "0445dbf713ce9499b3681935b9f4fb811efea3127e1a0d8a1f88773d2ab1e685"
+      },
+      "test_case_count": 4,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/graphneuralnetwork:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-graphneuralnetwork:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "humanize",
+      "specification": {
+        "path": "test_files/humanize/start.md",
+        "sha256": "0d10d7ec05f81d1a49eba658fa09ddc95cfb15284226ec7a05b867c2b100f3da"
+      },
+      "test_case_count": 607,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests/test_filesize.py",
+        "tests/test_i18n.py",
+        "tests/test_lists.py",
+        "tests/test_number.py",
+        "tests/test_time.py"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "67eab6db6703cdf9acf656bbb09640fcde2ff197786adbd9ae9c14936fc8d159",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "80818f9dbb31ad76ec1b6e66e414fd13d81bf9789f590bfdf9117547c007e9a2"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/humanize:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-humanize:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "icecream",
+      "specification": {
+        "path": "test_files/icecream/start.md",
+        "sha256": "bec5562e635e5b1bb39d391207ac56ff39dc6032c596491354206670e1419afe"
+      },
+      "test_case_count": 40,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "d59eced1ded07f84c145592f65bdf854358e009c5cd705f5215bf18697fed103",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/icecream:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-icecream:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "ipytest",
+      "specification": {
+        "path": "test_files/ipytest/start.md",
+        "sha256": "acf918728b54a36113125f4d957f68eaded879b3247b3421d3bf32f21b0690ca"
+      },
+      "test_case_count": 74,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "eb624dbe56eb6620ae62080c10a273cab73ae8eca98ab17b731446a31c79393a",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/ipytest:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-ipytest:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "jinja",
+      "specification": {
+        "path": "test_files/jinja/start.md",
+        "sha256": "54795b9e1054579eee2ba29e474bc035a4fde5f96be925b738d1c30f6e062c0e"
+      },
+      "test_case_count": 911,
+      "test_commands": [
+        "echo 'This is sample license text.' >> LICENSE.txt",
+        "echo 'This is sample README text.' >> README.md",
+        "pip install  -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "a5ccb1c538e34663a658b1be28b16455ee5285efb10e6f1d4caba1f69ec9782b",
+        "test_commands.json": "aa16a75a1e0aedfc90d2371026091acb174a0269697cc7862080c3b76403346e",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/jinja:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-jinja:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "jsonlines",
+      "specification": {
+        "path": "test_files/jsonlines/start.md",
+        "sha256": "f50c66a0fcfbc47dea028d488f2c139734bde45e562addb60c63857563bb390c"
+      },
+      "test_case_count": 27,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "670671cd97404156226e507973f2ab8330d3022ca96e0c93bdbdb320c41adcaf",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/jsonlines:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-jsonlines:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "justext",
+      "specification": {
+        "path": "test_files/justext/start.md",
+        "sha256": "2d0d4c0e0d212d02b41ddbf2229c2cad6caea9ffb06a17a42be97fc378b57d89"
+      },
+      "test_case_count": 61,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "d029fa3a95e174a19934857f535eb9427d967218a36ea014b70ad704bc6c8d1c",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/justext:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-justext:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "markdownify",
+      "specification": {
+        "path": "test_files/markdownify/start.md",
+        "sha256": "427eebc3c4d0038d1e0d4213911253fa7a8e1ddd4ab43765c265e7a69781af45"
+      },
+      "test_case_count": 83,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "bbb965ab0c80d6538cf2184babad2a564a010376712012bd07b0af92dcd3097d",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/markdownify:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-markdownify:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "markupsafe",
+      "specification": {
+        "path": "test_files/markupsafe/start.md",
+        "sha256": "373057ecc03d1552d99cbf1c24b0463e52cac22e36bab96e26b49ff1496aeb07"
+      },
+      "test_case_count": 39,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "0b918943df0962bc7a1824c0555a389347b4febdc7cf9d1254406d80ce44e3f9",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/markupsafe:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-markupsafe:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "math-verify",
+      "specification": {
+        "path": "test_files/math-verify/start.md",
+        "sha256": "8bf5695e0d6c62abe7e069fa48a9c7bc53545780f930e417344634137a5c2c58"
+      },
+      "test_case_count": 192,
+      "test_commands": [
+        "pip install -e .",
+        "python -m pytest --continue-on-collection-errors -n 0 tests/test_all.py  -v -s"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "eb3be230bbd2844b1f5d8f2e4fab9ffba8ab22cfeeb69c4c1361993ba4f377b9",
+        "test_commands.json": "c92b9043e6b7f3dd855e299d8f907893147bba16770437af300845fbfc10b02c",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/math-verify:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-math-verify:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "mechanicalsoup",
+      "specification": {
+        "path": "test_files/mechanicalsoup/start.md",
+        "sha256": "2b7792e9222e949350f36d5c2f731df9aacb0bb97f8888067658f4f36782ef17"
+      },
+      "test_case_count": 121,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "89aa1e580023722db67646e8149eb246c748e180e34a1cf679ab0b41a416d904",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/mechanicalsoup:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-mechanicalsoup:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "mootdx",
+      "specification": {
+        "path": "test_files/mootdx/start.md",
+        "sha256": "c2d17e68567c9e340685ab866da68bf5ef373f998e1e35dc9e6e6783034317cb"
+      },
+      "test_case_count": 92,
+      "test_commands": [
+        "pip install -e .",
+        "pip install requests",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "8241649609f88ccd2a0a5b233a07a538ec313ff6adf695aa44a969dbca39f67d",
+        "test_commands.json": "d3a2d6275cfc9336d62cbad263d1a09582e4c0098b47f36e45cbcba06ea8b1bb",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/mootdx:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-mootdx:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "more-Itertools",
+      "specification": {
+        "path": "test_files/more-Itertools/start.md",
+        "sha256": "8341f40e811410fa427b0c6abaaaa31f628b4bcd3accaa031a448453d9915e86"
+      },
+      "test_case_count": 682,
+      "test_commands": [
+        "pip install -e .",
+        "pip install -r requirements/development.txt",
+        "pip install pytest",
+        "pytest --continue-on-collection-errors"
+      ],
+      "test_files": [
+        "tests/test_more.py",
+        "tests/test_recipes.py"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "ec1c7d93ba051204e4fea7e167f540c2136769c82329c53f5b7a0770bb237987",
+        "test_commands.json": "319c19a3fb58159a3cae879c3b0be01171f1648caeff20fef7f2e41c3c8a3bb1",
+        "test_files.json": "39587eea75eb31f96cf0749e1d4b1e7f31d0a1787b8a2d7ab9d792d6f224d5df"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/more-Itertools:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-more-Itertools:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "paillier",
+      "specification": {
+        "path": "test_files/paillier/start.md",
+        "sha256": "a3b11205c6837ee5e4d3d970b611dec633ad1de02db168041eeb15dd62d1da1d"
+      },
+      "test_case_count": 234,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/paillier:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-paillier:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "pandarallel",
+      "specification": {
+        "path": "test_files/pandarallel/start.md",
+        "sha256": "8ff6a3eb734cf72fd52e32fdac39947b56e81272295ef2a9540aa940ea2fe065"
+      },
+      "test_case_count": 217,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "16badfc6202cb3f8889e0f2779b19218af4cbb736e56acadce8148aba9a7a9f8",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/pandarallel:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-pandarallel:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "parse",
+      "specification": {
+        "path": "test_files/parse/start.md",
+        "sha256": "d6e283b3b6eb17124cda6faa3d7bf401101dec552dab96ccaabe56b98d25b642"
+      },
+      "test_case_count": 96,
+      "test_commands": [
+        "pip install -e . & pip install -r tests/requirements.txt",
+        "pytest --continue-on-collection-errors"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "7b1a278f5abe8e9da907fc9c29dfd432d60dc76e17b0fabab659d2a508bc65c4",
+        "test_commands.json": "77264e509db1c50620bf9ad3cd042b78358f1db0e13b349fe0ab0d61f12b48dc",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/parse:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-parse:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "pathlib2",
+      "specification": {
+        "path": "test_files/pathlib2/start.md",
+        "sha256": "11dd14706a71d5eed2f694066f211546ce9fb0c192f8aa52dd0eaffff673ebe8"
+      },
+      "test_case_count": 344,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "02e6295d8f522840f09b5194b3f023799ad6ed3306d9296005787e792224df20",
+        "test_commands.json": "97cf150f7a0ce56f7d5bbb9d6987e62413c1944209b983cbdec9360408693d8d",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/pathlib2:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-pathlib2:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "pdfplumber-stable",
+      "specification": {
+        "path": "test_files/pdfplumber-stable/start.md",
+        "sha256": "7b8ceee236e0505830d58ba1e30d97e93ef48747c7cb3ad055c6b410de7e94f8"
+      },
+      "test_case_count": 171,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "284de502c9847342318c17d474733ef468fbdbe252cddf6e4b4be0676706d9d0",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/pdfplumber-stable:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-pdfplumber-stable:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "plac",
+      "specification": {
+        "path": "test_files/plac/start.md",
+        "sha256": "fe027755364e116ccc63d2308084acd0fad5c1a9458fe09abdd7d4c687f96528"
+      },
+      "test_case_count": 28,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors doc"
+      ],
+      "test_files": [
+        "doc/test_ishelve.py",
+        "doc/test_ishelve_more.py",
+        "doc/test_pi.py",
+        "doc/test_plac.py",
+        "doc/test_runp.py",
+        "doc/test_server.py"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "59e19706d51d39f66711c2653cd7eb1291c94d9b55eb14bda74ce4dc636d015a",
+        "test_commands.json": "a62e68b6d425858056f6e93029ed8dc641b4e0261f0ae49311ee039b480ab851",
+        "test_files.json": "5486a9f2ee26f4c85243b055105b4672400cacb37deee5a57001cd0b959c5449"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/plac:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-plac:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "pss",
+      "specification": {
+        "path": "test_files/pss/start.md",
+        "sha256": "c3184e68a707bb8f6196973fbe0cd50c0cc135a2b2d24aebd93f5c53efdf65e7"
+      },
+      "test_case_count": 46,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors test"
+      ],
+      "test_files": [
+        "test"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "25fc0e7096fc653718202dc30b0c580b8ab87eac11a700cba03a7c021bc35b0c",
+        "test_commands.json": "69c951a45d31bb01099b9f222f19e8682b19c94407e0436fe85ece8248ca92b7",
+        "test_files.json": "ecfd160805b1b0481fd0793c745be3b45d2054582de1c4df5d9b8fa4d78e7fbc"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/pss:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-pss:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "pyautogui",
+      "specification": {
+        "path": "test_files/pyautogui/start.md",
+        "sha256": "f10b25e0752d7be902fa372453b9c04dbfdabb273e9e1e5837d6489a50aac173"
+      },
+      "test_case_count": 28,
+      "test_commands": [
+        "pip install .",
+        "xvfb-run -a pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "59e19706d51d39f66711c2653cd7eb1291c94d9b55eb14bda74ce4dc636d015a",
+        "test_commands.json": "a66262100dcc498c176a8efc3370f0266166213b7c9a88f2a82d61662e4e7552",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/pyautogui:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-pyautogui:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "pyjwt",
+      "specification": {
+        "path": "test_files/pyjwt/start.md",
+        "sha256": "37e715f5f1d65011475448ed497faea1d50a113fa3e11423a397b4df4029c786"
+      },
+      "test_case_count": 299,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests/test_advisory.py",
+        "tests/test_algorithms.py",
+        "tests/test_api_jwk.py",
+        "tests/test_api_jws.py",
+        "tests/test_api_jwt.py",
+        "tests/test_compressed_jwt.py",
+        "tests/test_exceptions.py",
+        "tests/test_jwks_client.py",
+        "tests/test_jwt.py",
+        "tests/test_utils.py",
+        "tests/utils.py",
+        "tests/keys/"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "308831041ea4863c3f87d222c31f759411898c874a9006b4bd6c745858b8f3bd",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "556942398a6337a5e15ae7396a1619d984660c0195857229c7f3623a6c8b3c6e"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/pyjwt:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-pyjwt:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "pylama",
+      "specification": {
+        "path": "test_files/pylama/start.md",
+        "sha256": "5c44173f80323b9ba4322366496ab58454656030b54690078356c46075229620"
+      },
+      "test_case_count": 34,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests/"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "86e50149658661312a9e0b35558d84f6c6d3da797f552a9657fe0558ca40cdef",
+        "test_commands.json": "cadc8238072221f75564224456e541df542a9b3ed155d46318e07b6372942f99",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/pylama:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-pylama:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "pyperclip",
+      "specification": {
+        "path": "test_files/pyperclip/start.md",
+        "sha256": "a217b18cf981606d5b16b759d8f1b8cde939f121ecc929d5899a5d07344b1a0c"
+      },
+      "test_case_count": 2,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/pyperclip:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-pyperclip:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "pypinyin",
+      "specification": {
+        "path": "test_files/pypinyin/start.md",
+        "sha256": "a5b2d7038624da7ad764e3e8399f55b28005caa7a93c6e36dc8dd165e397f256"
+      },
+      "test_case_count": 966,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "339d9d13edbaa267cb977f39e0a9da194e07c1dc9ec3a2567eec6f45776e3018",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/pypinyin:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-pypinyin:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "pyquery",
+      "specification": {
+        "path": "test_files/pyquery/start.md",
+        "sha256": "14195592d872e14638eb90e2b914e5939a1ad7de123ccea6c3b7b0b1cf29e750"
+      },
+      "test_case_count": 74,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "eb624dbe56eb6620ae62080c10a273cab73ae8eca98ab17b731446a31c79393a",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/pyquery:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-pyquery:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "pysondb-v2",
+      "specification": {
+        "path": "test_files/pysondb-v2/start.md",
+        "sha256": "fd2fa6e725737db82dda186719deab5b93326fbf4a34e74d691818225194a09d"
+      },
+      "test_case_count": 96,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "7b1a278f5abe8e9da907fc9c29dfd432d60dc76e17b0fabab659d2a508bc65c4",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/pysondb-v2:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-pysondb-v2:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "pytest-cov",
+      "specification": {
+        "path": "test_files/pytest-cov/start.md",
+        "sha256": "28d199700f71a8c33781e5893aadcb0e7e5757efd183dcdf97aa3080e5d71f85"
+      },
+      "test_case_count": 184,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "52f11620e397f867b7d9f19e48caeb64658356a6b5d17138c00dd9feaf5d7ad6",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/pytest-cov:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-pytest-cov:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "pytestify",
+      "specification": {
+        "path": "test_files/pytestify/start.md",
+        "sha256": "a3020df1912c75918db8d75b92e72e177312f9a735835b6e6b0bc2d454581898"
+      },
+      "test_case_count": 122,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "1be00341082e25c4e251ca6713e767f7131a2823b0052caf9c9b006ec512f6cb",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/pytestify:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-pytestify:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "python-dotenv",
+      "specification": {
+        "path": "test_files/python-dotenv/start.md",
+        "sha256": "b4882c804279716104eb4e641b7d9bcb2120d1b8a6372dfb0dcb5e70660b6750"
+      },
+      "test_case_count": 209,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "83f814f7a92e365cbd79f9addceed185761a8d38a06a2d4350bb1fe4b7632b34",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/python-dotenv:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-python-dotenv:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "python-fsutil",
+      "specification": {
+        "path": "test_files/python-fsutil/start.md",
+        "sha256": "5964f03fcea0f131f9f22d03efc52798d909f2e9df4cfb6f47020640615fe705"
+      },
+      "test_case_count": 153,
+      "test_commands": [
+        "pip install  -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "620c9c332101a5bae955c66ae72268fbcd3972766179522c8deede6a249addb7",
+        "test_commands.json": "8e3fb7b291ad567ec29b6e5d4fe9d4c5493de0497fb8d9aaa77257977cd1e028",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/python-fsutil:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-python-fsutil:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "python-jose",
+      "specification": {
+        "path": "test_files/python-jose/start.md",
+        "sha256": "19f1e3ea7097a0aaca6ddab9933fceec4678b297b277a8f665fb5b736b68139d"
+      },
+      "test_case_count": 458,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "ad21a2b810af49a8b9241e10dfce3a016987441cc93aa72feae47dd017ddf0bb",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/python-jose:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-python-jose:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "python-pathspec",
+      "specification": {
+        "path": "test_files/python-pathspec/start.md",
+        "sha256": "6dfac16ae6d848079fe5e0679632695bf33e3f4c8b0dd51aaf5ddae664706436"
+      },
+      "test_case_count": 119,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests/test_01_util.py",
+        "tests/test_02_gitwildmatch.py",
+        "tests/test_03_pathspec.py",
+        "tests/test_04_gitignore.py"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "3038bfb575bee6a0e61945eff8784835bb2c720634e42734678c083994b7f018",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "b6c200513a3dd4214ec0c108a153d4da43319584da19433da5e24babf6ee93f0"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/python-pathspec:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-python-pathspec:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "python-patterns",
+      "specification": {
+        "path": "test_files/python-patterns/start.md",
+        "sha256": "56910e9f2cc3a74c153a85c08b4bf1fad724b115b5a6ee3ca6c8527d5b0e4487"
+      },
+      "test_case_count": 68,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "a21855da08cb102d1d217c53dc5824a3a795c1c1a44e971bf01ab9da3a2acbbf",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/python-patterns:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-python-patterns:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "python-pytest-cases",
+      "specification": {
+        "path": "test_files/python-pytest-cases/start.md",
+        "sha256": "15c3d7c423a6e66ad7ecd755520ed3ef72b16a2c83d1e4b1cd34af97852908dd"
+      },
+      "test_case_count": 1372,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "a2144767f33525b47ccdbeb90311911fc7966c0975d14ae1df69712264d9ad47",
+        "test_commands.json": "0bd1b3d8d819a9bc29dce9aa35222ac4c7042dbf780304a6e34126f7e1d2dd3b",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/python-pytest-cases:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-python-pytest-cases:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "python-slugify",
+      "specification": {
+        "path": "test_files/python-slugify/start.md",
+        "sha256": "eb9e3d6e25679c8620c56e3de8634d18bcaf8b7a3ce6e5c1ed27083aaaefaab1"
+      },
+      "test_case_count": 82,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors test.py"
+      ],
+      "test_files": [
+        "test.py"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "a46e37632fa6ca51a13fe39a567b3c23b28c2f47d8af6be9bd63e030e214ba38",
+        "test_commands.json": "03a200a5c8e20fb2f1910707b61cbf7faf49d18c8f57b67f89341eed66cfd8e3",
+        "test_files.json": "9cef0cb4f7f840f8431c2aaf7b088a0b974e2b121b088ec76d852bae1c3a0d2b"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/python-slugify:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-python-slugify:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "pythonprojecttemplate",
+      "specification": {
+        "path": "test_files/pythonprojecttemplate/start.md",
+        "sha256": "a0047c55aad89b5bb62223e44a9e35d480af2d63a0d107ed615acf4e6dc5781c"
+      },
+      "test_case_count": 36,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "76a50887d8f1c2e9301755428990ad81479ee21c25b43215cf524541e0503269",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/pythonprojecttemplate:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-pythonprojecttemplate:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "pytorch-grad-cam",
+      "specification": {
+        "path": "test_files/pytorch-grad-cam/start.md",
+        "sha256": "097752813581d71cbfa4f0481348d05bf75b4bc0b6a67c47462d0cb3174d1d11"
+      },
+      "test_case_count": 178,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests",
+        "examples"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "01d54579da446ae1e75cda808cd188438834fa6249b151269db0f9123c9ddc61",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "fc86fe0557de1ba525febf654b0afddf7e7689bdb916460d674a0618a61894ab"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/pytorch-grad-cam:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-pytorch-grad-cam:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "pytz",
+      "specification": {
+        "path": "test_files/pytz/start.md",
+        "sha256": "986a8594ad31d3d9bff50286577e64630aa0192c920c92d6cfe3808fa683caee"
+      },
+      "test_case_count": 235,
+      "test_commands": [
+        "pytest --continue-on-collection-errors -v"
+      ],
+      "test_files": [
+        "src/pytz/tests/test_docs.py",
+        "src/pytz/tests/test_lazy.py",
+        "src/pytz/tests/test_tzinfo.py",
+        "test_zdump.py"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "0a2d643bfd24a028cd236e76575d828424ccffbfa47392bd09d8ca9dc85e2f8d",
+        "test_commands.json": "5a982a7dd0169d20187d318a3d35c2ce7ffb71942304590e6f80c35583add88d",
+        "test_files.json": "335706fd1e2fc4ee38bd1660a213bcf55d9f041c1a98cb716a880ff4e5230480"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/pytz:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-pytz:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "records",
+      "specification": {
+        "path": "test_files/records/start.md",
+        "sha256": "34c8361648348a3358d93b3a561f888161cf4b2373cb779f3c1a415c6812073e"
+      },
+      "test_case_count": 31,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "eb1e33e8a81b697b75855af6bfcdbcbf7cbbde9f94962ceaec1ed8af21f5a50f",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/records:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-records:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "requests-html",
+      "specification": {
+        "path": "test_files/requests-html/start.md",
+        "sha256": "d0962405e29d987a413550fdf22d2b3e14d7213200c465483c46eae970ce17a4"
+      },
+      "test_case_count": 41,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "3d914f9348c9cc0ff8a79716700b9fcd4d2f3e711608004eb8f138bcba7f14d9",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/requests-html:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-requests-html:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "retrying",
+      "specification": {
+        "path": "test_files/retrying/start.md",
+        "sha256": "cd41306283b97f81d9cb8ec14985b47acf973dea92f492b53a4e1aaa796a4168"
+      },
+      "test_case_count": 23,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors test_retrying.py"
+      ],
+      "test_files": [
+        "test_retrying.py"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "535fa30d7e25dd8a49f1536779734ec8286108d115da5045d77f3b4185d8f790",
+        "test_commands.json": "4883405906ffd3b7ecf1cc24ddebb6e14c66c1a18b59acad5ca9f894f0686b54",
+        "test_files.json": "232e53a7dd8abd705c6e27d35983a3bfd4760e05954dbda8a6986588a152c9f7"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/retrying:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-retrying:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "rich-click",
+      "specification": {
+        "path": "test_files/rich-click/start.md",
+        "sha256": "6795895efba326e409b594df3f446b63b788d61ad69aace7b8957dd5964421da"
+      },
+      "test_case_count": 145,
+      "test_commands": [
+        "pip install 'setuptools>=45'",
+        "pip install click",
+        "pip install --no-build-isolation -e .[dev]",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "be47addbcb8f60566a3d7fd5a36f8195798e2848b368195d9a5d20e007c59a0c",
+        "test_commands.json": "35c527456d27f6e65140c5e92d54369895b48ac5454e7ec57d1a7bb5f1055805",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/rich-click:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-rich-click:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "schedule-master",
+      "specification": {
+        "path": "test_files/schedule-master/start.md",
+        "sha256": "bc3faaee2d22a11550e5cb541d47734ef7b3bcd6490bb658373dc4f0194ff971"
+      },
+      "test_case_count": 81,
+      "test_commands": [
+        "pytest --continue-on-collection-errors test_schedule.py"
+      ],
+      "test_files": [
+        "test_schedule.py"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "5316ca1c5ddca8e6ceccfce58f3b8540e540ee22f6180fb89492904051b3d531",
+        "test_commands.json": "c82be48afd71c79d0bd04dfa350335148d87324ecdcdd88c5a4e9be93f92793e",
+        "test_files.json": "ab39610097f988e7e0c1a75c0fd211acb3815cd1679747b4ce4c4f872834a143"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/schedule-master:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-schedule-master:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "schema",
+      "specification": {
+        "path": "test_files/schema/start.md",
+        "sha256": "f11391f866674a747dbc36e2088a706c492eabe92ddbef6cf2c471eb2a53dd9e"
+      },
+      "test_case_count": 118,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors test_schema.py"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "85daaf6f7055cd5736287faed9603d712920092c4f8fd0097ec3b650bf27530e",
+        "test_commands.json": "aced32bafb42e6bfc3067980b6fc0f6735636130fe795a71481a07978eb5c825",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/schema:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-schema:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "six",
+      "specification": {
+        "path": "test_files/six/start.md",
+        "sha256": "5dd3947df2335ae7ac156a084abea1be15eff616844414ff12ed13752fc8cee6"
+      },
+      "test_case_count": 200,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors test_six.py"
+      ],
+      "test_files": [
+        "test_six.py"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf",
+        "test_commands.json": "e9778a6a9005d41a17da23981b3a428b3e36b7d625b2d9ade9f0ce526b472c67",
+        "test_files.json": "bccd0e0f9172d890ebbee4bdcb8db1806f1da019d3b691110586f4c38bef39f7"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/six:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-six:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "sklearn",
+      "specification": {
+        "path": "test_files/sklearn/start.md",
+        "sha256": "19828b897af3dfed2717ddaf5dfa08124709aea8ec30e596faef18348f56aa80"
+      },
+      "test_case_count": 70,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "ff5a1ae012afa5d4c889c50ad427aaf545d31a4fac04ffc1c4d03d403ba4250a",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/sklearn:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-sklearn:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "sortedcontainers",
+      "specification": {
+        "path": "test_files/sortedcontainers/start.md",
+        "sha256": "85ca9d0ea096936000349aeeabb7cac0d9e1b51201cefc55b4aa2cf2b188dfa4"
+      },
+      "test_case_count": 296,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "a0f8b2c4cb1ac82abdb37f0fe5203b97be556c4468c83bba18684d620fd8eaf9",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/sortedcontainers:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-sortedcontainers:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "sqlparse",
+      "specification": {
+        "path": "test_files/sqlparse/start.md",
+        "sha256": "cc7062beb6108a19ff0376fbc4694b6f1b625551376bf6582a4403e3a37b4d51"
+      },
+      "test_case_count": 461,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "de482c7ed5ca67ae135ef25bf3b13194970a2f3902318f1eda3c64af2a2eb344",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/sqlparse:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-sqlparse:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "stable-baselines3",
+      "specification": {
+        "path": "test_files/stable-baselines3/start.md",
+        "sha256": "292eb484a24f98eebaf5ab4184406ad0d8c66a7265dc910d0cec67df66d8e0cf"
+      },
+      "test_case_count": 798,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "4d5e5deb0353d3a6c0b5cf97de0a23087a56796a3474ee500edbe4676c3b9716",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/stable-baselines3:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-stable-baselines3:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "stamina",
+      "specification": {
+        "path": "test_files/stamina/start.md",
+        "sha256": "ffe5a44621ea515f2a687605bf86581209f3ed9805cac9a8c1c7f78fe5b1eb51"
+      },
+      "test_case_count": 129,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "6566230e3a3ce3774c1bbc7c18b590ae0f457bbcd511e90e3e7dca2a02e7addc",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/stamina:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-stamina:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "structlog",
+      "specification": {
+        "path": "test_files/structlog/start.md",
+        "sha256": "d69a35a2f63112b77684d50d57662d6a5a4312650e94a700934f9f841033a4e2"
+      },
+      "test_case_count": 828,
+      "test_commands": [
+        "pip install -e .",
+        "pip install colorama",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "43d244581aa23a744de9d775979165eb226a80e2cce6c0d0885412c9b6a0dbdf",
+        "test_commands.json": "438907353a3eaf0bb276739880af1682b7f993427352270b9fdfd8a3a2607487",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/structlog:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-structlog:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "synthetic",
+      "specification": {
+        "path": "test_files/synthetic/start.md",
+        "sha256": "769069bf0cbd92664b54d84e0c1d2b46d4e83a21c561fce495ae4434ecdda522"
+      },
+      "test_case_count": 93,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "6e4001871c0cf27c7634ef1dc478408f642410fd3a444e2a88e301f5c4a35a4d",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/synthetic:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-synthetic:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "tablib",
+      "specification": {
+        "path": "test_files/tablib/start.md",
+        "sha256": "b92f14313bcd3b376d5e75ed057cc7e9e8c4d191bff64dcb2c773cf7c1f661b7"
+      },
+      "test_case_count": 172,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "68519a9eca55c68c72658a2a1716aac3788c289859d46d6f5c3f14760fa37c9e",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/tablib:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-tablib:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "tenacity",
+      "specification": {
+        "path": "test_files/tenacity/start.md",
+        "sha256": "fa037cab663ba83acdc978565deb99f9cfd964a4a59b16e519188487c3f220ae"
+      },
+      "test_case_count": 124,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "6affdae3b3c1aa6aa7689e9b6a7b3225a636aa1ac0025f490cca1285ceaf1487",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/tenacity:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-tenacity:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "tinydb",
+      "specification": {
+        "path": "test_files/tinydb/start.md",
+        "sha256": "77df3249f296f9e1f525393db2db15cc67ffeddbdc7936f10382508ace1643a4"
+      },
+      "test_case_count": 204,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "fc56dbc6d4652b315b86b71c8d688c1ccdea9c5f1fd07763d2659fde2e2fc49a",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/tinydb:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-tinydb:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "tqdm",
+      "specification": {
+        "path": "test_files/tqdm/start.md",
+        "sha256": "1199ab663bdcdd17ac1f52f2684a8edbae888632f681f17e5a3c22a1927446e0"
+      },
+      "test_case_count": 139,
+      "test_commands": [
+        "echo \"__version__ = '0.0.1'\" > tqdm/version.py",
+        "SETUPTOOLS_SCM_PRETEND_VERSION_FOR_TQDM=0.0.1 pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "8d27ba37c5d810106b55f3fd6cdb35842007e88754184bfc0e6035f9bcede633",
+        "test_commands.json": "ccc37dad9fe1316318ddf68cc35185ef819de9be9084e9fa9d04462094c409c7",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/tqdm:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-tqdm:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "trimming",
+      "specification": {
+        "path": "test_files/trimming/start.md",
+        "sha256": "9a2cc46f72fe6d7036a0e2e75c50263711555d70c0be660667ee7cc2ca38957d"
+      },
+      "test_case_count": 10,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/trimming:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-trimming:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "tsfresh",
+      "specification": {
+        "path": "test_files/tsfresh/start.md",
+        "sha256": "dc1689a734028b177cda85556ed8d95413206d3985c8476f783f341e3aa70c2e"
+      },
+      "test_case_count": 317,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "8d1ede4f889e0ed6f0823d8c1821905b9de37a0f851dc270df0dbf72b3c93641",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/tsfresh:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-tsfresh:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "typing_extensions",
+      "specification": {
+        "path": "test_files/typing_extensions/start.md",
+        "sha256": "2cf572bd2c9b0285a2e1bf2f572d5a36f27d6b5b862f1eaa27747e87dee4bab7"
+      },
+      "test_case_count": 535,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors src"
+      ],
+      "test_files": [
+        "src/test_typing_extensions.py",
+        "test_typing_extensions.py"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "20ca98162ba780883712eb701c84e4c06f73aba78e903935a9ad799193b4627f",
+        "test_commands.json": "ad9d85cdbcf59c265557e93a11302adf5d657aeaa5ba2ed6e7c77090f35b5615",
+        "test_files.json": "f8b288dd24d4a5a2cf821fe4398f6adb8c144c693faab03248180143d96f00e9"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/typing_extensions:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-typing_extensions:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "uiautomator",
+      "specification": {
+        "path": "test_files/uiautomator/start.md",
+        "sha256": "8259abf353f5c38ab5ec7127dcc494541fb7f2afc82da25057cacbca586ab762"
+      },
+      "test_case_count": 101,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors"
+      ],
+      "test_files": [
+        "test"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "16dc368a89b428b2485484313ba67a3912ca03f2b2b42429174a4f8b3dc84e44",
+        "test_commands.json": "0bd1b3d8d819a9bc29dce9aa35222ac4c7042dbf780304a6e34126f7e1d2dd3b",
+        "test_files.json": "ecfd160805b1b0481fd0793c745be3b45d2054582de1c4df5d9b8fa4d78e7fbc"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/uiautomator:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-uiautomator:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "unidecode",
+      "specification": {
+        "path": "test_files/unidecode/start.md",
+        "sha256": "e56a329f69d59c4e3eb41f8f2004d17b79b0a48728d7a898252ea429a49a02b1"
+      },
+      "test_case_count": 65,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "108c995b953c8a35561103e2014cf828eb654a99e310f87fab94c2f4b7d2a04f",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/unidecode:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-unidecode:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "unittest-parametrize",
+      "specification": {
+        "path": "test_files/unittest-parametrize/start.md",
+        "sha256": "f0667762e3e63f5aefb1ceceb70892edff15f4537852090a7259440b4afc6c90"
+      },
+      "test_case_count": 26,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors /workspace/tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "5f9c4ab08cac7457e9111a30e4664920607ea2c115a1433d7be98e97e64244ca",
+        "test_commands.json": "7c51442c79c7435459f8005057cd4ed3750eb2019f17136f4ad73944f809c618",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/unittest-parametrize:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-unittest-parametrize:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "verifiers",
+      "specification": {
+        "path": "test_files/verifiers/start.md",
+        "sha256": "d811a2281c932452292c157109d1173eb1e1d2bd0605f08fdbb26a65cc5ff177"
+      },
+      "test_case_count": 171,
+      "test_commands": [
+        "pip install  -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "284de502c9847342318c17d474733ef468fbdbe252cddf6e4b4be0676706d9d0",
+        "test_commands.json": "8e3fb7b291ad567ec29b6e5d4fe9d4c5493de0497fb8d9aaa77257977cd1e028",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/verifiers:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-verifiers:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "voluptuous",
+      "specification": {
+        "path": "test_files/voluptuous/start.md",
+        "sha256": "a8207cc580f09fdad8343e0000fd6104c3a78f4178bb9189a7a973f9dd7177a0"
+      },
+      "test_case_count": 152,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "043066daf2109523a7490d4bfad4766da5719950a2b5f96d192fc0537e84f32a",
+        "test_commands.json": "97cf150f7a0ce56f7d5bbb9d6987e62413c1944209b983cbdec9360408693d8d",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/voluptuous:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-voluptuous:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "wifiphisher",
+      "specification": {
+        "path": "test_files/wifiphisher/start.md",
+        "sha256": "059282385a4e9968017d44ab79405f44eed746b2647123de46a99bc3ad7d204d"
+      },
+      "test_case_count": 43,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "44cb730c420480a0477b505ae68af508fb90f96cf0ec54c6ad16949dd427f13a",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/wifiphisher:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-wifiphisher:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "wsgidav",
+      "specification": {
+        "path": "test_files/wsgidav/start.md",
+        "sha256": "778692d89ee74e999a4dc2c279018a09329b8de0c7232afb9ee617b09058b57c"
+      },
+      "test_case_count": 36,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "76a50887d8f1c2e9301755428990ad81479ee21c25b43215cf524541e0503269",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/wsgidav:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-wsgidav:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "xlrd",
+      "specification": {
+        "path": "test_files/xlrd/start.md",
+        "sha256": "bf19dee36d829e37c0fae56acb28503a7be62bbd6d58266acc664a9a7921bb23"
+      },
+      "test_case_count": 84,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "44c8031cb036a7350d8b9b8603af662a4b9cdbd2f96e8d5de5af435c9c35da69",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/xlrd:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-xlrd:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    },
+    {
+      "id": "ydata-profiling",
+      "specification": {
+        "path": "test_files/ydata-profiling/start.md",
+        "sha256": "a6336471d5d289b4cebdd0a3ec2c64d836af4177acd42612893bcefdbf410a99"
+      },
+      "test_case_count": 2182,
+      "test_commands": [
+        "pip install -e .",
+        "pytest --continue-on-collection-errors tests"
+      ],
+      "test_files": [
+        "tests"
+      ],
+      "metadata_sha256": {
+        "test_case_count.txt": "93989d0f14e7ec638a3c6a29372246b56628ae42d36820ed73f3669a99e9491b",
+        "test_commands.json": "3bd822b96ae432d75e8a3d09a40c856f17f3164f200f1eb0fee6b684be49ace9",
+        "test_files.json": "af7f0b2bd342822f2fa8e6a9fda610570f911f30d3108379ea4184c0866727c3"
+      },
+      "image": {
+        "tag": "ghcr.io/multimodal-art-projection/nl2repobench/ydata-profiling:1.0",
+        "adaptation_tag": "generalreasoning/nl2repobench-ydata-profiling:1.0",
+        "digest": null,
+        "platform": "linux/amd64",
+        "verification": "not_checked"
+      },
+      "adaptation_readme_excluded": false
+    }
+  ]
+}
