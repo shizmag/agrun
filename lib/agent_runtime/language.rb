@@ -8,6 +8,7 @@ module AgentRuntime
 
     def program(name, &block)
       raise Error, "duplicate program" if @ir
+      raise Error, "missing program identity" unless name.is_a?(String) || name.is_a?(Symbol)
       @ir = {"schema_version" => 1, "name" => name.to_s, "inputs" => {}, "executors" => {}, "steps" => [], "outputs" => {}, "config" => {}}
       instance_eval(&block)
     end
@@ -17,11 +18,12 @@ module AgentRuntime
     end
 
     def executor(name, via:, config: {})
+      raise Error, "malformed executor adapter" unless via.is_a?(String) || via.is_a?(Symbol)
       declare(@ir["executors"], name, {"adapter" => via.to_s, "config" => normalize(config)})
     end
 
     def step(name, with:, inputs:, outputs:, needs: [], config: {}, timeout: 60, retries: 0, input_types: {})
-      @ir["steps"] << {"id" => name.to_s, "executor" => with.to_s, "inputs" => normalize(inputs), "outputs" => normalize(outputs), "needs" => needs.map(&:to_s), "config" => normalize(config), "timeout" => timeout, "retries" => retries, "input_types" => normalize(input_types)}
+      @ir["steps"] << {"id" => name.to_s, "executor" => with.to_s, "inputs" => normalize(inputs), "outputs" => normalize(outputs), "needs" => normalize(needs), "config" => normalize(config), "timeout" => timeout, "retries" => retries, "input_types" => normalize(input_types)}
     end
 
     def emit(name, from:)
@@ -31,7 +33,7 @@ module AgentRuntime
     private
 
     def normalize(value)
-      JSON.parse(JSON.generate(value))
+      IR.normalize_json(value)
     end
 
     def declare(hash, name, value)
