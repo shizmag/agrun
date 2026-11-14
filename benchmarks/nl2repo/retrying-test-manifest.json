@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "task_id": "retrying",
+  "protocol_id": "nl2repo-audited-v2",
+  "dataset_revision": "781a1da1ee41fb8edb0bed22f586d69111610edf",
+  "image_digest": "sha256:1302235420db9d34955c42273ebaf23df8bbee31ceeaf3c336347f54b64146fe",
+  "image_config_digest": "sha256:0ca74e4e2ff4634e254ab75806ff5487f3b2485b1c6ddda4e0b3f7cc05be585a",
+  "platform": "linux/amd64",
+  "specification_path": "test_files/retrying/start.md",
+  "specification_sha256": "cd41306283b97f81d9cb8ec14985b47acf973dea92f492b53a4e1aaa796a4168",
+  "test_path": "test_retrying.py",
+  "test_source_sha256": "6d6286fc485273ba8b434afbf3f754f3f69321281bd94fd1f08b88a9171e056f",
+  "official_metadata_sha256": {
+    "test_case_count.txt": "535fa30d7e25dd8a49f1536779734ec8286108d115da5045d77f3b4185d8f790",
+    "test_commands.json": "4883405906ffd3b7ecf1cc24ddebb6e14c66c1a18b59acad5ca9f894f0686b54",
+    "test_files.json": "232e53a7dd8abd705c6e27d35983a3bfd4760e05954dbda8a6986588a152c9f7"
+  },
+  "reference": {
+    "repository": "https://github.com/rholder/retrying",
+    "revision": "1d5699348d707e377aad7488da6a8a1b48a65933",
+    "module_sha256": "d8f1cc7e269fe908cae965fb9338d3625c56c9e56a35435dcb6f78ee74a53e0a",
+    "qualification": "genuine upstream metadata-matching reference; historical benchmark source unproven"
+  },
+  "reference_collection": {
+    "python": "3.10.11",
+    "pytest": "8.4.1",
+    "exit_code": 0,
+    "collected": 23,
+    "collection_errors": [],
+    "parameterized": 0
+  },
+  "reference_validation": {
+    "exit_code": 0,
+    "collected": 23,
+    "call_passed": 23,
+    "phase_reports": 69,
+    "nonpassed_reports": []
+  },
+  "tests": [
+    {"nodeid": "test_retrying.py::TestStopConditions::test_legacy_explicit_stop_type", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestStopConditions::test_never_stop", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestStopConditions::test_stop_after_attempt", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestStopConditions::test_stop_after_delay", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestStopConditions::test_stop_func", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestWaitConditions::test_exponential", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestWaitConditions::test_exponential_with_max_wait", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestWaitConditions::test_exponential_with_max_wait_and_multiplier", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestWaitConditions::test_fixed_sleep", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestWaitConditions::test_incrementing_sleep", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestWaitConditions::test_legacy_explicit_wait_type", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestWaitConditions::test_no_sleep", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestWaitConditions::test_random_sleep", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestWaitConditions::test_random_sleep_without_min", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestWaitConditions::test_wait_func", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestDecoratorWrapper::test_defaults", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestDecoratorWrapper::test_retry_if_exception_of_type", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestDecoratorWrapper::test_with_stop_on_exception", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestDecoratorWrapper::test_with_stop_on_return_value", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestDecoratorWrapper::test_with_wait", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestDecoratorWrapper::test_wrapped_exception", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestBeforeAfterAttempts::test_after_attempts", "parameter_id": null},
+    {"nodeid": "test_retrying.py::TestBeforeAfterAttempts::test_before_attempts", "parameter_id": null}
+  ]
+}

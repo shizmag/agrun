@@ -31,6 +31,28 @@
       "operational_status": "unvalidated",
       "authoritative_score_available": false,
       "comparability": "Not an unmodified official score; deviations must be reported."
+    },
+    {
+      "id": "nl2repo-audited-v2",
+      "kind": "scoped-audited-contract",
+      "task_ids": ["retrying"],
+      "trust_scope": "benign_ordinary_submissions",
+      "raw_score_unit": "canonical-pytest-case",
+      "normalized_rate": "accepted_passed_cases / frozen_expected_cases",
+      "manifest_path": "benchmarks/nl2repo/retrying-test-manifest.json",
+      "manifest_sha256": "3861f33b79c0b6d8f1c4a81ab382b7fe6f4ddbb9d865e3d96e5fdf0f0bb9bcc8",
+      "expected_cases": 23,
+      "quality_basis": ["validated_quality_result", "candidate_collection_failure"],
+      "required_controls": [
+        "exact pinned image, official test source, specification and expected identities",
+        "healthy known-good reference collection and complete phase outcomes",
+        "clean candidate-only implementation import with no inherited reference source",
+        "structured phase-complete results and collection/exit-status consistency",
+        "binding actual submission, procedure, environment and resource limits"
+      ],
+      "operational_status": "implementation_requires_runtime_preflight_and_controls",
+      "authoritative_score_available": false,
+      "comparability": "Scoped retrying-only audited protocol; not the official legacy parser, a paper-compatible score, an official leaderboard result, or adversarially authenticated collection. Runtime evidence, not this registry, establishes readiness."
     }
   ],
   "diagnostics": {
