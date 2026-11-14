@@ -34,8 +34,11 @@ branches may finish. Cancellation prevents new work and is passed to active
 executors. Each attempt receives its own directory and writable copies of
 filesystem input artifacts; no shared writable repository is scheduled.
 
-Only a failure explicitly classified `transport` is retried, up to `retries`
-additional attempts (0–10). This is not semantic repair. Each attempt is persisted
+Only a failure explicitly classified `transport` and explicitly marked
+`retry_safe: true` is retried, up to `retries` additional attempts (0–10).
+Transport classification alone does not establish that repeating an external
+side effect is safe. Existing custom executors must opt in; absent safety means
+one invocation. This is not semantic repair. Each attempt is persisted
 before invocation and after termination. A process crash can leave a running
 record: restart/resume and crash reconciliation are deferred. Subprocess adapters
 enforce their own deadline and process-group cleanup; custom in-process executors
@@ -59,7 +62,14 @@ copies, never mutable references to the stored snapshot.
 The independent evaluator snapshots the submission, then executes a disposable
 copy. Its report binds exact SHA-256 versions of repository, specification,
 procedure, and environment/configuration. Reuse checks require all four to match;
-verification never transfers automatically to edited content. Hidden procedure
+verification never transfers automatically to edited content. M0.1's
+`Evaluator#verify!` checks retained canonical evidence, generation association,
+specification/public test bytes, evaluator source/version, timeout and environment
+without rerunning the grader. Submitted-generation mode distinguishes identical
+bytes produced independently. Standalone mode records only an evaluation-owned
+snapshot, not solver provenance. Historical reports alone do not assert current
+validation. See [frozen boundary decisions](m0.1-contract-decisions.md) for exact
+scope and migration details. Hidden procedure
 paths are withheld from the public solver task; host filesystem access is not
 sandboxed. Benchmark solvers implement `solve(task:, model:, budget:, workspace:)`
 without depending on the DSL. Only the DSL solver imports the compiler/runtime.

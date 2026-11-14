@@ -29,6 +29,10 @@ module AgentRuntime
       else IR.dump(value)
       end
       digest = Digest::SHA256.hexdigest(bytes)
+      # Reuse must not repair damaged historical evidence. New content still
+      # creates its first object normally; equal bytes retain distinct IDs.
+      existing = @mutex.synchronize { @db.execute("SELECT id FROM artifacts WHERE digest = ?", [digest]) }
+      existing.each { |row| value(artifact(row.fetch(0))) }
       @mutex.synchronize do
         object = File.join(root, "objects", digest)
         unless File.exist?(object)
@@ -53,16 +57,34 @@ module AgentRuntime
       end
     end
 
+    def artifact(id)
+      row = @mutex.synchronize { @db.get_first_row("SELECT digest,data FROM artifacts WHERE id=?", [id]) }
+      raise Error, "unknown artifact #{id}" unless row
+      record = JSON.parse(row[1])
+      valid = record.is_a?(Hash) && record["id"] == id && record["digest"] == row[0] &&
+        %w[id digest type path run_id step_id created_at].all? { |key| record[key].is_a?(String) && !record[key].empty? } &&
+        record["digest"].match?(/\A[0-9a-f]{64}\z/) && record["attempt"].is_a?(Integer) &&
+        record["inputs"].is_a?(Array) && record["metadata"].is_a?(Hash)
+      raise Error, "invalid canonical artifact #{id}" unless valid
+      Compiler.type!(record["type"])
+      record
+    rescue => error
+      raise error if error.is_a?(Error)
+      raise Error, "artifact metadata read failed: #{error.class}: #{error.message}"
+    end
+
     def value(artifact)
+      bytes = validated_bytes(artifact, {})
       type = artifact.fetch("type")
       path = artifact.fetch("path")
-      bytes = %w[repository directory].include?(type) ? IR.dump(self.class.manifest(path)) : File.binread(path)
-      raise Error, "artifact content integrity violation #{artifact["id"]}" unless Digest::SHA256.hexdigest(bytes) == artifact["digest"]
       case type
       when "repository", "directory", "file" then path
       when "text", "string", "patch" then bytes.force_encoding(Encoding::UTF_8)
       else JSON.parse(bytes)
       end
+    rescue => error
+      raise error if error.is_a?(Error)
+      raise Error, "artifact read failed: #{error.class}: #{error.message}"
     end
 
     def save_report(report)
@@ -105,6 +127,32 @@ module AgentRuntime
     end
 
     private
+
+    def validated_bytes(record, visiting)
+      raise Error, "invalid artifact reference" unless record.is_a?(Hash)
+      canonical = artifact(record.fetch("id"))
+      raise Error, "artifact metadata integrity violation #{canonical["id"]}" unless record == canonical
+      id = canonical.fetch("id")
+      raise Error, "cyclic artifact provenance #{id}" if visiting[id]
+      visiting[id] = true
+      canonical.fetch("inputs").each do |input|
+        validated_bytes(input.is_a?(String) ? artifact(input) : input, visiting)
+      end
+      object = File.join(root, "objects", canonical.fetch("digest"))
+      tree = %w[repository directory].include?(canonical.fetch("type"))
+      expected_path = tree ? "#{object}.tree" : object
+      raise Error, "invalid artifact path #{id}" unless canonical.fetch("path") == expected_path
+      raise Error, "invalid artifact object #{id}" unless File.file?(object) && !File.symlink?(object)
+      bytes = File.binread(object)
+      raise Error, "artifact content integrity violation #{id}" unless Digest::SHA256.hexdigest(bytes) == canonical.fetch("digest")
+      if tree
+        raise Error, "invalid artifact tree #{id}" unless File.directory?(expected_path) && !File.symlink?(expected_path)
+        manifest = IR.dump(self.class.manifest(expected_path))
+        raise Error, "artifact tree integrity violation #{id}" unless manifest == bytes
+      end
+      visiting.delete(id)
+      bytes
+    end
 
     def validate_value!(type, value)
       valid = case type

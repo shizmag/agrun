@@ -6,8 +6,8 @@ Ruby 4.0, stdlib plus sqlite3 and standard. Namespace `AgentRuntime`.
 
 `Request = Struct.new(:run_id, :step_id, :attempt, :inputs, :config, :workspace, :timeout, :cancellation, keyword_init: true)`.
 Inputs map names to decoded values (paths for repository/file artifacts).
-`Result = Struct.new(:status, :outputs, :error, :duration, :usage, :cost, :logs, :session_id, :model, keyword_init: true)`.
-M0.1 adds optional `:retry_safe` after `:model`. Transport retries require explicit
+`Result = Struct.new(:status, :outputs, :error, :duration, :usage, :cost, :logs, :session_id, :model, :retry_safe, keyword_init: true)`.
+M0.1 appended optional `:retry_safe` after `:model`. Transport retries require explicit
 `retry_safe: true`; existing custom executors must opt in only when replay is safe.
 Transport classification alone no longer authorizes another invocation.
 Statuses strings: success, failure, cancelled, timeout, unknown, blocked. Outputs map declared output names to raw values. Executors implement `execute(request)`.
@@ -33,6 +33,8 @@ Independent solver contract `solve(task:, model:, budget:, workspace:)` returns 
 `Store#artifact(id)` returns canonical metadata or raises `AgentRuntime::Error`.
 `value(artifact)` rejects inconsistent metadata, missing/corrupt bytes or trees,
 and invalid provenance. This is consistency checking, not hostile-user authentication.
+Writing identical content does not silently repair missing/corrupt historical
+objects or trees: existing referenced content must validate before reuse.
 
 `Evaluator#evaluate(task:, repository:, run_id:, timeout: 30, generation: nil)`
 records a unique `evaluation_id`, explicit `identity_mode` and `generation`.

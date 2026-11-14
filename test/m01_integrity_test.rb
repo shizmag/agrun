@@ -473,4 +473,107 @@ class M01IntegrityTest < Minitest::Test
       end
     end
   end
+
+  def test_false_generation_is_not_implicit_standalone
+    fixture do |_, task, repository, evaluator|
+      assert_raises(AgentRuntime::Error) do
+        evaluator.evaluate(task: task, repository: repository, run_id: "run", generation: false)
+      end
+      report = evaluator.evaluate(task: task, repository: repository, run_id: "run")
+      assert_raises(AgentRuntime::Error) { verify(evaluator, report, task, repository, generation: false) }
+    end
+  end
+
+  def test_malformed_submitted_generation_metadata_fails_closed
+    fixture do |store, task, repository, evaluator|
+      original = generation(store, repository)
+      variants = [true, 1, "generation", [], {}, original.except("id"),
+        original.except("type"), original.merge("type" => nil),
+        original.merge("inputs" => "invalid"), original.merge("metadata" => [])]
+      variants.each do |producer|
+        assert_raises(AgentRuntime::Error, producer.inspect) do
+          evaluator.evaluate(task: task, repository: repository, run_id: "run", generation: producer)
+        end
+      end
+    end
+  end
+
+  def test_unavailable_evaluator_source_fails_closed_in_isolated_copy
+    fixture do |store, _, _, _, root|
+      copy = File.join(root, "copied-evaluator.rb")
+      source = File.binread(AgentRuntime::Evaluation::Evaluator::SOURCE_PATH)
+      adapter = File.expand_path("../lib/agent_runtime/adapters/process_runner", __dir__)
+      File.binwrite(copy, source.sub('require_relative "../adapters/process_runner"', "require #{adapter.inspect}"))
+      script = <<~RUBY
+        require #{File.expand_path("../lib/agent_runtime", __dir__).inspect}
+        require #{File.expand_path("../lib/agent_runtime/benchmarks", __dir__).inspect}
+        load #{copy.inspect}
+        File.unlink(#{copy.inspect})
+        task = AgentRuntime::Benchmarks::Fixture.demo(root: #{File.join(root, "isolated-fixture").inspect})
+        store = AgentRuntime::Store.new(#{File.join(root, "isolated-store").inspect})
+        begin
+          AgentRuntime::Evaluation::Evaluator.new(store: store).evaluate(task: task, repository: task.repository, run_id: "source-unavailable")
+        rescue AgentRuntime::Error
+          exit 0
+        end
+        abort "unavailable evaluator source accepted"
+      RUBY
+      execution = AgentRuntime::Adapters::ProcessRunner.new.call(argv: [RbConfig.ruby, "-e", script], cwd: root, timeout: 10)
+      assert_equal "success", execution.fetch("status"), execution.inspect
+      assert_equal 0, execution.fetch("exit_code"), execution.inspect
+      assert File.file?(AgentRuntime::Evaluation::Evaluator::SOURCE_PATH)
+      assert Dir.exist?(store.root)
+    end
+  end
+
+  def test_put_does_not_repair_missing_historical_object_or_tree
+    %w[object tree corrupt].each do |damage|
+      fixture do |store, _, repository|
+        old = generation(store, repository)
+        object = File.join(store.root, "objects", old.fetch("digest"))
+        case damage
+        when "object" then File.unlink(object)
+        when "tree" then FileUtils.remove_entry(old.fetch("path"))
+        else
+          File.chmod(0o644, object)
+          File.binwrite(object, "corrupt")
+        end
+        assert_raises(AgentRuntime::Error, damage) { generation(store, repository) }
+        assert_raises(AgentRuntime::Error, damage) { store.value(old) }
+      end
+    end
+  end
+
+  def test_loaded_source_change_rejects_evaluate_and_verify_in_isolated_copy
+    in_tmp do |root|
+      copy = File.join(root, "copied-evaluator.rb")
+      source = File.binread(AgentRuntime::Evaluation::Evaluator::SOURCE_PATH)
+      adapter = File.expand_path("../lib/agent_runtime/adapters/process_runner", __dir__)
+      File.binwrite(copy, source.sub('require_relative "../adapters/process_runner"', "require #{adapter.inspect}"))
+      script = <<~RUBY
+        require #{File.expand_path("../lib/agent_runtime", __dir__).inspect}
+        require #{File.expand_path("../lib/agent_runtime/benchmarks", __dir__).inspect}
+        load #{copy.inspect}
+        task = AgentRuntime::Benchmarks::Fixture.demo(root: #{File.join(root, "fixture").inspect})
+        evaluator = AgentRuntime::Evaluation::Evaluator.new(store: AgentRuntime::Store.new(#{File.join(root, "store").inspect}))
+        report = evaluator.evaluate(task: task, repository: task.repository, run_id: "run")
+        File.open(#{copy.inspect}, "a") { |f| f.puts "# changed after load" }
+        failures = 0
+        begin
+          evaluator.evaluate(task: task, repository: task.repository, run_id: "run")
+        rescue AgentRuntime::Error
+          failures += 1
+        end
+        begin
+          evaluator.verify!(report: report, task: task, repository: task.repository, run_id: "run")
+        rescue AgentRuntime::Error
+          failures += 1
+        end
+        exit(failures == 2 ? 0 : 1)
+      RUBY
+      execution = AgentRuntime::Adapters::ProcessRunner.new.call(argv: [RbConfig.ruby, "-e", script], cwd: root, timeout: 10)
+      assert_equal "success", execution.fetch("status"), execution.inspect
+      assert_equal 0, execution.fetch("exit_code"), execution.inspect
+    end
+  end
 end

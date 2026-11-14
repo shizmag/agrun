@@ -46,8 +46,11 @@ module AgentRuntime
         started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         solution = solver.solve(task: public_task, model: model, budget: budget, workspace: workspace)
         evaluation = if solution["status"] == "success" && solution["repository"]
+          # Retain the submitted generation independently from content identity.
+          generation = @store.put(value: solution.fetch("repository"), type: "repository", run_id: run_id,
+            step_id: "solver", attempt: 1, metadata: {"solver_id" => configuration["solver"]})
           @evaluator.evaluate(task: task, repository: solution.fetch("repository"), run_id: run_id,
-            timeout: budget.fetch("evaluation_timeout", 30))
+            timeout: budget.fetch("evaluation_timeout", 30), generation: generation)
         else
           {"execution_status" => "not_started", "verdict" => "not_evaluated"}
         end
@@ -56,13 +59,17 @@ module AgentRuntime
           "budget" => budget, "solution" => solution, "evaluation" => evaluation,
           "duration" => Process.clock_gettime(Process::CLOCK_MONOTONIC) - started,
           "ended_at" => Time.now.utc.iso8601(6), "ir_digest" => solution["ir_digest"],
-          "artifact_refs" => evaluation.fetch("artifacts", {}).merge("evaluation_report" => evaluation["report_artifact"]).compact
+          "artifact_refs" => evaluation.fetch("artifacts", {}).merge("generation" => generation,
+            "evaluation_report" => evaluation["report_artifact"]).compact
         })
         persist(report, directory)
       rescue => error
         raise unless directory
         persist(report.merge({
-          "status" => "failure", "error" => "#{error.class}: #{error.message}",
+          "status" => solution ? solution.fetch("status", "failure") : "failure", "error" => "#{error.class}: #{error.message}",
+          "solution" => solution, "model" => solution && solution["model"],
+          "ir_digest" => solution && solution["ir_digest"],
+          "artifact_refs" => {"generation" => generation}.compact,
           "ended_at" => Time.now.utc.iso8601(6),
           "duration" => started && Process.clock_gettime(Process::CLOCK_MONOTONIC) - started,
           "evaluation" => {"execution_status" => "error", "verdict" => "not_evaluated"}
