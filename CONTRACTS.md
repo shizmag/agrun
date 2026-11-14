@@ -54,3 +54,14 @@ automatic reuse, crash recovery or TOCTOU prevention.
 ## Ownership
 
 Main: lib/agent_runtime.rb, language/compiler/IR/runtime/store/contracts and fake, core tests, Gemfile/lock. Integrations stream: adapters except fake, integrations/, openspec/, docs/integrations.md, integration tests. Benchmarks stream: benchmarks, evaluation, CLI/bin, programs, mise.toml, README, docs except integrations, AGENTS.md, benchmark tests. Avoid editing other owned files. Use shared working directory with disjoint paths; no commits by children.
+# Scoped audited NL2Repo scoring (M1.1c)
+
+`nl2repo-audited-v2` may produce quality-bearing results with `trust: audited`
+and `trust_scope: benign_ordinary_submissions` after exact authoritative canonical
+collection/result validation and a fresh matching reference preflight. This is
+reproducible scientific evidence for controlled ordinary coding submissions, not
+authentication against arbitrary hostile Python imported into pytest. Historical
+legacy/audited-v1 evidence and their stronger unresolved authentication gates are
+unchanged. Invalid, incomplete, ambiguous or infrastructure-failed evidence stays
+unscored; an explicit proven missing-candidate collection policy may assign zero
+without claiming that expected cases executed. See `docs/m1.1c-scoring-contract.md`.
