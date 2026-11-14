@@ -142,13 +142,15 @@ module AgentRuntime
       end
 
       def grade(report, cell, adapter, task, limits, regrade: false)
-        active_keys = %w[score verdict passed total error execution_status status grading_duration]
+        evidence_keys = %w[protocol quality_basis trust_scope reason failure_category expected collected executed passed failed skipped total]
+        active_keys = %w[score verdict error execution_status status grading_duration] + evidence_keys
         previous = active_keys.to_h { |key| [key, cell[key]] } if regrade
         original_attempt = cell.fetch("grading_attempts", []).find { |entry| entry["request"] }
         original_request = original_attempt&.fetch("request")
         unless regrade
           cell["score"] = cell["verdict"] = nil
-          cell["passed"] = cell["total"] = cell["error"] = nil
+          evidence_keys.each { |key| cell[key] = nil }
+          cell["error"] = nil
         end
         attempt = {"attempt_id" => SecureRandom.uuid, "execution_status" => "not_started"}
         (cell["grading_attempts"] ||= []) << attempt
@@ -194,7 +196,7 @@ module AgentRuntime
         attempt["execution_status"] = status
         repeated_unavailable = status == "unavailable" && previous && previous["execution_status"] == "unavailable"
         raise Error, "regrade failed: #{normalized["error"] || status}" if regrade && status != "success" && !repeated_unavailable
-        %w[verdict passed total error].each { |key| cell[key] = normalized[key] }
+        (%w[verdict error] + evidence_keys).each { |key| cell[key] = normalized[key] }
         cell["score"] = (status == "success") ? score : nil
         cell["verdict"] = nil unless status == "success"
         transition(report, cell, "completed", execution_status: status)

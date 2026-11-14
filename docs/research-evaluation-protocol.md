@@ -27,3 +27,21 @@ Before paid experiments: validate trusted native collection against real positiv
 and negative controls; enforce provider/network/budget policy in the solver
 sandbox; establish authoritative complete usage accounting. Live calls remain
 disabled in the M1.1 infrastructure path until these gates are satisfied.
+
+## Scoped M1.1c retrying results
+
+`nl2repo-audited-v2` is explicitly limited to `retrying`, its independently frozen
+23 canonical pytest identities, and benign ordinary submissions. Structured
+collection in the candidate execution domain is not candidate-resistant
+authentication. Report `trust_scope: benign_ordinary_submissions` alongside the
+protocol and `quality_basis`; do not market it as an official leaderboard result,
+paper-compatible score, or validation of all 104 NL2Repo tasks.
+
+Preserve historical legacy/v1 evidence and blocked/untrusted labels. A successful
+reference control cannot retroactively upgrade those observations. Keep v2
+results separate by protocol and quality basis; disclose `candidate_collection_failure`
+zeros separately from `validated_quality_result` evaluations and never convert
+infrastructure failures into quality zeros. A single selected task is an
+infrastructure-development control, not an independent task sample sufficient
+for scientific solver-quality or architecture-advantage claims. Existing fairness,
+coverage, pairing, preregistration, and paid-experiment gates still apply.
