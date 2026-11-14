@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "dataset_revision": "781a1da1ee41fb8edb0bed22f586d69111610edf",
+  "protocols": [
+    {
+      "id": "nl2repo-legacy-781a1da1ee41fb8edb0bed22f586d69111610edf",
+      "kind": "historical-definition",
+      "implementation_path": "openhands/post_processor.py",
+      "implementation_sha256": "a681bcb48c6199b74a72c92b97f30b63a6f0da7875428e82c6e370f82000e450",
+      "raw_score_unit": "parsed-passed-count",
+      "normalized_rate": "min(parsed_passed / declared_test_case_count, 1)",
+      "known_limitations": [
+        "candidate overlay may retain original implementation",
+        "printable pass counts are not authenticated test observations",
+        "test process exit status does not validate parsed score",
+        "fixed declared denominator may disagree with collection"
+      ],
+      "operational_status": "unvalidated",
+      "authoritative_score_available": false
+    },
+    {
+      "id": "nl2repo-audited-v1",
+      "kind": "audited-contract",
+      "required_corrections": [
+        "explicit task-specific clean implementation boundary",
+        "protected authoritative test collection",
+        "validated collector inaccessible to candidate code",
+        "actual collection/outcome/exit-status consistency",
+        "binding actual submission, task, tests, procedure, environment and limits"
+      ],
+      "operational_status": "unvalidated",
+      "authoritative_score_available": false,
+      "comparability": "Not an unmodified official score; deviations must be reported."
+    }
+  ],
+  "diagnostics": {
+    "classification": "controlled-native-diagnostic",
+    "authoritative_score_available": false,
+    "notes": "Real native test observations may be retained separately, but do not satisfy the trusted collector contract or establish legacy execution compatibility."
+  }
+}
