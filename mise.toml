@@ -21,3 +21,11 @@ run = ["bundle exec ruby bin/agru doctor", "bundle exec ruby bin/agru validate",
 [tasks.benchmark-demo]
 description = "Run the deterministic offline benchmark"
 run = "bundle exec ruby bin/agru benchmark --suite demo --solver all --repetitions 2 --offline"
+
+[tasks.conformance]
+description = "Run deterministic M0.1 harness conformance (no live models)"
+run = "bundle exec ruby -Itest script/m01_conformance.rb"
+
+[tasks.acceptance]
+description = "Run all seven persisted M0.1 acceptance scenarios offline"
+run = "bundle exec ruby -Itest test/m01_acceptance_test.rb"
