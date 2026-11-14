@@ -43,7 +43,7 @@ class RuntimeTest < Minitest::Test
       adapter = Object.new
       adapter.define_singleton_method(:execute) do |request|
         calls << request.step_id
-        AgentRuntime::Result.new(status: "failure", error: {"classification" => "transport"})
+        AgentRuntime::Result.new(status: "failure", error: {"classification" => "transport"}, retry_safe: true)
       end
       report = AgentRuntime::Runtime.new(store: AgentRuntime::Store.new(dir), executors: {custom: adapter}).run(graph([step("a", retries: 2), step("c", needs: ["a"])]))
       assert_equal ["a", "a", "a"], calls

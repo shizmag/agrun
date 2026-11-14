@@ -88,8 +88,9 @@ module AgentRuntime
       attempts = []
       outputs = {}
       executor = ir["executors"].fetch(step["executor"])
-      config = executor["config"].merge(step["config"])
+      config = executor.fetch("config", {}).merge(step.fetch("config", {}))
       (step["retries"] + 1).times do |index|
+        break if index.positive? && cancellation.cancelled?
         attempt = index + 1
         directory = File.join(workspace, step["id"], attempt.to_s)
         FileUtils.mkdir_p(directory)
@@ -138,8 +139,8 @@ module AgentRuntime
         end
         attempts << data
         @store.save_attempt(run_id, step["id"], attempt, data)
-        # Retry only classified transport failures, never semantic implementation failures.
-        break unless data["status"] == "failure" && data["error"].is_a?(Hash) && data.dig("error", "classification") == "transport" && !cancellation.cancelled?
+        # Transport classification alone cannot establish that replay is safe.
+        break unless data["status"] == "failure" && data["error"].is_a?(Hash) && data.dig("error", "classification") == "transport" && result.retry_safe == true && index < step["retries"] && !cancellation.cancelled?
       end
       {"status" => attempts.last["status"], "attempts" => attempts, "outputs" => outputs}
     end

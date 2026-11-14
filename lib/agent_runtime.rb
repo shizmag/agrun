@@ -9,7 +9,7 @@ module AgentRuntime
   VERSION = "0.1.0"
   class Error < StandardError; end
   Request = Struct.new(:run_id, :step_id, :attempt, :inputs, :config, :workspace, :timeout, :cancellation)
-  Result = Struct.new(:status, :outputs, :error, :duration, :usage, :cost, :logs, :session_id, :model)
+  Result = Struct.new(:status, :outputs, :error, :duration, :usage, :cost, :logs, :session_id, :model, :retry_safe)
 
   class Cancellation
     def initialize

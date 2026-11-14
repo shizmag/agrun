@@ -317,4 +317,35 @@ class M01ContractsTest < Minitest::Test
       refute_path_exists sentinel, "compile must not invoke the configured executable"
     end
   end
+
+  %w[executor step].each do |omitted|
+    define_method("test_a36_optional_#{omitted}_config_executes_and_persists") do
+      in_tmp do |dir|
+        p = fixture
+        p["steps"] = [p["steps"][0]]
+        p["outputs"] = {"answer" => "a.answer"}
+        executor = p["executors"]["worker"]
+        step = p["steps"][0]
+        expected = "observable #{omitted} config omission"
+        if omitted == "executor"
+          executor.delete("config")
+          step["config"] = {"values" => {"answer" => expected}}
+        else
+          step.delete("config")
+          executor["config"] = {"values" => {"answer" => expected}}
+        end
+        assert_equal p, AgentRuntime::Compiler.validate!(Marshal.load(Marshal.dump(p)))
+        store = AgentRuntime::Store.new(dir)
+        report = AgentRuntime::Runtime.new(store: store).run(p, inputs: {"issue" => "input control"})
+        assert_equal "success", report["status"]
+        assert_equal expected, store.value(report["outputs"].fetch("answer"))
+        persisted = store.report(report["run_id"])
+        assert_equal report, persisted
+        attempts = persisted.fetch("steps").fetch("a").fetch("attempts")
+        assert_equal 1, attempts.length
+        assert_equal "success", attempts[0]["status"]
+        assert_equal 1, attempts[0]["attempt"]
+      end
+    end
+  end
 end
