@@ -65,4 +65,27 @@ class BenchmarkCLITest < Minitest::Test
       assert_equal "completed", JSON.parse(result).fetch("status")
     end
   end
+
+  def test_nl2repo_is_registered_without_import_or_fabricated_score
+    in_tmp do |root|
+      dataset = JSON.parse(File.read(File.expand_path("../benchmarks/nl2repo/manifest.json", __dir__)))
+      manifest = JSON.parse(File.read(File.expand_path("../experiments/fixture-infrastructure-smoke.json", __dir__)))
+      manifest["experiment_id"] = "nl2repo-missing"
+      manifest["benchmark"] = {"name" => "nl2repo", "revision" => dataset.fetch("sources").fetch("official").fetch("revision"), "task_ids" => [dataset.fetch("tasks").first.fetch("id")]}
+      manifest["solver_ids"] = ["repository-submission"]
+      manifest["repetitions"] = 1
+      path = File.join(root, "experiment.json")
+      File.write(path, JSON.generate(manifest))
+      store_root = File.join(root, ".agru")
+      out, err, status = cli("run", path, "--root", store_root, "--offline")
+      assert status.success?, err
+      result = JSON.parse(out)
+      assert_equal "provisional official-benchmark integration", result.fetch("qualification")
+      assert result.fetch("cells").all? { |cell| cell["execution_status"] == "unavailable" && cell["score"].nil? && !cell.key?("submission") }
+      refute File.exist?(File.join(store_root, "nl2repo/repository"))
+      out, err, status = cli("report", "nl2repo-missing", "--root", store_root)
+      assert status.success?, err
+      assert_equal "provisional official-benchmark integration", JSON.parse(out).fetch("qualification")
+    end
+  end
 end

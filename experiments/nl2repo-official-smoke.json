@@ -7,7 +7,7 @@
     "task_ids": ["retrying"]
   },
   "solver_ids": ["repository-submission"],
-  "models": [{"id": "deterministic-control", "provider": "fixture"}],
+  "models": [{"id": "fixture", "provider": "fixture"}],
   "repetitions": 1,
   "limits": {
     "max_parallel_runs": 1,

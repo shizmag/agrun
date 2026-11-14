@@ -2,7 +2,10 @@ require "digest"
 require "fileutils"
 require "json"
 require "open3"
+require "tmpdir"
 require_relative "../adapter"
+require_relative "../submission"
+require_relative "../nl2repo_image"
 
 module AgentRuntime
   module Benchmarks
@@ -16,8 +19,10 @@ module AgentRuntime
 
         attr_reader :dataset_path
 
-        def initialize(manifest_path: File.join(ROOT, "benchmarks/nl2repo/manifest.json"), root: File.join(ROOT, ".agru/nl2repo"), store: nil)
+        def initialize(manifest_path: File.join(ROOT, "benchmarks/nl2repo/manifest.json"), root: File.join(ROOT, ".agru/nl2repo"), store: nil, diagnostics: false, diagnostic_runner: nil)
           @store = store
+          @diagnostics = diagnostics
+          @diagnostic_runner = diagnostic_runner
           @requests = {}
           @manifest_path = File.expand_path(manifest_path)
           @manifest_bytes = File.binread(@manifest_path)
@@ -42,7 +47,7 @@ module AgentRuntime
         def load_task(id)
           record = task_record(id)
           lifecycle = availability
-          excluded = record["authorized"] != true
+          excluded = record["authorized"] != true && !local_specification_authorized?(record)
           instruction = (!excluded && lifecycle["state"] == "verified") ? File.read(asset_path(record.fetch("instruction_path"))) : nil
           Adapter.public_task({
             "id" => record.fetch("id"), "benchmark" => "nl2repo", "instruction" => instruction,
@@ -67,7 +72,23 @@ module AgentRuntime
            "unavailable_reason" => "official grading blocked: authenticated native collector and controls unavailable"}
         end
 
-        def prepare(dry_run: false, allow_download: false)
+        def prepare(dry_run: false, allow_download: false, task: nil, allow_local_specification_use: false)
+          if allow_local_specification_use
+            raise ArgumentError, "local specification use requires selected task" unless task
+            return inspection if dry_run
+            unchanged_manifest!
+            verify!
+            authorization = local_specification_binding(task_record(task))
+            receipt = {"authorization" => authorization, "digest" => IR.digest(authorization)}
+            path = File.join(@root, "local-specification-use.json")
+            raise ArgumentError, "local specification receipt is a symlink" if File.symlink?(path)
+            File.write(path, JSON.generate(receipt))
+            return availability.merge("local_specification_use" => {"task_id" => task, "redistribution_authorized" => false})
+          end
+          if task
+            unchanged_manifest!
+            return NL2RepoImage.new(root: @root).prepare(task: task, allow_download: allow_download, dry_run: dry_run)
+          end
           return inspection if dry_run
           unchanged_manifest!
           if File.exist?(@dataset_path) || File.symlink?(@dataset_path)
@@ -122,8 +143,23 @@ module AgentRuntime
           @store.value(artifact)
           # No image probe, Docker pull, native score parsing, or launch can turn
           # an unauthenticated collector into an official grading result.
-          {"status" => "unavailable", "execution_status" => "unavailable", "verdict" => "untrusted", "trust" => "untrusted", "score" => nil,
-           "reason" => "official NL2Repo grading requires authenticated native collector and isolation controls", "benchmark" => identity}
+          result = {"status" => "unavailable", "execution_status" => "unavailable", "verdict" => "untrusted", "trust" => "untrusted", "score" => nil,
+                    "reason" => "official NL2Repo grading requires authenticated native collector and isolation controls", "benchmark" => identity}
+          if @diagnostics
+            raise ArgumentError, "native diagnostics support only selected retrying task" unless request.fetch("task_id") == "retrying"
+            boundary = Submission.new(store: @store)
+            FileUtils.mkdir_p(File.join(@root, "diagnostics"))
+            Dir.mktmpdir("submission-", File.join(@root, "diagnostics")) do |directory|
+              repository = File.join(directory, "repository")
+              boundary.materialize(artifact, destination: repository)
+              helper = @diagnostic_runner || NL2RepoImage.new(root: @root)
+              observations = helper.diagnose_submission(task: request.fetch("task_id"), repository: repository, limits: request.fetch("limits"))
+              boundary.verify_snapshot!(artifact, repository)
+              result["diagnostics"] = IR.normalize_json(observations)
+              result["diagnostic_submission_digest"] = artifact.fetch("digest")
+            end
+          end
+          result
         end
 
         def normalize_score(raw)
@@ -131,6 +167,27 @@ module AgentRuntime
         end
 
         private
+
+        def local_specification_binding(record)
+          {"schema_version" => 1, "scope" => "local instruction use only; no redistribution or hidden assets",
+           "manifest_digest" => @manifest_digest, "revision" => @manifest.fetch("revision"), "task_id" => record.fetch("id"),
+           "instruction_path" => record.fetch("instruction_path"),
+           "specification_digest" => @manifest.fetch("assets").fetch(record.fetch("instruction_path"))}
+        end
+
+        def local_specification_authorized?(record)
+          path = File.join(@root, "local-specification-use.json")
+          raise ArgumentError, "local specification receipt is a symlink" if File.symlink?(path)
+          return false unless File.file?(path)
+          receipt = JSON.parse(File.read(path))
+          authorization = receipt.fetch("authorization")
+          raise ArgumentError, "invalid local specification receipt" unless receipt.keys.sort == %w[authorization digest] && receipt.fetch("digest") == IR.digest(authorization)
+          return false unless authorization["task_id"] == record.fetch("id")
+          raise ArgumentError, "local specification receipt binding mismatch" unless authorization == local_specification_binding(record)
+          true
+        rescue JSON::ParserError, KeyError
+          raise ArgumentError, "invalid local specification receipt"
+        end
 
         def import_auditor_schema!
           return unless @manifest["benchmark"] == "NL2Repo-Bench"

@@ -57,3 +57,16 @@ before marking an official protocol operational.
 #### Scenario: Only infrastructure fixtures pass
 - **WHEN** no real official-task tests have been observed
 - **THEN** milestone status remains PARTIAL or BLOCKED rather than PASS
+
+### Requirement: Explicit local-use permissions
+The system SHALL distinguish operator-authorized local instruction use from
+redistribution rights and SHALL NOT export private tests or reference source as
+part of local specification authorization.
+
+#### Scenario: Redistribution remains unresolved
+- **WHEN** the operator explicitly authorizes local use of a checksum-verified public task instruction
+- **THEN** only that instruction may enter the solver workspace, with a bound local-use receipt and no claim of redistribution permission
+
+#### Scenario: No explicit local authorization
+- **WHEN** neither pinned redistribution authorization nor local-use opt-in exists
+- **THEN** the instruction remains unavailable to the solver

@@ -14,7 +14,11 @@ module AgentRuntime
           parser.on("--offline") { options[:offline] = true }
           parser.on("--dry-run") { options[:dry_run] = true }
           parser.on("--allow-download") { options[:allow_download] = true }
+          parser.on("--allow-local-specification-use") { options[:allow_local_specification_use] = true }
+          parser.on("--task ID") { |value| options[:task] = value }
           parser.on("--format FORMAT") { |value| options[:format] = value }
+          parser.on("--repository PATH") { |value| options[:repository] = value }
+          parser.on("--diagnostics") { options[:diagnostics] = true }
         end.parse!(argv)
         case command
         when "doctor"
@@ -30,7 +34,7 @@ module AgentRuntime
           result = case command
           when "datasets" then {"benchmark" => adapter.identity, "readiness" => adapter.availability}
           when "tasks" then {"benchmark" => adapter.identity, "tasks" => adapter.list_tasks}
-          else adapter.prepare(dry_run: options[:dry_run], allow_download: options[:allow_download])
+          else adapter.prepare(dry_run: options[:dry_run], allow_download: options[:allow_download], task: options[:task], allow_local_specification_use: options.fetch(:allow_local_specification_use, false))
           end
           emit(result)
         when "verify"
@@ -45,8 +49,10 @@ module AgentRuntime
           begin
             registry = Registry.new
             registry.register("fixture", FixtureAdapter.new(store: store))
+            require_relative "adapters/nl2repo"
+            registry.register("nl2repo", Adapters::NL2Repo.new(root: File.join(store.root, "nl2repo"), store: store, diagnostics: options.fetch(:diagnostics, false)))
             runner = ExperimentRunner.new(store: store, root: File.join(store.root, "experiments"), registry: registry,
-              solvers: FixtureSolvers::CATEGORIES.to_h { |id| [id, FixtureSolvers.build(id)] })
+              solvers: FixtureSolvers::CATEGORIES.to_h { |id| [id, FixtureSolvers.build(id)] }.merge("repository-submission" => RepositorySolver.new(repository: options[:repository])))
             reports = Reports.new(store: store)
             case command
             when "run"
