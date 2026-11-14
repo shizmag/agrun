@@ -6,6 +6,8 @@ require_relative "experiment_manifest"
 require_relative "submission"
 require_relative "fixture_adapter"
 require_relative "fixture_solvers"
+require_relative "repository_solver"
+require_relative "adapters/nl2repo"
 
 module AgentRuntime
   module Benchmarks
@@ -30,6 +32,7 @@ module AgentRuntime
         raise ArgumentError, "experiment already exists" if existing
         report = {"run_id" => config.fetch("experiment_id"), "kind" => "experiment", "manifest" => config,
                   "manifest_digest" => manifest.digest, "effective_parallelism" => 1,
+                  "qualification" => qualification(adapter),
                   "provenance" => provenance(adapter),
                   "solver_configurations" => config.fetch("solver_ids").to_h { |id| [id, JSON.parse(JSON.generate(@solvers.fetch(id).configuration))] },
                   "cells" => JSON.parse(JSON.generate(manifest.cells))}
@@ -65,9 +68,18 @@ module AgentRuntime
       def validate_offline!(config, adapter)
         raise ArgumentError, "only offline execution is supported" unless config["execution_mode"] == "offline"
         # Concrete built-ins, not self-asserted user metadata, authorize execution.
-        raise ArgumentError, "offline experiments require the built-in fixture adapter" unless Benchmarks.const_defined?(:FixtureAdapter) && adapter.instance_of?(Benchmarks::FixtureAdapter)
-        raise ArgumentError, "offline experiments require built-in fixture solvers" unless config.fetch("solver_ids").all? { |id| FixtureSolvers::CATEGORIES.include?(id) && @solvers[id].instance_of?(FixtureSolvers::Solver) }
+        if adapter.instance_of?(FixtureAdapter)
+          raise ArgumentError, "offline experiments require built-in fixture solvers" unless config.fetch("solver_ids").all? { |id| FixtureSolvers::CATEGORIES.include?(id) && @solvers[id].instance_of?(FixtureSolvers::Solver) }
+        elsif adapter.instance_of?(Adapters::NL2Repo)
+          raise ArgumentError, "NL2Repo offline experiments require the built-in repository-submission solver" unless config.fetch("solver_ids").all? { |id| id == "repository-submission" && @solvers[id].instance_of?(RepositorySolver) }
+        else
+          raise ArgumentError, "offline experiments require the built-in fixture adapter or NL2Repo adapter"
+        end
         raise ArgumentError, "offline experiments require fixture model profiles" unless config.fetch("models").all? { |model| %w[fixture fixture-model].include?(model.fetch("id")) && (!model.key?("provider") || model["provider"] == "fixture") }
+      end
+
+      def qualification(adapter)
+        adapter.instance_of?(Adapters::NL2Repo) ? "provisional official-benchmark integration" : "infrastructure-only demonstration"
       end
 
       def provenance(adapter)
@@ -92,7 +104,8 @@ module AgentRuntime
 
       def execute_cell(report, cell, adapter)
         task = Adapter.public_task(adapter.load_task(cell.fetch("task_id")))
-        unless task["availability"] == "available" || task["availability"] == true || task["availability"] == "runnable"
+        ready = ["available", true, "runnable"].include?(task["availability"]) || (task["availability"] == "verified" && task["instruction"].is_a?(String))
+        unless ready
           cell["error"] = task["unavailable_reason"] || "task unavailable"
           transition(report, cell, "skipped", execution_status: "unavailable")
           return
@@ -100,7 +113,7 @@ module AgentRuntime
         attempt_id = SecureRandom.uuid
         cell["attempt_id"] = attempt_id
         workspace = File.join(@root, attempt_id)
-        FileUtils.mkdir_p(workspace)
+        FileUtils.mkdir_p(File.dirname(workspace))
         transition(report, cell, "solving")
         adapter.prepare_solver_workspace(task: task, workspace: workspace)
         config = report.fetch("manifest")
@@ -179,7 +192,8 @@ module AgentRuntime
         end
         attempt["result"] = normalized
         attempt["execution_status"] = status
-        raise Error, "regrade failed: #{normalized["error"] || status}" if regrade && status != "success"
+        repeated_unavailable = status == "unavailable" && previous && previous["execution_status"] == "unavailable"
+        raise Error, "regrade failed: #{normalized["error"] || status}" if regrade && status != "success" && !repeated_unavailable
         %w[verdict passed total error].each { |key| cell[key] = normalized[key] }
         cell["score"] = (status == "success") ? score : nil
         cell["verdict"] = nil unless status == "success"

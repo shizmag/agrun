@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "experiment_id": "nl2repo-official-smoke",
+  "benchmark": {
+    "name": "nl2repo",
+    "revision": "781a1da1ee41fb8edb0bed22f586d69111610edf",
+    "task_ids": ["retrying"]
+  },
+  "solver_ids": ["repository-submission"],
+  "models": [{"id": "deterministic-control", "provider": "fixture"}],
+  "repetitions": 1,
+  "limits": {
+    "max_parallel_runs": 1,
+    "max_wall_seconds_per_run": 300,
+    "max_agent_invocations": 1,
+    "max_local_verification_seconds": 10,
+    "max_grading_seconds": 120,
+    "max_retry_attempts": 1
+  },
+  "execution_mode": "offline",
+  "subset_role": "infrastructure-development"
+}

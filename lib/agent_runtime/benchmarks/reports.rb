@@ -41,6 +41,7 @@ module AgentRuntime
         end
         timings["agent_plus_grading"] = timing(combined, "recorded_total")
         {"experiment_id" => experiment_id, "manifest" => report["manifest"], "manifest_digest" => report["manifest_digest"],
+         "qualification" => report.fetch("qualification", "infrastructure-only demonstration"),
          "provenance" => report["provenance"], "effective_parallelism" => report["effective_parallelism"],
          "arms" => arms, "paired" => paired(cells), "per_task_results" => cells.group_by { |row| row.fetch("task_id") },
          "execution_counts" => {"planned" => cells.size, "completed" => cells.count { |row| row["status"] == "completed" || valid?(row) },
@@ -52,7 +53,9 @@ module AgentRuntime
            "Timing totals and percentiles cover recorded cells only; missing timings remain unknown.",
            "Tool usage is unavailable unless explicitly recorded.",
            "Usage and costs with missing coverage are unknown, not zero."],
-         "interpretation" => "Offline fixture plumbing check; not scientific capability evidence."}
+         "interpretation" => (report["qualification"] == "provisional official-benchmark integration") ?
+            "Provisional NL2Repo integration; untrusted diagnostics are not official scores or scientific capability evidence." :
+            "Offline fixture plumbing check; not scientific capability evidence."}
       end
 
       def render(experiment_id:, format: "json")
