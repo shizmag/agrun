@@ -27,6 +27,7 @@ Dir.mktmpdir("agru-sentinel-") do |scratch|
   submission = AgentRuntime::Benchmarks::Submission.new(store: store).capture(repository: candidate)
   grader = AgentRuntime::Benchmarks::NL2RepoAuditedGrader.new(store: store)
   binding = {"submission_digest" => submission.fetch("digest"),
+             "collector_digest" => Digest::SHA256.file(AgentRuntime::Benchmarks::NL2RepoAuditedGrader::HELPER).hexdigest,
              "procedure_digest" => Digest::SHA256.file(AgentRuntime::Benchmarks::NL2RepoAuditedGrader::HELPER).hexdigest,
              "sentinel" => "candidate-tests-config-hooks-and-preparation"}
   raw = grader.execute(repository: candidate, binding: binding)
