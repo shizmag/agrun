@@ -6,6 +6,8 @@ require "tmpdir"
 require_relative "../adapter"
 require_relative "../submission"
 require_relative "../nl2repo_image"
+require_relative "../nl2repo_audited_promotion"
+require_relative "../nl2repo_test_manifest"
 
 module AgentRuntime
   module Benchmarks
@@ -13,16 +15,19 @@ module AgentRuntime
       # Import is an explicit operation. The upstream repository is private grader
       # material, never a solver starting repository or an authenticated score.
       class NL2Repo < Adapter
+        SOURCE_PATH = File.expand_path(__FILE__).freeze
+        SOURCE_SHA256 = Digest::SHA256.file(SOURCE_PATH).hexdigest.freeze
         ROOT = File.expand_path("../../../..", __dir__)
         STATES = %w[missing downloaded verified images_available grader_ready runnable excluded].freeze
         PUBLIC_KEYS = %w[id benchmark instruction specification_digest metadata availability unavailable_reason].freeze
 
         attr_reader :dataset_path
 
-        def initialize(manifest_path: File.join(ROOT, "benchmarks/nl2repo/manifest.json"), root: File.join(ROOT, ".agru/nl2repo"), store: nil, diagnostics: false, diagnostic_runner: nil)
+        def initialize(manifest_path: File.join(ROOT, "benchmarks/nl2repo/manifest.json"), root: File.join(ROOT, ".agru/nl2repo"), store: nil, diagnostics: false, diagnostic_runner: nil, audited_grader: nil)
           @store = store
           @diagnostics = diagnostics
           @diagnostic_runner = diagnostic_runner
+          @audited_grader = audited_grader
           @requests = {}
           @manifest_path = File.expand_path(manifest_path)
           @manifest_bytes = File.binread(@manifest_path)
@@ -131,16 +136,50 @@ module AgentRuntime
           request = {"benchmark" => identity, "task_id" => public_task.fetch("id"), "specification_digest" => public_task.fetch("specification_digest"),
                      "submission_id" => artifact.fetch("id"), "submission_digest" => artifact.fetch("digest"),
                      "limits" => JSON.parse(JSON.generate(limits)), "protocol_status" => "blocked"}
+          if @audited_grader
+            verify_loaded_source!
+            raise ArgumentError, "audited grading supports only retrying" unless public_task.fetch("id") == "retrying"
+            unchanged_manifest!
+            cases = NL2RepoTestManifest.new
+            unless public_task.fetch("specification_digest") == cases.identity.fetch("specification_sha256") &&
+                @manifest.fetch("revision") == cases.identity.fetch("dataset_revision")
+              raise ArgumentError, "audited task specification or revision mismatch"
+            end
+            transport = @audited_grader.identity
+            request["expected_nodeids"] = cases.expected_nodeids
+            request["audited_binding"] = {
+              "protocol" => NL2RepoAuditedPromotion::PROTOCOL, "task_id" => "retrying",
+              "submission_digest" => artifact.fetch("digest"),
+              "specification_digest" => public_task.fetch("specification_digest"),
+              "benchmark_revision" => @manifest.fetch("revision"), "manifest_digest" => @manifest_digest,
+              "test_manifest_digest" => cases.digest, "test_source_sha256" => cases.identity.fetch("test_source_sha256"),
+              "collector_digest" => transport.fetch("collector_sha256"),
+              "procedure_digest" => IR.digest({"protocol" => NL2RepoAuditedPromotion::PROTOCOL,
+                                              "transport" => transport.fetch("transport_sha256"),
+                                              "validator" => transport.fetch("validator_sha256"),
+                                              "promotion" => transport.fetch("promotion_sha256"),
+                                              "adapter" => SOURCE_SHA256, "tests" => cases.identity}),
+              "environment_digest" => IR.digest(transport.slice("image", "resource_policy")),
+              "image" => transport.fetch("image")
+            }
+            request["protocol_status"] = NL2RepoAuditedPromotion::PROTOCOL
+          end
           request["request_digest"] = Digest::SHA256.hexdigest(JSON.generate(request))
           @requests[request.fetch("request_digest")] = JSON.parse(JSON.generate(request))
           Adapter.freeze_json(request)
         end
 
         def grade_submission(request)
+          verify_loaded_source! if @audited_grader
           raise ArgumentError, "unrecognized or modified grading request" unless request.is_a?(Hash) && @requests[request["request_digest"]] == request
           artifact = @store.artifact(request.fetch("submission_id"))
           raise ArgumentError, "submission digest changed" unless artifact.fetch("digest") == request.fetch("submission_digest")
           @store.value(artifact)
+          if @audited_grader && request["audited_binding"] && request["expected_nodeids"]
+            evidence = @audited_grader.grade(submission: artifact, binding: request.fetch("audited_binding"),
+              expected_nodeids: request.fetch("expected_nodeids"), request: request)
+            return NL2RepoAuditedPromotion.new(transport: @audited_grader).call(request: request, evidence: evidence)
+          end
           # No image probe, Docker pull, native score parsing, or launch can turn
           # an unauthenticated collector into an official grading result.
           result = {"status" => "unavailable", "execution_status" => "unavailable", "verdict" => "untrusted", "trust" => "untrusted", "score" => nil,
@@ -163,10 +202,16 @@ module AgentRuntime
         end
 
         def normalize_score(raw)
-          nil
+          raw if raw.is_a?(Numeric) && raw.finite? && raw.between?(0, 1)
         end
 
         private
+
+        def verify_loaded_source!
+          unless Digest::SHA256.file(SOURCE_PATH).hexdigest == SOURCE_SHA256
+            raise Error, "audited grading source changed after load; restart required: #{SOURCE_PATH}"
+          end
+        end
 
         def local_specification_binding(record)
           {"schema_version" => 1, "scope" => "local instruction use only; no redistribution or hidden assets",
