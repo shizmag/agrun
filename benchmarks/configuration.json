@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "offline_solvers": ["fake-good", "fake-bad", "dsl"],
+  "live_solver": "opencode",
+  "future_baselines": {
+    "direct_llm": {"implemented": false, "model": null, "budget": {"timeout": 300}},
+    "opencode_openspec": {"implemented": false, "model": null, "budget": {"timeout": 300}}
+  },
+  "external_datasets": {
+    "swe_bench_pro": {"implemented": false, "revision": null},
+    "swe_bench_multilingual": {"implemented": false, "revision": null},
+    "feature_bench": {"implemented": false, "revision": null}
+  }
+}

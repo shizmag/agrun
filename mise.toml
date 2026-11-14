@@ -1,0 +1,23 @@
+[tools]
+ruby = "4.0.9"
+
+[env]
+GEM_HOME = "{{config_root}}/.bundle/gems"
+GEM_PATH = "{{config_root}}/.bundle/gems"
+BUNDLE_PATH = "{{config_root}}/.bundle/gems"
+
+[tasks.test]
+description = "Run all Minitest tests offline"
+run = "bundle exec ruby -Itest -e 'Dir[\"test/**/*_test.rb\"].sort.each { |file| require_relative file }'"
+
+[tasks.lint]
+description = "Check Ruby formatting"
+run = "bundle exec standardrb"
+
+[tasks.smoke]
+description = "Compile and execute the local demo"
+run = ["bundle exec ruby bin/agru doctor", "bundle exec ruby bin/agru validate", "bundle exec ruby bin/agru run --offline"]
+
+[tasks.benchmark-demo]
+description = "Run the deterministic offline benchmark"
+run = "bundle exec ruby bin/agru benchmark --suite demo --solver all --repetitions 2 --offline"

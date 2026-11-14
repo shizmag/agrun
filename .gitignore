@@ -1,0 +1,6 @@
+/.bundle/
+/.agent-runtime/
+/.agru/
+/tmp/
+/.mise.local.toml
+/.env

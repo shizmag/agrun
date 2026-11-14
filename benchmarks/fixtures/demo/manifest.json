@@ -1,0 +1,16 @@
+{
+  "id": "demo/clamp",
+  "dataset": "local-demo",
+  "repository": "source",
+  "public_tests": [],
+  "external_evaluation": {"procedure": "hidden_test.rb"},
+  "limits": {"timeout": 30, "evaluation_timeout": 30},
+  "metadata": {"mock": true, "purpose": "offline contract demonstration, not a model benchmark"},
+  "dataset_revision": "demo-v1",
+  "base_commit": null,
+  "instruction": "Fix Clamp.call(value, minimum, maximum) to constrain a number to the inclusive interval. Reject inverted bounds with ArgumentError. Preserve values already in range.",
+  "spec": {
+    "entrypoint": "lib/clamp.rb",
+    "requirements": ["inclusive lower bound", "inclusive upper bound", "preserve in-range values", "reject minimum greater than maximum"]
+  }
+}
