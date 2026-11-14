@@ -7,6 +7,10 @@ module AgentRuntime
 
       def call(argv:, cwd:, timeout:, cancellation: nil, env: {})
         started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+        truncated = false
+        stdout_truncated = false
+        stderr_truncated = false
+        killed = false
         raise ArgumentError, "argv must be a nonempty array of strings" unless argv.is_a?(Array) && !argv.empty? && argv.all? { |arg| arg.is_a?(String) && !arg.include?("\0") } && !argv.first.empty?
         limit = Float(timeout || 300)
         raise ArgumentError, "timeout must be positive and finite" unless limit.positive? && limit.finite?
@@ -34,8 +38,9 @@ module AgentRuntime
               terminated_at = now
             end
           end
-          if terminated_at && now - terminated_at >= 0.2
+          if terminated_at && !killed && now - terminated_at >= 0.2
             signal_group("KILL", pid)
+            killed = true
             readers.each { |io| io.close unless io.closed? }
             readers.clear
           end
@@ -47,6 +52,9 @@ module AgentRuntime
               io.close
             elsif chunk != :wait_readable
               remaining = CAPTURE_LIMIT - buffers[io].bytesize
+              truncated ||= chunk.bytesize > remaining
+              stdout_truncated ||= io == out_r && chunk.bytesize > remaining
+              stderr_truncated ||= io == err_r && chunk.bytesize > remaining
               buffers[io] << chunk.byteslice(0, remaining) if remaining.positive?
             end
           end
@@ -57,18 +65,24 @@ module AgentRuntime
           break if status && readers.empty?
           sleep(0.01) if readers.empty?
         end
-        result(forced || (status.success? ? "success" : "failure"), buffers[out_r], buffers[err_r], status.exitstatus, started)
+        result(forced || (status.success? ? "success" : "failure"), buffers[out_r], buffers[err_r], status.exitstatus, started, truncated, stdout_truncated, stderr_truncated)
       rescue SystemCallError => error
-        result("failure", "", error.message, nil, started)
+        result("failure", "", error.message, nil, started, truncated, stdout_truncated, stderr_truncated)
       ensure
         [out_r, out_w, err_r, err_w].compact.each { |io| io.close unless io.closed? }
-        signal_group("KILL", pid) if pid && forced
-        if pid && !status
-          signal_group("KILL", pid)
+        if pid
           begin
-            Process.waitpid(pid)
-          rescue Errno::ECHILD
-            nil
+            # Reap an already-exited leader before signaling: Darwin can report
+            # EPERM for a group containing only its unreaped zombie leader.
+            waited = Process.waitpid2(pid, Process::WNOHANG) unless status
+            status = waited.last if waited
+            signal_group("KILL", pid) if !killed && (forced || !status)
+          ensure
+            begin
+              Process.waitpid(pid) unless status
+            rescue Errno::ECHILD
+              nil
+            end
           end
         end
       end
@@ -81,9 +95,10 @@ module AgentRuntime
         nil
       end
 
-      def result(status, stdout, stderr, exit_code, started)
+      def result(status, stdout, stderr, exit_code, started, truncated = false, stdout_truncated = false, stderr_truncated = false)
         {"status" => status, "stdout" => stdout.dup.force_encoding(Encoding::UTF_8).scrub,
-         "stderr" => stderr.dup.force_encoding(Encoding::UTF_8).scrub, "exit_code" => exit_code,
+         "stderr" => stderr.dup.force_encoding(Encoding::UTF_8).scrub, "exit_code" => exit_code, "truncated" => truncated,
+         "stdout_truncated" => stdout_truncated, "stderr_truncated" => stderr_truncated,
          "duration" => Process.clock_gettime(Process::CLOCK_MONOTONIC) - started}
       end
     end

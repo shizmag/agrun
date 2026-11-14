@@ -36,6 +36,7 @@ module AgentRuntime
       private
 
       def translate(execution, request, config)
+        raise JSON::ParserError, "captured output was truncated" if execution["truncated"] || execution["stdout_truncated"] || execution["stderr_truncated"]
         events = execution["stdout"].lines.reject { |line| line.strip.empty? }.map { |line| JSON.parse(line) }
         raise JSON::ParserError, "events must be JSON objects" unless events.all? { |event| event.is_a?(Hash) }
         text = events.select { |event| event["type"] == "text" }.map { |event| event.dig("part", "text").to_s }.join
@@ -43,7 +44,7 @@ module AgentRuntime
         error_event = events.find { |event| event["type"] == "error" }
         status = execution["status"]
         status = "failure" if status == "success" && error_event
-        status = "blocked" if error_event && JSON.generate(error_event).match?(/permission|approval|denied/i)
+        status = "blocked" if !%w[timeout cancelled].include?(status) && error_event && JSON.generate(error_event).match?(/permission|approval|denied/i)
         status = "unknown" if status == "success" && finishes.empty?
         session_id = events.rfind { |event| event["sessionID"] }&.fetch("sessionID")
         usage = finishes.filter_map { |event| event.dig("part", "tokens") }

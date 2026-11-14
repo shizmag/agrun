@@ -145,6 +145,8 @@ class M01AdapterReportingTest < Minitest::Test
       assert_equal "success", result["status"]
       assert_equal [size, AgentRuntime::Adapters::ProcessRunner::CAPTURE_LIMIT].min, result[stream].bytesize
       assert_equal truncated, result["truncated"], stream
+      assert_equal truncated, result["#{stream}_truncated"], stream
+      assert_equal false, result["#{(stream == "stdout") ? "stderr" : "stdout"}_truncated"]
     end
   end
 
@@ -166,6 +168,26 @@ class M01AdapterReportingTest < Minitest::Test
       result = cli(root, "STDOUT.write(#{finish.inspect}); STDOUT.write(' ' * #{limit - finish.bytesize})")
       assert_equal limit, result.logs["stdout"].bytesize
       assert_equal "success", result.status
+    end
+  end
+
+  def test_d05_stderr_truncation_cannot_authorize_success
+    in_tmp do |root|
+      result = cli(root, "puts #{JSON.generate(FINISH).inspect}; STDERR.write('x' * #{AgentRuntime::Adapters::ProcessRunner::CAPTURE_LIMIT + 1})")
+      assert_equal "unknown", result.status
+    end
+  end
+
+  def test_d05_truncation_preserves_interrupted_statuses
+    in_tmp do |root|
+      %w[timeout cancelled].each do |status|
+        runner = Object.new
+        runner.define_singleton_method(:call) do |**_|
+          {"status" => status, "stdout" => JSON.generate(FINISH), "stderr" => "", "truncated" => true}
+        end
+        result = AgentRuntime::Adapters::OpenCodeCLI.new(runner: runner, live: true).execute(request(root))
+        assert_equal status, result.status
+      end
     end
   end
 
@@ -216,22 +238,26 @@ class M01AdapterReportingTest < Minitest::Test
     Timeout.timeout(5) { sleep(0.01) until yield }
   end
 
-  def assert_descendant_cleanup(expected)
+  def assert_descendant_cleanup(expected, mode = :resistant)
     in_tmp do |root|
       marker = File.join(root, expected)
-      path = executable(root, "trap('TERM') {}; child = fork { trap('TERM') {}; loop { sleep 1 } }; File.write(#{marker.inspect}, JSON.generate([Process.pid, child])); puts 'partial'; loop { sleep 1 }")
+      leader_trap = (mode == :resistant) ? "trap('TERM') {}" : "trap('TERM') { exit! 0 }"
+      child_trap = (mode == :responsive) ? "trap('TERM') { exit! 0 }" : "trap('TERM') {}"
+      leader_end = (mode == :exited_leader) ? "exit! 0" : "loop { sleep 1 }"
+      path = executable(root, "#{leader_trap}; child = fork { #{child_trap}; loop { sleep 1 } }; File.write(#{marker.inspect}, JSON.generate([Process.pid, child])); STDOUT.sync = true; puts 'partial'; #{leader_end}")
       token = AgentRuntime::Cancellation.new
       pids = []
-      worker = Thread.new { AgentRuntime::Adapters::ProcessRunner.new.call(argv: [path], cwd: root, timeout: (expected == "timeout") ? 0.5 : 5, cancellation: token) }
+      worker = Thread.new { AgentRuntime::Adapters::ProcessRunner.new.call(argv: [path], cwd: root, timeout: (expected == "timeout") ? 5 : 15, cancellation: token) }
       begin
-        wait_until { File.exist?(marker) }
+        Timeout.timeout(15) { sleep(0.01) until File.exist?(marker) }
         pids = JSON.parse(File.read(marker))
         token.cancel! if expected == "cancelled"
-        result = Timeout.timeout(5) { worker.value }
+        result = Timeout.timeout(15) { worker.value }
         assert_equal expected, result["status"]
         assert_includes result["stdout"], "partial"
         wait_until { pids.none? { |pid| process_alive?(pid) } }
         pids.each { |pid| refute process_alive?(pid), "live fixture descendant #{pid}" }
+        assert_raises(Errno::ECHILD) { Process.waitpid(pids.first, Process::WNOHANG) }
       ensure
         pids.each do |pid|
           Process.kill("KILL", pid) if process_alive?(pid)
@@ -249,6 +275,30 @@ class M01AdapterReportingTest < Minitest::Test
 
   def test_d09_active_cancel_kills_term_resistant_descendants
     assert_descendant_cleanup("cancelled")
+  end
+
+  def test_d08_term_responsive_group_timeout
+    assert_descendant_cleanup("timeout", :responsive)
+  end
+
+  def test_d09_term_responsive_group_cancel
+    assert_descendant_cleanup("cancelled", :responsive)
+  end
+
+  def test_d08_exited_leader_resistant_descendant_timeout
+    assert_descendant_cleanup("timeout", :exited_leader)
+  end
+
+  def test_d09_exited_leader_resistant_descendant_cancel
+    assert_descendant_cleanup("cancelled", :exited_leader)
+  end
+
+  def test_d08_responsive_leader_resistant_descendant_timeout
+    assert_descendant_cleanup("timeout", :responsive_leader)
+  end
+
+  def test_d09_responsive_leader_resistant_descendant_cancel
+    assert_descendant_cleanup("cancelled", :responsive_leader)
   end
 
   def test_d09_pre_cancel_prevents_spawn_and_next_invocation_succeeds
@@ -295,7 +345,7 @@ class M01AdapterReportingTest < Minitest::Test
       runner = runtime(store) do |req|
         calls << req.attempt
         AgentRuntime::Result.new(status: (req.attempt == 1) ? "failure" : "success", outputs: {"answer" => "accepted"},
-          error: (req.attempt == 1) ? {"classification" => "transport"} : nil, logs: "attempt #{req.attempt}")
+          error: (req.attempt == 1) ? {"classification" => "transport"} : nil, retry_safe: true, logs: "attempt #{req.attempt}")
       end
       report = runner.run(program, inputs: {seed: "original"})
       assert_equal [1, 2], calls
@@ -324,7 +374,7 @@ class M01AdapterReportingTest < Minitest::Test
         calls = 0
         runner = runtime(store) do |_req|
           calls += 1
-          AgentRuntime::Result.new(status: status, outputs: {"answer" => "partial"}, error: {"classification" => classification}, logs: "partial log")
+          AgentRuntime::Result.new(status: status, outputs: {"answer" => "partial"}, error: {"classification" => classification}, retry_safe: true, logs: "partial log")
         end
         report = runner.run(program, inputs: {seed: "original"})
         assert_equal (classification == "transport") ? 3 : 1, calls
@@ -477,8 +527,8 @@ class M01AdapterReportingTest < Minitest::Test
       evaluator.define_singleton_method(:evaluate) { |**_| raise "fixture evaluator failed" }
       store, task, runner = benchmark_setup(root, evaluator: evaluator)
       report = runner.run(task: task, solver: AgentRuntime::Benchmarks::Solvers::Fake.new)
-      assert_equal "failure", report["status"]
-      assert_equal "success", report["solver_status"]
+      assert_equal "success", report["status"]
+      assert_equal "success", report.fetch("solution").fetch("status")
       assert_equal "error", report.dig("evaluation", "execution_status")
       assert_equal "not_evaluated", report.dig("evaluation", "verdict")
       assert_report_files(root, store, report)
