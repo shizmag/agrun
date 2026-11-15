@@ -19,6 +19,7 @@ module AgentRuntime
           cell["usage"], cell["cost"] = cell["execution"].values_at("usage", "cost")
         end
         repetitions = report.fetch("manifest").fetch("repetitions")
+        models = report.fetch("manifest").fetch("models", []).to_h { |model| [model.fetch("id"), model] }
         arms = cells.group_by { |cell| [cell.fetch("solver_id"), cell["model"], cell["protocol"], cell["quality_basis"]] }.map do |(solver, model, protocol, quality_basis), rows|
           tasks = rows.group_by { |row| row.fetch("task_id") }
           included, excluded = tasks.partition do |_, task_rows|
@@ -44,6 +45,10 @@ module AgentRuntime
            "evidence_coverage" => evidence_coverage(rows),
            "cost_total" => costs.empty? ? nil : costs.sum, "cost_known_cells" => costs.size,
            "usage_known_cells" => rows.count { |row| !row["usage"].nil? }}
+        end
+        arms.each do |arm|
+          model = models[arm["model"]]
+          arm["model_resolution"] = model["model_resolution"] if model&.key?("model_resolution")
         end
         statuses = cells.group_by { |row| row["execution_status"] || row["status"] }.transform_values(&:size)
         completed = cells.count { |row| valid?(row) }

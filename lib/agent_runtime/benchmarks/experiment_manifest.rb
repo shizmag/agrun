@@ -6,8 +6,22 @@ module AgentRuntime
       FIELDS = %w[schema_version experiment_id benchmark solver_ids models repetitions limits execution_mode subset_role].freeze
       attr_reader :data, :digest
 
-      def initialize(value)
+      def initialize(value, catalog: nil)
         normalized = IR.normalize_json(value)
+        if catalog
+          normalized["models"].each do |model|
+            snapshot = catalog.resolve(model.fetch("catalog_route"))
+            model["model_resolution"] = snapshot
+            profile = model.fetch("model_profile")
+            route = snapshot.fetch("route")
+            raise ArgumentError, "catalog route mismatch" unless profile["provider"] == route["provider"] && profile["model"] == route["wire_id"]
+            raise ArgumentError, "catalog endpoint mismatch" unless profile.dig("tool_policy", "endpoint") == route["endpoint"]
+            raise ArgumentError, "catalog inference parameters mismatch" unless profile.fetch("inference_parameters", {}) == snapshot.fetch("variant").fetch("parameters")
+            if !snapshot.fetch("variant").fetch("parameters").empty? && route["parameter_delivery"] != "wire_id"
+              raise ArgumentError, "unsupported catalog inference parameter delivery"
+            end
+          end
+        end
         validate!(normalized)
         @data = Adapter.freeze_json(JSON.parse(IR.dump(normalized)))
         @digest = IR.digest(@data).freeze

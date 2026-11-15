@@ -1,0 +1,30 @@
+{
+  "revision": "operator-model-declarations-v1",
+  "models": {
+    "gpt-6-luna": {}
+  },
+  "variants": {
+    "gpt-6-luna-low": {
+      "model": "gpt-6-luna",
+      "parameters": {"reasoning_effort": "low"},
+      "pricing": "operator-gpt-6-luna"
+    }
+  },
+  "routes": {
+    "omniroute-luna-low": {
+      "provider": "omniroute",
+      "endpoint": "http://localhost:20128/v1",
+      "wire_id": "cx/gpt-6-luna-low",
+      "parameter_delivery": "wire_id",
+      "variant": "gpt-6-luna-low",
+      "gateway_provider": "codex",
+      "gateway_model": "gpt-6-luna"
+    }
+  },
+  "pricing": {
+    "operator-gpt-6-luna": {
+      "revision": "operator-inheritance-declaration-v1",
+      "provenance": "Operator instruction: low reasoning variant inherits base model tariff. Numerical tariff and verified token semantics not supplied."
+    }
+  }
+}

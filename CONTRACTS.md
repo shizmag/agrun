@@ -1,5 +1,16 @@
 # M0 shared contracts
 
+## Optional model catalog evidence
+
+Benchmark CLI manifest loading may explicitly accept `--model-catalog PATH` and
+pass `catalog:` to `ExperimentManifest.new`. Requested resolution is persisted
+in the manifest digest and surfaced on report arms, not served-model proof or
+generic inference-parameter transport. All offline strategies share that
+snapshot; live pilot restrictions remain unchanged. Store/report reconstruction
+uses persisted evidence without current-catalog lookup, historical backfill,
+or automatic root-step repricing. Missing pricing remains unknown. See
+`docs/model-catalog.md` for declarations and dispatch limitations.
+
 Ruby 4.0, stdlib plus sqlite3 and standard. Namespace `AgentRuntime`.
 
 ## Execution boundary

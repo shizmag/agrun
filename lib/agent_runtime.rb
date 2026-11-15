@@ -32,6 +32,7 @@ module AgentRuntime
 end
 
 require_relative "agent_runtime/ir"
+require_relative "agent_runtime/execution/model_catalog"
 require_relative "agent_runtime/language"
 require_relative "agent_runtime/store"
 require_relative "agent_runtime/adapters/fake"

@@ -3,6 +3,7 @@ require "optparse"
 require "fileutils"
 require_relative "../execution/live_authorization"
 require_relative "../execution/opencode_launch"
+require_relative "../execution/model_catalog"
 require_relative "experiment_manifest"
 require_relative "experiment_runner"
 require_relative "nl2repo_audited_grader"
@@ -17,10 +18,12 @@ module AgentRuntime
         OptionParser.new do |parser|
           parser.on("--root PATH") { |value| options[:root] = value }
           parser.on("--authorization PATH") { |value| options[:authorization] = value }
+          parser.on("--model-catalog PATH") { |value| options[:model_catalog] = value }
         end.parse!(argv)
         root = File.expand_path(options.fetch(:root))
         if command == "plan"
           manifest = JSON.parse(File.read(argv.fetch(0)))
+          manifest = ExperimentManifest.new(manifest, catalog: read_catalog(options[:model_catalog])).data if options[:model_catalog]
           puts JSON.pretty_generate({"status" => "plan_only", "provider_requests_performed" => false,
                                      "manifest" => manifest, "authorization_required" => true,
                                      "financial_ceiling" => nil, "usage_coverage" => "partial_cli_events"})
@@ -30,7 +33,7 @@ module AgentRuntime
         raise ArgumentError, "live authorization required" unless options[:authorization]
         authorization_data = JSON.parse(File.read(options.fetch(:authorization)))
         authorization = Execution::LiveAuthorization.new(**authorization_data.slice("scope", "expires_at", "financial_exposure").transform_keys(&:to_sym))
-        manifest = ExperimentManifest.new(JSON.parse(File.read(argv.fetch(0))))
+        manifest = ExperimentManifest.new(JSON.parse(File.read(argv.fetch(0))), catalog: read_catalog(options[:model_catalog]))
         raise ArgumentError, "live manifest required" unless manifest.data.fetch("execution_mode") == "live"
         execute(command, manifest, authorization, root)
       rescue ArgumentError, KeyError, SystemCallError, AgentRuntime::Error, JSON::ParserError, OptionParser::ParseError => error
@@ -42,6 +45,10 @@ module AgentRuntime
       end
 
       private
+
+      def read_catalog(path)
+        Execution::ModelCatalog.new(JSON.parse(File.read(path))) if path
+      end
 
       def execute(command, manifest, authorization, root)
         unsupported = manifest.data.fetch("limits").keys - %w[timeout max_concurrent_sessions max_attempts max_parallelism]
