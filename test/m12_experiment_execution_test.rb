@@ -57,9 +57,23 @@ class M12ExperimentExecutionTest < Minitest::Test
       end
       assert_equal [1, 3, 3, 3], counts
       assert_equal 1, report.fetch("cells").map { |cell| cell.fetch("submission").fetch("digest") }.uniq.size
+      report.fetch("cells").each do |cell|
+        cell["usage"] = {"forged_usage" => 999999}
+        cell["cost"] = 999999
+      end
+      store.save_report(report)
       reports = AgentRuntime::Benchmarks::Reports.new(store: AgentRuntime::Store.new(store.root))
       json = JSON.parse(reports.render(experiment_id: "parity", format: "json"))
       assert_equal counts, json.fetch("cells").map { |cell| cell.fetch("execution").fetch("invocation_count") }
+      json.fetch("cells").each do |cell|
+        assert_nil cell["cost"]
+        assert_equal cell.dig("execution", "usage"), cell["usage"]
+      end
+      %w[json csv markdown].each do |format|
+        output = reports.render(experiment_id: "parity", format: format)
+        refute_includes output, "forged_usage"
+        refute_includes output, "999999"
+      end
       assert_includes reports.render(experiment_id: "parity", format: "csv").lines.first, "execution"
       assert_includes reports.render(experiment_id: "parity", format: "markdown"), "## Execution evidence"
       json.fetch("cells").each do |cell|

@@ -33,6 +33,28 @@ class M12AdapterExecutionTest < Minitest::Test
     end
   end
 
+  def test_partial_patch_is_preserved_as_evidence_on_failure
+    in_tmp do |root|
+      executable = File.join(root, "failed-fixture")
+      File.write(executable, <<~RUBY)
+        #!#{RbConfig.ruby}
+        File.write("partial.txt", "partial change")
+        puts '{"type":"error","message":"synthetic failure"}'
+        exit 1
+      RUBY
+      File.chmod(0o755, executable)
+      adapter = AgentRuntime::Adapters::OpenCodeCLI.new(executable: executable,
+        fixture_sha256: Digest::SHA256.file(executable).hexdigest)
+      request = AgentRuntime::Request.new(run_id: "failed", step_id: "agent", attempt: 1,
+        inputs: {}, workspace: root, timeout: 3, cancellation: AgentRuntime::Cancellation.new,
+        config: {"prompt" => "offline", "model_profile" => profile,
+                 "budget_policy" => {"wall_seconds" => 3, "max_attempts" => 1, "max_concurrent_sessions" => 1}})
+      result = adapter.execute(request)
+      assert_equal "failure", result.status
+      assert_includes result.outputs.fetch("patch"), "partial change"
+    end
+  end
+
   def test_timeout_after_finish_never_becomes_success
     in_tmp do |root|
       adapter = AgentRuntime::Adapters::OpenCodeCLI.new(executable: FIXTURE,

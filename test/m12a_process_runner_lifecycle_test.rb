@@ -29,6 +29,30 @@ class M12aProcessRunnerLifecycleTest < Minitest::Test
     with_descendants(:cancel) { |result| assert_equal "cancelled", result.fetch("status") }
   end
 
+  def test_cancellation_delivers_term_before_kill
+    Dir.mktmpdir do |dir|
+      ready = File.join(dir, "ready")
+      marker = File.join(dir, "term")
+      child = File.join(dir, "child.rb")
+      File.write(child, <<~RUBY)
+        trap("TERM") { File.write(#{marker.inspect}, "term"); exit }
+        File.write(#{ready.inspect}, "ready")
+        sleep 5
+      RUBY
+      token = AgentRuntime::Cancellation.new
+      worker = Thread.new { AgentRuntime::Adapters::ProcessRunner.new.call(argv: [RbConfig.ruby, child], cwd: dir, timeout: 3, cancellation: token) }
+      deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + 2
+      sleep 0.01 until File.exist?(ready) || Process.clock_gettime(Process::CLOCK_MONOTONIC) >= deadline
+      assert File.exist?(ready), "child never started"
+      token.cancel!
+      assert_equal "cancelled", worker.value.fetch("status")
+      assert File.exist?(marker), "child never received TERM before forced KILL"
+    ensure
+      token&.cancel!
+      worker&.join
+    end
+  end
+
   def test_outer_timeout_cleans_descendants_before_propagating
     with_descendants(:outer) { |error| assert_instance_of Timeout::Error, error }
   end

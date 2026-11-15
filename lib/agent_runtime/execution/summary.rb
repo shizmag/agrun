@@ -49,11 +49,19 @@ module AgentRuntime
           process_status: process.fetch("status", "unknown"), stdout_truncated: process.fetch("stdout_truncated", false),
           stderr_truncated: process.fetch("stderr_truncated", false), profile: record["model_profile"], identity: record.fetch("identity", {}))
         normalized = Usage.normalize(requests: parsed.fetch("requests"), complete: parsed.dig("completion", "accounting_complete") == true, pricing: record.dig("model_profile", "pricing"))
+        process_outcome = parsed["outcome"]
+        cleanup = record["cleanup"]
+        artifact_failed = cleanup.is_a?(Hash) && Array(cleanup["errors"]).any? { |error| error.is_a?(Hash) && error["type"] == "artifact_collection" }
+        if artifact_failed
+          parsed["outcome"] = "failure"
+          parsed["completion"] = parsed.fetch("completion").merge("operationally_complete" => false)
+        end
         base.merge({"schema_version" => "m12a-execution-summary-v1", "availability" => "available",
          "attempt_id" => record["attempt_id"], "evidence" => log.fetch("id"),
          "status" => attempt["status"], "outcome" => parsed["outcome"], "session_id" => parsed["session_id"],
          "completion" => parsed["completion"], "accounting_scope" => parsed["accounting_scope"],
-         "protocol_error" => parsed["protocol_error"], "admission" => record["admission"],
+          "protocol_error" => parsed["protocol_error"], "admission" => record["admission"],
+          "process_outcome" => process_outcome, "artifact_status" => artifact_failed ? "failure" : "unavailable", "cleanup" => cleanup,
          "usage" => normalized.fetch("usage"), "cost" => normalized.fetch("cost")})
       rescue JSON::ParserError, KeyError, TypeError => error
         raise Error, "invalid execution evidence: #{error.message}"

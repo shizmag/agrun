@@ -14,7 +14,9 @@ module AgentRuntime
         report = @store.report(experiment_id)
         cells = report.fetch("cells")
         cells.each do |cell|
-          cell["execution"] = Execution::Summary.from_run(store: @store, run_id: cell.fetch("execution").fetch("run_id")) if cell["execution"]
+          next unless cell["execution"]
+          cell["execution"] = Execution::Summary.from_run(store: @store, run_id: cell.fetch("execution").fetch("run_id"))
+          cell["usage"], cell["cost"] = cell["execution"].values_at("usage", "cost")
         end
         repetitions = report.fetch("manifest").fetch("repetitions")
         arms = cells.group_by { |cell| [cell.fetch("solver_id"), cell["model"], cell["protocol"], cell["quality_basis"]] }.map do |(solver, model, protocol, quality_basis), rows|
@@ -79,7 +81,9 @@ module AgentRuntime
       def render(experiment_id:, format: "json")
         report = @store.report(experiment_id)
         report.fetch("cells").each do |cell|
-          cell["execution"] = Execution::Summary.from_run(store: @store, run_id: cell.fetch("execution").fetch("run_id")) if cell["execution"]
+          next unless cell["execution"]
+          cell["execution"] = Execution::Summary.from_run(store: @store, run_id: cell.fetch("execution").fetch("run_id"))
+          cell["usage"], cell["cost"] = cell["execution"].values_at("usage", "cost")
         end
         aggregate = summary(experiment_id: experiment_id)
         case format.to_s

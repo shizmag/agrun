@@ -114,6 +114,24 @@ class M12ExecutionSummaryTest < Minitest::Test
     end
   end
 
+  def test_artifact_collection_failure_overrides_successful_native_process
+    in_tmp do |root|
+      store = AgentRuntime::Store.new(root)
+      original = recorded_attempt(store)
+      logs = JSON.parse(store.value(original.fetch("log")))
+      trace = logs.fetch("execution")
+      trace["outcome"] = "failure"
+      trace["cleanup"] = {"errors" => [{"type" => "artifact_collection", "message" => "repository collection failed"}]}
+      log = store.put(type: "text", value: JSON.generate(logs), run_id: "artifact-failure", step_id: "work", attempt: 1)
+      summary = summary_api.from_attempt(store: store, attempt: {"attempt" => 1, "status" => "failure", "log" => log, "execution" => {"outcome" => "success"}})
+      assert_equal "failure", summary.fetch("outcome")
+      assert_equal "success", summary.fetch("process_outcome")
+      assert_equal "failure", summary.fetch("artifact_status")
+      assert_equal false, summary.dig("completion", "operationally_complete")
+      assert_equal "artifact_collection", summary.dig("cleanup", "errors", 0, "type")
+    end
+  end
+
   private
 
   def summary_api

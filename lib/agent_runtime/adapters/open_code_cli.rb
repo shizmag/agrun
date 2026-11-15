@@ -66,6 +66,10 @@ module AgentRuntime
         false
       end
 
+      public def offline_fixture?
+        fixture_valid?
+      end
+
       def execute_observed(request)
         config = request.config
         secrets = config.fetch("env", {}).filter_map { |key, value| value if Execution::Redaction::SENSITIVE_KEY.match?(key) }
@@ -102,11 +106,15 @@ module AgentRuntime
                     "invocation_id" => SecureRandom.uuid, "workspace" => directory}
         remaining = coordinator.remaining_timeout(lease: lease)
         raise ArgumentError, "budget expired before launch" unless remaining
-        nil
-        execution = nil
-        execution, patch = GitPatch.new(directory).capture do
-          @runner.call(argv: argv, cwd: directory, timeout: remaining,
-            cancellation: request.cancellation, env: fixture_environment(config))
+        execution = patch = artifact_error = nil
+        begin
+          execution, patch = GitPatch.new(directory).capture do
+            execution = @runner.call(argv: argv, cwd: directory, timeout: remaining,
+              cancellation: request.cancellation, env: fixture_environment(config))
+          end
+        rescue => error
+          raise unless execution
+          artifact_error = {"type" => "artifact_collection", "message" => "Artifact collection failed after execution", "error_class" => error.class.name}
         end
         execution = Execution::Redaction.redact(execution, secrets: secrets)
         trace = Execution::EventStream.parse(stdout: execution.fetch("stdout", ""), stderr: execution.fetch("stderr", ""),
@@ -125,8 +133,14 @@ module AgentRuntime
           trace["protocol_error"] ||= {"type" => "protocol", "code" => "conflicting_usage", "message" => "Root-step usage observations conflict"}
         end
         outputs = {"patch" => patch, "repository" => directory, "text" => trace.fetch("events").select { |event| event["type"] == "text" }.map { |event| event.dig("part", "text").to_s }.join}
+        if artifact_error
+          trace["cleanup"] = {"errors" => [artifact_error]}
+          trace["outcome"] = "failure" unless %w[timeout cancelled].include?(trace["outcome"])
+          trace["completion"]["operationally_complete"] = false
+          outputs = {}
+        end
         Result.new(status: trace.fetch("outcome"), outputs: outputs,
-          error: trace["protocol_error"] || execution["error"], duration: execution["duration"],
+          error: artifact_error || trace["protocol_error"] || execution["error"], duration: execution["duration"],
           usage: normalized["usage"], cost: nil, logs: {"execution" => trace}, session_id: trace["session_id"], retry_safe: false)
       rescue ArgumentError, KeyError => error
         Result.new(status: "blocked", outputs: {}, error: {"type" => "configuration", "message" => error.message},

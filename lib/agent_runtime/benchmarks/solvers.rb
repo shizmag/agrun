@@ -3,6 +3,7 @@ require "securerandom"
 require "open3"
 require_relative "../adapters/opencode_cli"
 require_relative "../execution/summary"
+require_relative "adapter"
 
 module AgentRuntime
   module Benchmarks
@@ -11,6 +12,18 @@ module AgentRuntime
         budget.fetch("budget_policy") do
           {"wall_seconds" => budget.fetch("timeout", 120), "max_attempts" => 1, "max_concurrent_sessions" => 1}
         end
+      end
+
+      def self.task_repository(task, workspace)
+        return task.repository unless task.is_a?(Hash)
+        Adapter.public_task(task)
+        path = File.join(File.expand_path(workspace), "repository")
+        raise ArgumentError, "prepared repository required" unless File.directory?(path) && !File.symlink?(path)
+        path
+      end
+
+      def self.task_instruction(task)
+        task.is_a?(Hash) ? Adapter.public_task(task).fetch("instruction") : task.instruction
       end
       GOOD_IMPLEMENTATION = <<~RUBY.freeze
         module Clamp
@@ -34,7 +47,8 @@ module AgentRuntime
         def solve(task:, model:, budget:, workspace:)
           repository = File.join(workspace, "repository")
           FileUtils.mkdir_p(repository)
-          FileUtils.cp_r(File.join(task.repository, "."), repository)
+          source = Solvers.task_repository(task, workspace)
+          FileUtils.cp_r(File.join(source, "."), repository) unless File.expand_path(source) == File.expand_path(repository)
           File.write(File.join(repository, "lib/clamp.rb"), GOOD_IMPLEMENTATION) if @good
           patch, = Open3.capture2("git", "-C", repository, "diff", "--", ".")
           {"status" => "success", "repository" => repository, "patch" => patch,
@@ -59,7 +73,7 @@ module AgentRuntime
         end
 
         def configuration
-          {"live" => @live, "adapter" => @adapter ? @adapter.class.name : Adapters::OpenCodeCLI.name}
+          {"live" => @live, "adapter" => @adapter ? @adapter.class.name : AgentRuntime::Adapters::OpenCodeCLI.name}
         end
 
         def solve(task:, model:, budget:, workspace:)
@@ -67,11 +81,12 @@ module AgentRuntime
 
           repository = File.join(workspace, "repository")
           FileUtils.mkdir_p(repository)
-          FileUtils.cp_r(File.join(task.repository, "."), repository)
-          adapter = @adapter || Adapters::OpenCodeCLI.new
+          source = Solvers.task_repository(task, workspace)
+          FileUtils.cp_r(File.join(source, "."), repository) unless File.expand_path(source) == File.expand_path(repository)
+          adapter = @adapter || AgentRuntime::Adapters::OpenCodeCLI.new
           if budget.key?("model_profile")
             raise Error, "strict OpenCode solver requires shared Store" unless @store
-            config = {"live" => true, "model_profile" => budget.fetch("model_profile"), "prompt" => task.instruction, "budget" => budget, "budget_policy" => Solvers.budget_policy(budget)}
+            config = {"live" => true, "model_profile" => budget.fetch("model_profile"), "prompt" => Solvers.task_instruction(task), "budget" => budget, "budget_policy" => Solvers.budget_policy(budget)}
             ir = {"schema_version" => 1, "name" => "direct-opencode", "inputs" => {"repository" => "repository"},
                   "executors" => {"opencode" => {"adapter" => "opencode", "config" => config}},
                   "steps" => [{"id" => "solve", "executor" => "opencode", "inputs" => {"repository" => "repository"}, "outputs" => {"repository" => "repository"},
@@ -85,7 +100,7 @@ module AgentRuntime
           end
           request = Request.new(run_id: SecureRandom.uuid, step_id: "solve", attempt: 1,
             inputs: {"repository" => repository}, config: {"live" => true, "model" => model,
-                                                           "prompt" => task.instruction, "budget" => budget}, workspace: repository,
+                                                           "prompt" => Solvers.task_instruction(task), "budget" => budget}, workspace: repository,
             timeout: budget.fetch("timeout", 120), cancellation: nil)
           result = adapter.execute(request)
           outputs = result.outputs || {}
@@ -142,7 +157,7 @@ module AgentRuntime
             step["config"]["model"] = model if model
             step["config"]["model_profile"] = budget["model_profile"] if budget.key?("model_profile")
           end
-          report = Runtime.new(store: @store, executors: @executors).run(ir, inputs: {"repository" => task.repository}, workspace: workspace)
+          report = Runtime.new(store: @store, executors: @executors).run(ir, inputs: {"repository" => Solvers.task_repository(task, workspace)}, workspace: workspace)
           artifact = report.fetch("outputs", {})["repository"]
           observed_models = report.fetch("steps", {}).values.flat_map { |step| step.fetch("attempts", []).map { |attempt| attempt["model"] } }.compact.uniq
           result = {"status" => report.fetch("status"), "repository" => artifact && @store.value(artifact),
