@@ -87,6 +87,15 @@ module AgentRuntime
           if event["type"] == "tool_use"
             record["tool_calls"] << part
           elsif event["type"] == "step_finish"
+            prior = record["events"][0...-1].find do |observed|
+              previous = observed["part"]
+              observed["type"] == "step_finish" && previous.is_a?(Hash) &&
+                previous["sessionID"] == session && previous["messageID"] == part["messageID"]
+            end
+            if prior && prior["part"]["id"] != part["id"]
+              error(record, "conflicting_finish_identity", "Root step has conflicting finish part identities", line)
+              return
+            end
             finish(record, part, identity)
           end
         end

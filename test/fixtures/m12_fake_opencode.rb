@@ -46,7 +46,10 @@ else
     emit.call("retry", {"messageID" => "msg_one", "attempt" => 1, "nextRetryAt" => 2, "error" => {"type" => "transport", "message" => "synthetic retry"}})
     emit.call("background_wait", {"jobs" => [{"id" => "job_one", "kind" => "subagent", "title" => "synthetic"}]})
   end
-  emit.call("step_finish", {"part" => finish.call})
+  final_part = finish.call
+  final_part.delete("tokens") if scenario == "missing_usage"
+  final_part.delete("cost") if scenario == "missing_usage"
+  emit.call("step_finish", {"part" => final_part})
   case scenario
   when "multiple"
     emit.call("step_finish", {"part" => finish.call("msg_two")})
@@ -54,6 +57,27 @@ else
     emit.call("step_finish", {"part" => finish.call})
   when "conflict"
     emit.call("step_finish", {"part" => finish.call("msg_one", 0.25)})
+  when "usage_conflict"
+    conflicting = finish.call
+    conflicting.fetch("tokens")["input"] = 999
+    emit.call("step_finish", {"part" => conflicting})
+  when "aggregate_conflict"
+    # Explicit extension, not an audited native aggregate/reconciliation event.
+    emit.call("synthetic_aggregate", {"data" => {"input" => 999}})
+  when "model_mismatch"
+    # Native CLI does not expose resolved model identity. This extension cannot
+    # authorize pricing or prove an actual provider/model mismatch.
+    emit.call("synthetic_model", {"data" => {"provider" => "other", "model" => "other"}})
+  when "artifact_failure", "artifact_success"
+    File.write("synthetic_partial_artifact.txt", "offline artifact\n")
+    if scenario == "artifact_failure"
+      emit.call("error", {"error" => {"type" => "unknown", "message" => "synthetic failure after artifact"}})
+      exit 7
+    end
+  when "truncated"
+    # ProcessRunner's bounded capture must mark this incomplete, even though
+    # an otherwise valid finish appeared before the overflowing suffix.
+    20_000.times { puts "x" * 1024 }
   when "error"
     emit.call("error", {"error" => {"type" => "unknown", "message" => "synthetic execution failure"}})
   when "foreign"

@@ -114,7 +114,14 @@ module AgentRuntime
         @store.save_attempt(run_id, step["id"], attempt, {"attempt" => attempt, "status" => "running", "started_at" => Time.now.utc.iso8601(6)})
         started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         begin
-          result = Timeout.timeout(step["timeout"] + 0.1) { adapter(executor["adapter"]).execute(request) }
+          selected_adapter = adapter(executor["adapter"])
+          grace = selected_adapter.respond_to?(:timeout_cleanup_grace) ? selected_adapter.timeout_cleanup_grace : 0.1
+          result = Timeout.timeout(step["timeout"] + grace) do
+            selected_adapter.execute(request) do |decision|
+              @store.save_attempt(run_id, step["id"], attempt,
+                {"attempt" => attempt, "status" => "running", "admission" => decision})
+            end
+          end
           raise Error, "executor returned invalid result" unless result.is_a?(Result) && %w[success failure cancelled timeout unknown blocked].include?(result.status)
         rescue Timeout::Error
           result = Result.new(status: "timeout", outputs: {}, error: {"classification" => "timeout"})
@@ -124,6 +131,10 @@ module AgentRuntime
         data = {"attempt" => attempt, "status" => result.status, "error" => result.error, "duration" => result.duration || Process.clock_gettime(Process::CLOCK_MONOTONIC) - started, "usage" => result.usage, "cost" => result.cost, "session_id" => result.session_id, "model" => result.model}
         if result.logs
           data["log"] = @store.put(type: "text", value: result.logs.is_a?(String) ? result.logs : JSON.generate(result.logs), run_id: run_id, step_id: step["id"], attempt: attempt)
+        end
+        if result.logs.is_a?(Hash) && result.logs["execution"].is_a?(Hash)
+          data["execution"] = JSON.parse(JSON.generate(result.logs["execution"].except("events", "requests", "raw", "stdout", "stderr", "process", "frozen_config")))
+          data["execution"]["evidence"] = data["log"] if data["log"]
         end
         if result.status == "success"
           begin

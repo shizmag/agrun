@@ -21,7 +21,8 @@ class M01AdapterReportingTest < Minitest::Test
   end
 
   def cli(root, body, config = {}, **options)
-    AgentRuntime::Adapters::OpenCodeCLI.new(executable: executable(root, body), live: true)
+    path = executable(root, body)
+    AgentRuntime::Adapters::OpenCodeCLI.new(executable: path, fixture_sha256: Digest::SHA256.file(path).hexdigest, live: true)
       .execute(request(root, config, **options))
   end
 
@@ -52,7 +53,7 @@ class M01AdapterReportingTest < Minitest::Test
       FileUtils.mkdir_p(repo)
       marker = File.join(root, "observed.json")
       path = executable(root, "File.write(ENV.fetch('MARKER'), JSON.generate([ARGV, Dir.pwd, ENV['VALUE']]))\nputs #{JSON.generate(FINISH).inspect}")
-      adapter = AgentRuntime::Adapters::OpenCodeCLI.new(executable: path)
+      adapter = AgentRuntime::Adapters::OpenCodeCLI.new(executable: path, fixture_sha256: Digest::SHA256.file(path).hexdigest)
       [nil, "true"].each do |opt|
         result = adapter.execute(request(root, {"live" => opt}))
         assert_equal "blocked", result.status
@@ -185,7 +186,8 @@ class M01AdapterReportingTest < Minitest::Test
         runner.define_singleton_method(:call) do |**_|
           {"status" => status, "stdout" => JSON.generate(FINISH), "stderr" => "", "truncated" => true}
         end
-        result = AgentRuntime::Adapters::OpenCodeCLI.new(runner: runner, live: true).execute(request(root))
+        path = executable(root, "exit 0")
+        result = AgentRuntime::Adapters::OpenCodeCLI.new(runner: runner, executable: path, fixture_sha256: Digest::SHA256.file(path).hexdigest, live: true).execute(request(root))
         assert_equal status, result.status
       end
     end

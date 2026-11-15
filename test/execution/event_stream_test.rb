@@ -37,6 +37,7 @@ class EventStreamTest < Minitest::Test
     assert_equal "disjoint", request.fetch("input_cache_relation")
     assert_equal "disjoint", request.fetch("output_reasoning_relation")
     assert_equal 0.125, record.fetch("native_cost_observations").fetch(0).fetch("value")
+    assert_equal "opaque_cli", record.fetch("native_cost_observations").fetch(0).fetch("provenance")
   end
 
   def test_preserves_duplicate_and_conflicting_observations_for_usage_normalizer
@@ -155,6 +156,17 @@ class EventStreamTest < Minitest::Test
     requests = record.fetch("requests")
     assert_equal [10, 999], requests.map { |request| request.fetch("tokens").fetch("input") }
     assert_equal requests.first.fetch("request_id"), requests.last.fetch("request_id")
+  end
+
+  def test_equal_usage_with_conflicting_finish_part_identity_cannot_complete
+    stdout, = Open3.capture3({"M12_SCENARIO" => "duplicate"}, RbConfig.ruby, SIMULATOR)
+    events = stdout.lines.map { |line| JSON.parse(line) }
+    events.last.fetch("part")["id"] = "prt_conflicting_identity"
+    record = AgentRuntime::Execution::EventStream.parse(stdout: events.map { |event| JSON.generate(event) }.join("\n"))
+    assert_equal "unknown", record.fetch("outcome")
+    assert_equal "conflicting_finish_identity", record.fetch("protocol_error").fetch("code")
+    refute record.fetch("completion").fetch("operationally_complete")
+    assert_equal 2, record.fetch("events").count { |event| event["type"] == "step_finish" }
   end
 
   def test_requested_session_identity_must_match_observed_session

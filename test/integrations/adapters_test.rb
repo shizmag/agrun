@@ -116,7 +116,7 @@ class AdaptersIntegrationTest < Minitest::Test
         puts JSON.generate(type: "text", sessionID: "ses_fixture", part: {text: "done"})
         puts JSON.generate(type: "step_finish", sessionID: "ses_fixture", part: {tokens: {input: 3, output: 2}, cost: 0.0})
       RUBY
-      result = AgentRuntime::Adapters::OpenCodeCLI.new(executable: executable).execute(request(dir,
+      result = AgentRuntime::Adapters::OpenCodeCLI.new(executable: executable, fixture_sha256: Digest::SHA256.file(executable).hexdigest).execute(request(dir,
         {"live" => true, "prompt" => "--not-a-flag; $(bad)", "model" => "fixture/local"}))
       assert_equal "success", result.status
       assert_equal "done", result.outputs["text"]
@@ -130,11 +130,13 @@ class AdaptersIntegrationTest < Minitest::Test
   def test_opencode_malformed_and_incomplete_output_not_success
     in_tmp do |dir|
       executable = fixture(dir, 'puts "not-json"')
-      adapter = AgentRuntime::Adapters::OpenCodeCLI.new(executable: executable, live: true)
+      adapter = AgentRuntime::Adapters::OpenCodeCLI.new(executable: executable, fixture_sha256: Digest::SHA256.file(executable).hexdigest, live: true)
       assert_equal "unknown", adapter.execute(request(dir, {"prompt" => "test"})).status
       fixture(dir, 'puts %q({"type":"text","part":{"text":"partial"}})')
+      adapter = AgentRuntime::Adapters::OpenCodeCLI.new(executable: executable, fixture_sha256: Digest::SHA256.file(executable).hexdigest, live: true)
       assert_equal "unknown", adapter.execute(request(dir, {"prompt" => "test"})).status
       fixture(dir, 'STDERR.write("failed"); exit 2')
+      adapter = AgentRuntime::Adapters::OpenCodeCLI.new(executable: executable, fixture_sha256: Digest::SHA256.file(executable).hexdigest, live: true)
       assert_equal "failure", adapter.execute(request(dir, {"prompt" => "test"})).status
     end
   end
@@ -145,7 +147,7 @@ class AdaptersIntegrationTest < Minitest::Test
         puts %q({"type":"step_finish","part":{"tokens":{"input":1}}})
         puts %q({"type":"error","error":{"message":"fixture failure"}})
       RUBY
-      result = AgentRuntime::Adapters::OpenCodeCLI.new(executable: executable, live: true).execute(request(dir, {"prompt" => "test"}))
+      result = AgentRuntime::Adapters::OpenCodeCLI.new(executable: executable, fixture_sha256: Digest::SHA256.file(executable).hexdigest, live: true).execute(request(dir, {"prompt" => "test"}))
       assert_equal "failure", result.status
       assert_equal "error", result.error["type"]
       assert_nil result.cost
@@ -164,7 +166,7 @@ class AdaptersIntegrationTest < Minitest::Test
       RUBY
       req = request(dir, {"prompt" => "test", "live" => true})
       req.inputs = {"repository" => repo}
-      result = AgentRuntime::Adapters::OpenCodeCLI.new(executable: executable).execute(req)
+      result = AgentRuntime::Adapters::OpenCodeCLI.new(executable: executable, fixture_sha256: Digest::SHA256.file(executable).hexdigest).execute(req)
       assert_equal "success", result.status
       assert_equal repo, result.outputs["repository"]
       assert_includes result.outputs["patch"], "new file mode"
@@ -202,7 +204,7 @@ class AdaptersIntegrationTest < Minitest::Test
         puts %q({"type":"step_finish","part":{"modelID":"actual-model"}})
         puts %q({"type":"error","error":{"message":"Permission denied"}})
       RUBY
-      result = AgentRuntime::Adapters::OpenCodeCLI.new(executable: executable, live: true).execute(request(dir, {"prompt" => "test", "model" => "requested/model"}))
+      result = AgentRuntime::Adapters::OpenCodeCLI.new(executable: executable, fixture_sha256: Digest::SHA256.file(executable).hexdigest, live: true).execute(request(dir, {"prompt" => "test", "model" => "requested/model"}))
       assert_equal "blocked", result.status
       assert_equal "actual-model", result.model
       assert_equal "requested/model", result.outputs["requested_model"]
@@ -213,7 +215,7 @@ class AdaptersIntegrationTest < Minitest::Test
   def test_opencode_timeout_preserved_with_truncated_json
     in_tmp do |dir|
       executable = fixture(dir, 'STDOUT.sync = true; print "{"; sleep 4')
-      result = AgentRuntime::Adapters::OpenCodeCLI.new(executable: executable, live: true).execute(request(dir, {"prompt" => "test"}, timeout: 0.5))
+      result = AgentRuntime::Adapters::OpenCodeCLI.new(executable: executable, fixture_sha256: Digest::SHA256.file(executable).hexdigest, live: true).execute(request(dir, {"prompt" => "test"}, timeout: 0.5))
       assert_equal "timeout", result.status
       assert_match "invalid OpenCode JSON", result.error["message"]
     end
