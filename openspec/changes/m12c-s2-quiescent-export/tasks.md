@@ -10,4 +10,4 @@
 - [x] Record mutation outcomes, including survived mutations.
 - [x] Run regressions, opt-in suites and strict OpenSpec validation.
 - [ ] Commit implementation, then freeze exact environment only if all gates pass.
-- [ ] Commit evidence and report exact remaining limitations without push or merge.
+- [x] Commit evidence and report exact remaining limitations without push or merge.
