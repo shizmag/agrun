@@ -13,7 +13,11 @@
 
 ## 3. Verification and live evidence
 - [x] Perform independent adversarial review and controlled mutation checks.
-- [ ] Run complete regression and strict OpenSpec validation.
-- [ ] Execute authorized OmniRoute pilot or report a verified external blocker.
-- [ ] Retain all attempts and publish truthful scientific qualifications.
-- [ ] Commit intended changes with clean tree, without push or merge.
+- [x] Run complete regression and strict OpenSpec validation.
+- [x] Execute authorized OmniRoute pilot or report a verified external blocker.
+- [x] Retain all attempts and publish truthful scientific qualifications.
+- [x] Commit intended changes with clean tree, without push or merge.
+
+Acceptance is PARTIAL: live execution, artifact, audited grading and regrading
+completed; provider-response model identity remains unverified. Checked execution
+work does not imply that the stricter LIVE_VALIDATED acceptance was achieved.

@@ -4,10 +4,10 @@ require "digest"
 # Input is JSON from the existing reconstructed benchmark report command.
 # Never open Store here: exporting must not create, migrate, or repair run state.
 module M12bExportEvidence
-  IDENTIFIERS = %w[id run_id task_id solver_id model provider route execution_kind status execution_status verdict protocol quality_basis trust_scope availability outcome process_outcome artifact_status verification discrepancy observation_basis billing_status reported_cost_basis actual_charge_status currency provenance operation class type schema_version].freeze
-  NUMBERS = %w[score expected collected executed passed failed skipped total repetition invocation_count observed_launch_count duration agent_duration grading_duration known_subtotal observed_count accepted_requests duplicate_observations conflicting_requests unidentified_observations identified_requests observations amount known_subtotal_amount].freeze
-  BOOLEANS = %w[complete stream_complete operationally_complete session_reported_complete accounting_complete launch_observed reaped allowed].freeze
-  CONTAINERS = %w[cells steps attempts execution identity requested observed accounting_coverage usage tokens input output reasoning cache_read cache_write coverage reported_cost estimate cost_evidence process_cleanup cleanup errors completion grading_attempts result metrics provenance manifest].freeze
+  IDENTIFIERS = %w[id experiment_id run_id task_id solver_id model_id model provider route execution_kind execution_mode subset_role status solver_status execution_status verdict protocol quality_basis trust_scope availability outcome process_outcome artifact_status verification discrepancy observation_basis billing_status reported_cost_basis actual_charge_status currency provenance operation class type schema_version name revision runtime_version runtime_commit ruby_version ruby_platform reason].freeze
+  NUMBERS = %w[score expected collected executed passed failed skipped total repetition repetitions invocation_count observed_launch_count duration agent_duration grading_duration known_subtotal observed_count accepted_requests duplicate_observations conflicting_requests unidentified_observations identified_requests observations amount known_subtotal_amount planned completed cancelled missing unavailable fraction max_concurrent_sessions max_parallelism timeout planned_cells valid_score_cells missing_score_cells protocol_known_cells quality_basis_known_cells].freeze
+  BOOLEANS = %w[complete stream_complete operationally_complete session_reported_complete accounting_complete launch_observed reaped allowed admitted model_fallback].freeze
+  CONTAINERS = %w[cells per_task_results execution_counts evaluation_completion evidence_coverage steps attempts execution identity requested observed accounting_coverage usage tokens input output reasoning cache_read cache_write coverage reported_cost estimate cost_evidence process_cleanup cleanup errors completion grading_attempts result metrics provenance manifest benchmark models model_profile tool_policy limits adapter_identity admission preflight by_status by_execution_status].freeze
   DIGESTS = %w[manifest_digest experiment_digest specification_digest procedure_digest environment_digest submission_digest report_sha256 executable_sha256 pricing_digest].freeze
 
   def self.project(value, key = nil)
@@ -21,6 +21,10 @@ module M12bExportEvidence
           result[field] = child if child.is_a?(String) && child.match?(/\A(?:sha256:)?[0-9a-f]{64}\z/)
         elsif CONTAINERS.include?(field)
           result[field] = project(child, field) if child.is_a?(Hash) || child.is_a?(Array)
+        elsif key == "per_task_results" && child.is_a?(Array)
+          result[field] = project(child) if safe_identifier?(field)
+        elsif %w[by_status by_execution_status].include?(key)
+          result[field] = child if safe_identifier?(field) && child.is_a?(Integer) && child >= 0
         elsif key == "steps" && child.is_a?(Hash)
           result[field] = project(child) if safe_identifier?(field)
         elsif IDENTIFIERS.include?(field)
@@ -43,8 +47,13 @@ module M12bExportEvidence
   end
 
   def self.export(report)
-    raise ArgumentError, "expected a report object with cells" unless report.is_a?(Hash) && report["cells"].is_a?(Array)
+    runner_report = report.is_a?(Hash) && report["cells"].is_a?(Array)
+    cli_report = report.is_a?(Hash) && report["experiment_id"].is_a?(String) && report["per_task_results"].is_a?(Hash)
+    if !runner_report && !cli_report
+      raise ArgumentError, "expected reconstructed runner cells or CLI ExperimentReport per_task_results"
+    end
     {"export_schema" => "m12b-scientific-evidence-v1", "qualification" => "sanitized persisted observations; not upstream billing or routing attestation",
+     "raw_artifact_digests" => {"status" => "not_resolved_from_report", "digests" => []},
      "source_json_sha256" => Digest::SHA256.hexdigest(JSON.generate(canonical(report))), "report" => project(report)}
   end
 

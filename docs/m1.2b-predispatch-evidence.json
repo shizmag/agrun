@@ -1,0 +1,160 @@
+{
+  "export_schema": "m12b-scientific-evidence-v1",
+  "qualification": "sanitized persisted observations; not upstream billing or routing attestation",
+  "raw_artifact_digests": {
+    "status": "not_resolved_from_report",
+    "digests": []
+  },
+  "source_json_sha256": "e6e78779690604c2dd75dd3584524938fed8ac00a87deb7dba2df282b652684f",
+  "report": {
+    "evaluation_completion": {
+      "completed": 0,
+      "fraction": 0.0,
+      "planned": 1
+    },
+    "evidence_coverage": {
+      "by_execution_status": {
+        "error": 1
+      },
+      "missing_score_cells": 1,
+      "planned_cells": 1,
+      "protocol_known_cells": 0,
+      "quality_basis_known_cells": 0,
+      "valid_score_cells": 0
+    },
+    "execution_counts": {
+      "by_status": {
+        "error": 1
+      },
+      "cancelled": 0,
+      "completed": 1,
+      "failed": 1,
+      "missing": 0,
+      "planned": 1,
+      "unavailable": 0
+    },
+    "experiment_id": "m12b-retrying-omniroute-first",
+    "manifest": {
+      "benchmark": {
+        "name": "nl2repo",
+        "revision": "781a1da1ee41fb8edb0bed22f586d69111610edf"
+      },
+      "execution_mode": "live",
+      "experiment_id": "m12b-retrying-omniroute-first",
+      "limits": {
+        "max_concurrent_sessions": 1,
+        "max_parallelism": 1,
+        "timeout": 600
+      },
+      "models": [
+        {
+          "id": "omniroute/cx/gpt-6-luna-low",
+          "model_profile": {
+            "execution_kind": "real_provider",
+            "model": "cx/gpt-6-luna-low",
+            "provider": "omniroute",
+            "tool_policy": {
+              "executable_sha256": "9f3147cae4ca323827d3ca39451b0d3431b2906e79a08e9b09d1eb34bb703f52",
+              "model_fallback": false,
+              "route": "cx/gpt-6-luna-low"
+            }
+          }
+        }
+      ],
+      "repetitions": 1,
+      "subset_role": "transport-validation-not-architecture-comparison"
+    },
+    "manifest_digest": "6fc35f7473668e5033968ff85dc666e5d4ea20a66b06ce511a4795beea9572f3",
+    "per_task_results": {
+      "retrying": [
+        {
+          "agent_duration": 0.00570600014179945,
+          "execution": {
+            "availability": "available",
+            "invocation_count": 0,
+            "run_id": "8344445a-f0b0-4265-aec2-2440e2bb5ad8",
+            "schema_version": "m12a-execution-summary-v1",
+            "status": "blocked",
+            "steps": {
+              "solve": {
+                "attempts": [
+                  {
+                    "accounting_coverage": {
+                      "auxiliary_usage": "unknown",
+                      "billing_status": "not_provider_billing",
+                      "child_usage": "unknown",
+                      "compaction_usage": "unknown",
+                      "complete": false,
+                      "provider_charges": "unknown",
+                      "provider_requests": "unknown",
+                      "provider_retries": "unknown",
+                      "reported_cost_basis": "native_step_observations",
+                      "root_steps": "unknown",
+                      "title_usage": "unknown"
+                    },
+                    "admission": {
+                      "admitted": false,
+                      "reason": "invalid_configuration"
+                    },
+                    "availability": "available",
+                    "completion": {
+                      "accounting_complete": false,
+                      "operationally_complete": false,
+                      "session_reported_complete": null
+                    },
+                    "identity": {
+                      "discrepancy": "unknown",
+                      "observation_basis": "native_root_step",
+                      "observed": {
+                        "model": null,
+                        "provider": null,
+                        "route": null
+                      },
+                      "requested": {
+                        "model": null,
+                        "provider": null,
+                        "route": null
+                      },
+                      "verification": "unknown"
+                    },
+                    "launch_observed": false,
+                    "outcome": "blocked",
+                    "preflight": {},
+                    "process_cleanup": {
+                      "status": "unknown"
+                    },
+                    "schema_version": "m12a-execution-summary-v1",
+                    "status": "blocked"
+                  }
+                ],
+                "status": "blocked"
+              }
+            }
+          },
+          "execution_status": "error",
+          "id": "e188fa6dd50cd461d81d3a73330f1f0a912b41310df720de4ea62a28429c9c8d",
+          "model": "omniroute/cx/gpt-6-luna-low",
+          "model_id": "omniroute/cx/gpt-6-luna-low",
+          "repetition": 1,
+          "score": null,
+          "solver_id": "single-agent",
+          "solver_status": "blocked",
+          "status": "completed",
+          "task_id": "retrying",
+          "verdict": null
+        }
+      ]
+    },
+    "provenance": {
+      "adapter_identity": {
+        "manifest_digest": "f34f959b3de0d44f390799d22c82d415bf330aa56e540ad13df96c07e6cca5bc",
+        "name": "nl2repo",
+        "revision": "781a1da1ee41fb8edb0bed22f586d69111610edf"
+      },
+      "ruby_platform": "arm64-darwin25",
+      "ruby_version": "4.0.9",
+      "runtime_commit": "49d6a13d541882270481b8087207703758a0915d",
+      "runtime_version": "0.1.0"
+    }
+  }
+}
