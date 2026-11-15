@@ -11,7 +11,8 @@ uses persisted evidence without current-catalog lookup, historical backfill,
 or automatic root-step repricing. Missing pricing remains unknown. See
 `docs/model-catalog.md` for declarations and dispatch limitations.
 
-Ruby 4.0, stdlib plus sqlite3 and standard. Namespace `AgentRuntime`.
+Ruby 4.0, stdlib plus sqlite3, fiddle (descriptor-relative sandbox copying),
+and standard. Namespace `AgentRuntime`.
 
 ## Execution boundary
 
@@ -132,3 +133,82 @@ are not successful step outputs, are never bound downstream, and do not change
 execution status. Direct strict OpenCode uses this option to return an immutable
 failed repository to the benchmark runner, which records `partial_submission`
 without automatic grading. Collection failure remains separate evidence.
+
+## Provisional mock-only whole-agent sandbox (M1.2c-S1)
+
+This additive interface records coordinated implementation intent, not completed
+acceptance or a frozen production contract. Race/export and quota/resource
+blockers remain under review; parent integration must reconcile final signatures,
+effective policy and acceptance evidence before declaring readiness. Existing
+`Request` and `Result` layouts and execution-status/evaluation-verdict separation
+are unchanged. No historical live path is migrated or silently substituted.
+
+Latest integration status: quota/race/concurrent-cwd controls are reported
+implemented, but snapshot consistency remains unsupported. The current runner
+does not accept an export: an otherwise successful execution is converted to
+`blocked` with `writer_quiescence_unsupported: tmpfs archive collected before container pause`.
+Diagnostic archives are discarded, not returned as usable repository exports.
+Private temporary staging modes were broadened; that change is not proof that
+the temporary permission gap or writer-quiescence requirement is resolved.
+The successful-export descriptions below specify intended future behavior,
+not a currently available successful submission path.
+
+Current intended interfaces (implementation may evolve during that review):
+
+- `Execution::SandboxRunner.new(image:, limits:, process_runner: Adapters::ProcessRunner.new, network_policy: nil)`
+- `Execution::SandboxRunner#call(argv:, workspace:, timeout:, cancellation: nil, env: {})`
+- `Execution::SandboxRunner::MockRelayPolicy.new(volume:, helper:, helper_sha256:)`
+- `Execution::SandboxOpenCodeLaunch.new(executable:, executable_sha256:, endpoint:, model:, mock_only:, provider:, wire_model:)`
+- `Execution::SandboxOpenCodeLaunch#argv(prompt)`, `#environment`, `#to_h`,
+  and `#with_extensions(**)` (extensions currently rejected).
+- `Adapters::SandboxOpenCodeCLI.new(runner:, launch:)` and `#execute(request)`.
+
+`SandboxRunner` owns the intended Docker execution boundary and returns a
+string-keyed execution/evidence hash, not a new `Result` variant. Evidence includes
+status/stdout/stderr, image/resource policy, effective container inspection,
+cleanup observations and, when valid, export `path`, `manifest` and `digest`.
+Invalid startup/policy, missing evidence or unconfirmed cleanup must not become
+successful adapter output. Staging/export copying is a consistency mechanism,
+not an independent security sandbox. Host workspaces are not execution fallback.
+
+`SandboxOpenCodeLaunch` is a **mock-only** plan, not `OpenCodeLaunch` or
+`LiveAuthorization`. It currently pins `/usr/local/bin/opencode`, verifies its
+declared executable SHA-256 at startup and targets local mock HTTP
+`http://127.0.0.1:18080/v1`. The intended transport keeps the agent container at
+`network=none`, bridging local HTTP through a narrowly mounted UNIX relay volume.
+Only the reviewed mock relay policy is admitted; this does not authorize general
+networking, a real upstream, provider credentials in solver space or paid calls.
+Application tool/provider policy is defense in depth, not the confinement boundary.
+
+The adapter consumes repository input (or request workspace), prompt, timeout
+and cancellation; it intends to return successful `outputs["repository"]` only
+for a verified export with container and cleanup evidence. Sandbox/launch/event
+observations belong in logs. It must not delegate to historical host OpenCode on
+failure, retry through a live route or infer live consent from `mock_only`.
+Transport replay remains disabled (`retry_safe: false`). An execution success is
+not an evaluation pass or acceptance verdict.
+
+Export paths are caller-owned temporary snapshots, not durable Store artifacts.
+The caller must capture the actual export into immutable repository evidence,
+bind its digest to submission/evaluation, and clean up the returned temporary
+export tree after capture or on failure. A read-only filesystem mode alone does
+not make caller-owned files immutable against their owner. Never grade a stale
+input workspace in place of the returned export or leave cleanup implicit.
+
+Resource policy is separate from provider quotas: CPU, memory/swap, process,
+tmpfs, workspace byte/entry/depth, deadline, cancellation and descendant cleanup
+must be recorded and tested according to actual enforcement. Neither token/request
+quota nor wall timeout implies disk/memory/process containment or a spending cap.
+Do not claim hard end-to-end bounds while race/quota blockers remain unresolved.
+Current review additionally finds full timeout budgets applied per stage rather
+than a shared whole-call deadline. Finite stage operations do not establish total
+call or architecture deadline enforcement; bounded cleanup also needs explicit
+accounting and acceptance. These end-to-end limits remain unproven.
+
+Unknown duration, session/model identity, usage and cost remain unknown unless
+observed; raw event observations do not imply complete accounting. Existing
+generic model-catalog semantics remain unchanged: requested resolution is not
+served-model proof or generic inference-parameter transport, and cannot fill
+missing observed identity or pricing. Mock acceptance cannot authorize or backfill
+historical live evidence. See `docs/m1.2c-s1-scientific-protocol.md` for the
+unfrozen identity and separate offline acceptance gates.

@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "categories": [
+    "native-file-hostcanary", "shell-cat-hostcanary", "script-read-hostcanary",
+    "path-traversal", "symlink-escape", "absolute-hostpaths", "hostcredentials",
+    "otherworkspaces", "hiddengrader", "reference", "dockercontrolsocket",
+    "unapprovednetwork", "approvedmockprovider", "subagent-isolation",
+    "pluginsaux-nohostfallback", "normalshell", "buildtest", "writeexport",
+    "timeoutcleanup", "exportescape", "startup-failclosed",
+    "audited-v2compatibility", "evidencereconstruction", "previousregressions"
+  ]
+}
