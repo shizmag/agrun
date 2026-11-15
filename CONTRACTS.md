@@ -212,3 +212,22 @@ served-model proof or generic inference-parameter transport, and cannot fill
 missing observed identity or pricing. Mock acceptance cannot authorize or backfill
 historical live evidence. See `docs/m1.2c-s1-scientific-protocol.md` for the
 unfrozen identity and separate offline acceptance gates.
+# Opt-in exact submission modes
+
+`Benchmarks::Submission#capture(..., preserve_modes: true)` additionally binds
+ordinary file and directory permissions (including the repository root) in a
+`submission-modes-v1` JSON Store artifact. Canonical repository metadata references
+that sidecar by ID and digest; its payload binds the legacy repository content
+digest. Verification reloads canonical metadata, never trusts caller-supplied
+sidecar references, and rejects special permission bits. Existing Store content
+digests and legacy submissions are unchanged; shared Store trees are not chmodded.
+Materialization applies modes only to a fresh snapshot and verifies both content
+and exact modes. The audited grader subsequently creates a working copy and
+deliberately normalizes its root permissions; that working root is not the
+immutable submission root. File/nested-directory copy preservation is separately
+tested. This API does not make trusted Ruby code or directory separation a sandbox.
+# Sandbox provisioning resource bounds
+
+Before Docker creation, sandbox input provisioning accepts at most 1,024 regular
+files and 1,024 directories (including the workspace root). These bounds apply to
+input provisioning, independently of the existing 10,000-entry output export cap.

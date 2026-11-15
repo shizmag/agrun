@@ -1,0 +1,13 @@
+## Verification gates
+- [x] Verify clean S1 ancestry and baseline regression.
+- [x] Review supervisor protocol and adversarial test oracles independently.
+- [x] Demonstrate writer termination and stable export on Docker Desktop.
+- [x] Preserve safe metadata and reject unsafe/incomplete outputs.
+- [x] Demonstrate one deadline and bounded emergency cleanup.
+- [ ] Complete installed subagent, host-listener, redirect and auxiliary negatives.
+- [x] Execute complete single/fixed/DSL offline fixture workflows.
+- [x] Capture immutable submissions, audited-v2 grades and independent regrades.
+- [x] Record mutation outcomes, including survived mutations.
+- [x] Run regressions, opt-in suites and strict OpenSpec validation.
+- [ ] Commit implementation, then freeze exact environment only if all gates pass.
+- [ ] Commit evidence and report exact remaining limitations without push or merge.

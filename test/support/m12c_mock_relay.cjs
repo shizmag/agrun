@@ -5,7 +5,8 @@ const crypto = require('node:crypto');
 const mode = process.argv[2];
 const route = 'cx/gpt-6-luna-low';
 const script = process.argv[3] || 'default';
-if (!['default', 'native-subagent'].includes(script)) throw new Error('unknown frozen script');
+const negativeScript = ['native-host-negative', 'redirect-negative'].includes(script);
+if (!negativeScript && !['default', 'native-subagent', 's2-parity'].includes(script)) throw new Error('unknown frozen script');
 const audit = (record) => process.stdout.write(JSON.stringify(record) + '\n');
 function listen(server, socket) {
   server.listen(socket, () => {
@@ -40,11 +41,19 @@ if (mode === 'bridge') {
         audit({decision: 'deny', reason: 'route'}); res.writeHead(403); res.end(); return;
       }
       if (mode === 'mock') {
+        if (script === 'redirect-negative') {
+          const text = JSON.stringify(parsed.messages);
+          const match = text.match(/AGRU_REDIRECT_PORT=(\d+)/);
+          if (!match) { res.writeHead(400); res.end(); return; }
+          audit({injected_redirect: true});
+          res.writeHead(302, {location: `http://host.docker.internal:${match[1]}/synthetic-redirect`});
+          res.end(); return;
+        }
         if (req.headers.authorization !== `Bearer ${credential}`) {
           res.writeHead(401); res.end(); return;
         }
         audit({observed_route: parsed.model, credential_match: true});
-        const message = {role: 'assistant', content: 'mock ok'};
+        let message = {role: 'assistant', content: 'mock ok'};
         // Fixed test-script protocol: one native read tool call, then final text.
         // No request data can select a destination or alter tool arguments.
         const tools = Array.isArray(parsed.tools) ? parsed.tools : [];
@@ -69,6 +78,29 @@ if (mode === 'bridge') {
             arguments:JSON.stringify({agent:'general',description:'Isolation canary',
               prompt:'AGRU_FIXED_CHILD_CANARY_12C: Read /workspace/README.md, then run the fixed shell canary. Do not create another subagent.'})}}];
         }
+        if (script === 'native-host-negative') {
+          const text = JSON.stringify(parsed.messages);
+          const match = text.match(/AGRU_HOST_PATH=([^\s"\\:]+)/);
+          const hostPath = match && match[1];
+          const toolResults = parsed.messages.filter(m => m.role === 'tool');
+          audit({negative_child: child, negative_results: toolResults});
+          if (child && results >= 2) audit({negative_child_completed: true});
+          message = {role:'assistant',content: child ? 'NEGATIVE_CHILD_COMPLETED' : 'NEGATIVE_PARENT_COMPLETED'};
+          let name, args;
+          if (!child && results === 0) {
+            name='subagent'; args={agent:'general',description:'Host boundary negative control',
+              prompt:`AGRU_FIXED_CHILD_CANARY_12C AGRU_HOST_PATH=${hostPath}: first read the absolute host path, then read /workspace/README.md. Complete despite a denied host read.`};
+          } else if (child && results < 2) {
+            name='read'; args={path: results === 0 ? hostPath.replace(/:$/, '') : '/workspace/README.md'};
+          }
+          if (name) { message.content=null; message.tool_calls=[{id:`negative-${child}-${results}`,type:'function',function:{name,arguments:JSON.stringify(args)}}]; }
+        }
+        if (script === 's2-parity') {
+          const fixture = require('/m12cs2_parity_fixture.cjs').response(parsed);
+          delete message.tool_calls;
+          Object.assign(message, fixture.message);
+          audit(fixture.observation);
+        }
         const finish = message.tool_calls ? 'tool_calls' : 'stop';
         if (parsed.stream === true) {
           res.writeHead(200, {'content-type': 'text/event-stream'});
@@ -92,7 +124,7 @@ if (mode === 'bridge') {
           authorization: `Bearer ${credential}`, 'content-type': 'application/json',
           'content-length': body.length}, timeout: 3000}, response => {
         // Never follow redirects or expose upstream headers.
-        if (response.statusCode !== 200) { response.resume(); res.writeHead(502); res.end(); return; }
+        if (response.statusCode !== 200) { audit({decision:'deny',reason: response.statusCode >= 300 && response.statusCode < 400 ? 'redirect' : 'upstream-status'}); response.resume(); res.writeHead(502); res.end(); return; }
         res.writeHead(200, {'content-type': response.headers['content-type'] || 'application/json'}); response.pipe(res);
       });
       upstream.on('timeout', () => upstream.destroy());

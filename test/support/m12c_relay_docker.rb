@@ -8,7 +8,8 @@ class M12cRelayDocker
   attr_reader :relay_volume, :image
 
   def initialize(script: "default")
-    raise ArgumentError, "unknown frozen mock script" unless ["default", "native-subagent"].include?(script)
+    negative_script = ["native-host-negative", "redirect-negative"].include?(script)
+    raise ArgumentError, "unknown frozen mock script" unless negative_script || ["default", "native-subagent", "s2-parity"].include?(script)
     @script = script
     @image = IMAGE
     @prefix = "agru-mock-#{SecureRandom.hex(8)}"
@@ -110,6 +111,10 @@ class M12cRelayDocker
     @containers << name
     mounts = volumes.flat_map { |v| ["-v", v] }
     asset = File.expand_path("m12c_mock_relay.cjs", __dir__)
+    if @script == "s2-parity"
+      fixture = File.expand_path("m12cs2_parity_fixture.cjs", __dir__)
+      mounts += ["-v", "#{fixture}:/m12cs2_parity_fixture.cjs:ro"]
+    end
     command(*(base + ["-d", "--user=65534:65534", "--name", name] + mounts +
       ["-v", "#{asset}:/helper.cjs:ro", "-v", "#{@root}:/secret:ro", @image, "node", "/helper.cjs", role, @script]))
     100.times do

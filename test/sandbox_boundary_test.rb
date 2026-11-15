@@ -72,13 +72,14 @@ class SandboxBoundaryTest < Minitest::Test
       File.write(canary, marker)
       assert_equal marker, File.read(canary) # Positive host calibration.
       boundary = AgentRuntime::Execution::SandboxRunner.new(image: ENV.fetch("AGRU_SANDBOX_TEST_IMAGE"), limits: LIMITS)
-      script = 'test ! -r "$1" && test ! -r ../canary && test ! -S /var/run/docker.sock && printf built > result.txt'
+      script = 'test ! -r "$1" && test ! -r ../canary && test ! -S /var/run/docker.sock && printf built > result.txt && printf shell-probe-complete'
       result = boundary.call(argv: ["/bin/sh", "-c", script, "control", canary], workspace: workspace, timeout: 20)
-      assert_equal "blocked", result["status"], result.inspect
+      assert_equal "success", result["status"], result.inspect
       assert result["cleanup"]["confirmed"]
       assert_equal "none", result.dig("container_inspect", "HostConfig", "NetworkMode")
-      assert_match(/writer_quiescence_unsupported/, result["error"])
-      refute result.key?("export")
+      assert_equal 0, result["exit_code"], result.inspect
+      assert_includes result["stdout"], "shell-probe-complete"
+      assert File.directory?(result.fetch("export").fetch("path"))
       refute_includes result["stdout"], marker
       refute File.exist?(File.join(workspace, "result.txt"))
     ensure
@@ -167,9 +168,11 @@ class SandboxBoundaryTest < Minitest::Test
       client.close
       previous = ENV["AGRU_SYNTHETIC_HOST_SECRET"]
       ENV["AGRU_SYNTHETIC_HOST_SECRET"] = marker
-      script = 'test -z "$AGRU_SYNTHETIC_HOST_SECRET" || exit 31; for p do test ! -e "$p" || exit 32; done; test ! -S /var/run/docker.sock; test ! -S /run/host-services/ssh-auth.sock'
+      script = 'test -z "$AGRU_SYNTHETIC_HOST_SECRET" || exit 31; for p do test ! -e "$p" || exit 32; done; test ! -S /var/run/docker.sock || exit 33; test ! -S /run/host-services/ssh-auth.sock || exit 34; printf layout-probe-complete'
       result = boundary.call(argv: ["/bin/sh", "-c", script, "control", *paths, socket_path], workspace: workspace, timeout: 10)
-      assert_equal "blocked", result["status"], result.inspect
+      assert_equal "success", result["status"], result.inspect
+      assert_equal 0, result["exit_code"], result.inspect
+      assert_includes result["stdout"], "layout-probe-complete"
       refute_includes result["stdout"], marker
       assert result["cleanup"]["confirmed"]
     ensure
@@ -189,11 +192,13 @@ class SandboxBoundaryTest < Minitest::Test
       marker = SecureRandom.hex(24)
       File.write(canary, marker)
       assert_equal marker, File.read(canary)
-      code = "import pathlib,sys\nassert pathlib.Path('/workspace').is_dir()\nfor p in sys.argv[1:]:\n try:\n  pathlib.Path(p).read_bytes()\n except (FileNotFoundError,PermissionError):\n  continue\n raise SystemExit('host canary readable')\npathlib.Path('python-result').write_text('ok')"
+      code = "import pathlib,sys\nassert pathlib.Path('/workspace').is_dir()\nfor p in sys.argv[1:]:\n try:\n  pathlib.Path(p).read_bytes()\n except (FileNotFoundError,PermissionError):\n  continue\n raise SystemExit('host canary readable')\npathlib.Path('python-result').write_text('ok')\nprint('python-probe-complete')"
       reviewed_env = {"HOME" => "/tmp/agru-home", "XDG_CONFIG_HOME" => "/tmp/agru-home/config", "XDG_DATA_HOME" => "/tmp/agru-home/data", "XDG_CACHE_HOME" => "/tmp/agru-home/cache", "XDG_STATE_HOME" => "/tmp/agru-home/state"}
       result = boundary.call(argv: ["/bin/sh", "-c", 'exec python3 -c "$1" "$2" "$3"', "control", code, canary, "../canary"], workspace: workspace, timeout: 10, env: reviewed_env)
-      assert_equal "blocked", result["status"], result.inspect
-      refute result.key?("export")
+      assert_equal "success", result["status"], result.inspect
+      assert_equal 0, result["exit_code"], result.inspect
+      assert_includes result["stdout"], "python-probe-complete"
+      assert_equal "ok", File.read(File.join(result.fetch("export").fetch("path"), "python-result"))
     ensure
       release_export(result) if result
     end
@@ -228,8 +233,12 @@ class SandboxBoundaryTest < Minitest::Test
   def test_descriptor_copy_limits_and_cancellation_fail_before_docker
     in_tmp do |workspace|
       File.write(File.join(workspace, "large"), "x" * 128)
+      calls = []
       fake = Object.new
-      fake.define_singleton_method(:call) { |**| raise "docker must not execute" }
+      fake.define_singleton_method(:call) do |**args|
+        calls << args
+        raise "docker must not execute"
+      end
       boundary = AgentRuntime::Execution::SandboxRunner.new(image: IMAGE, limits: LIMITS.merge("workspace_bytes" => 16), process_runner: fake)
       result = boundary.call(argv: ["/bin/true"], workspace: workspace, timeout: 1)
       assert_equal "failure", result["status"]
@@ -237,7 +246,9 @@ class SandboxBoundaryTest < Minitest::Test
       cancellation = Object.new
       cancellation.define_singleton_method(:cancelled?) { true }
       result = runner(process_runner: fake).call(argv: ["/bin/true"], workspace: workspace, timeout: 1, cancellation: cancellation)
-      assert_match(/workspace copy cancelled/, result["error"])
+      assert_equal "cancelled", result["status"], result.inspect
+      assert_match(/sandbox cancelled during supervisor snapshot/, result["error"])
+      assert_empty calls
     end
   end
 

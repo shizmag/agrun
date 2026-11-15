@@ -1,5 +1,6 @@
 require_relative "test_helper"
 require_relative "../lib/agent_runtime/adapters/sandbox_open_code_cli"
+require_relative "../lib/agent_runtime/adapters/open_code_cli"
 
 class M12cSandboxOpenCodeTest < Minitest::Test
   class Boundary
@@ -60,6 +61,29 @@ class M12cSandboxOpenCodeTest < Minitest::Test
       assert_equal workspace, partial.logs.dig("partial_export", "path")
       assert_equal false, partial.logs.dig("execution", "completion", "accounting_complete")
       refute_nil partial.usage
+    end
+  end
+
+  def test_blocked_sandbox_never_falls_back_to_host_execution
+    in_tmp do |workspace|
+      boundary = Boundary.new(status: "blocked")
+      adapter = AgentRuntime::Adapters::SandboxOpenCodeCLI.new(runner: boundary, launch: launch)
+      request = AgentRuntime::Request.new(inputs: {"repository" => workspace}, workspace: workspace,
+        config: {"prompt" => "write candidate"}, timeout: 10)
+      host_calls = 0
+      host_adapter = Object.new
+      host_adapter.define_singleton_method(:execute) do |_|
+        host_calls += 1
+        nil
+      end
+      AgentRuntime::Adapters::OpenCodeCLI.stub(:new, ->(*) { host_adapter }) do
+        result = adapter.execute(request)
+        assert_equal 0, host_calls, "blocked sandbox must not invoke host execution"
+        assert_equal "blocked", result.status
+        assert_empty result.outputs
+      end
+      assert_equal 0, host_calls
+      assert_equal 1, boundary.calls.length
     end
   end
 end
