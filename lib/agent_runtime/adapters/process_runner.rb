@@ -4,6 +4,7 @@ module AgentRuntime
     # ensure cancellation reaches ordinary subprocess descendants as well.
     class ProcessRunner
       CAPTURE_LIMIT = 1_048_576
+      CLEANUP_TIMEOUT = 0.5
 
       def call(argv:, cwd:, timeout:, cancellation: nil, env: {})
         started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
@@ -11,6 +12,8 @@ module AgentRuntime
         stdout_truncated = false
         stderr_truncated = false
         killed = false
+        completed = false
+        cleanup = {"errors" => [], "reaped" => false}
         raise ArgumentError, "argv must be a nonempty array of strings" unless argv.is_a?(Array) && !argv.empty? && argv.all? { |arg| arg.is_a?(String) && !arg.include?("\0") } && !argv.first.empty?
         limit = Float(timeout || 300)
         raise ArgumentError, "timeout must be positive and finite" unless limit.positive? && limit.finite?
@@ -65,25 +68,56 @@ module AgentRuntime
           break if status && readers.empty?
           sleep(0.01) if readers.empty?
         end
-        result(forced || (status.success? ? "success" : "failure"), buffers[out_r], buffers[err_r], status.exitstatus, started, truncated, stdout_truncated, stderr_truncated)
+        completed = true
+        response = result(forced || (status.success? ? "success" : "failure"), buffers[out_r], buffers[err_r], status.exitstatus, started, truncated, stdout_truncated, stderr_truncated)
       rescue SystemCallError => error
-        result("failure", "", error.message, nil, started, truncated, stdout_truncated, stderr_truncated)
+        response = result("failure", "", error.message, nil, started, truncated, stdout_truncated, stderr_truncated)
       ensure
-        [out_r, out_w, err_r, err_w].compact.each { |io| io.close unless io.closed? }
-        if pid
-          begin
-            # Reap an already-exited leader before signaling: Darwin can report
-            # EPERM for a group containing only its unreaped zombie leader.
-            waited = Process.waitpid2(pid, Process::WNOHANG) unless status
-            status = waited.last if waited
-            signal_group("KILL", pid) if !killed && (forced || !status)
-          ensure
+        interrupted = $!
+        Thread.handle_interrupt(Exception => :never) do
+          if pid
+            # Reaping the leader does not establish completion: descendants
+            # may still own inherited pipes in the same process group.
             begin
-              Process.waitpid(pid) unless status
+              waited = Process.waitpid2(pid, Process::WNOHANG) unless status
+              status = waited.last if waited
             rescue Errno::ECHILD
-              nil
+              cleanup["reaped"] = true
             end
+            unless completed || killed
+              begin
+                signal_group("KILL", pid)
+              rescue SystemCallError => error
+                cleanup["errors"] << {"operation" => "kill", "class" => error.class.name, "message" => error.message}
+              end
+            end
+            deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + CLEANUP_TIMEOUT
+            until status || cleanup["reaped"]
+              begin
+                waited = Process.waitpid2(pid, Process::WNOHANG)
+                status = waited.last if waited
+              rescue Errno::ECHILD
+                cleanup["reaped"] = true
+              end
+              break if status || cleanup["reaped"]
+              if Process.clock_gettime(Process::CLOCK_MONOTONIC) >= deadline
+                cleanup["errors"] << {"operation" => "reap", "message" => "cleanup deadline exceeded"}
+                break
+              end
+              sleep(0.01)
+            end
+            cleanup["reaped"] ||= !status.nil?
           end
+        rescue SystemCallError => error
+          cleanup["errors"] << {"operation" => "reap", "class" => error.class.name, "message" => error.message}
+        ensure
+          [out_r, out_w, err_r, err_w].compact.each do |io|
+            io.close unless io.closed?
+          rescue IOError, SystemCallError => error
+            cleanup["errors"] << {"operation" => "close", "class" => error.class.name, "message" => error.message}
+          end
+          response["cleanup"] = cleanup if response
+          interrupted&.instance_variable_set(:@process_cleanup, cleanup)
         end
       end
 
