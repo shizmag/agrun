@@ -13,6 +13,7 @@ https.createServer({key: fs.readFileSync('/secret/key.pem'), cert: fs.readFileSy
       res.write('data: '+JSON.stringify({id:'offline-simulator',object:'chat.completion.chunk',
         model:'simulated-not-attested',choices:[{index:0,delta,finish_reason}]})+'\n\n');
     }
+    res.write('data: '+JSON.stringify({choices:[],usage:{prompt_tokens:12,completion_tokens:3,total_tokens:15}})+'\n\n');
     res.end('data: [DONE]\n\n');
   });
 }).listen(9443,'127.0.0.1', () => {
