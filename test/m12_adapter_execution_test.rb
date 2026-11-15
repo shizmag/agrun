@@ -5,6 +5,26 @@ require "digest"
 class M12AdapterExecutionTest < Minitest::Test
   FIXTURE = File.expand_path("fixtures/m12_fake_opencode.rb", __dir__)
 
+  def test_frozen_provider_route_reaches_actual_process_boundary
+    in_tmp do |root|
+      runner = AgentRuntime::Adapters::ProcessRunner.new
+      captured = []
+      wrapper = Object.new
+      wrapper.define_singleton_method(:call) do |**arguments|
+        captured << arguments.fetch(:argv).dup
+        runner.call(**arguments)
+      end
+      adapter = AgentRuntime::Adapters::OpenCodeCLI.new(runner: wrapper, executable: FIXTURE,
+        fixture_sha256: Digest::SHA256.file(FIXTURE).hexdigest)
+      store = AgentRuntime::Store.new(File.join(root, "store"))
+      report = AgentRuntime::Runtime.new(store: store, executors: {local: adapter}).run(program("success"))
+      assert_equal "success", report.fetch("status")
+      assert_equal 1, captured.size
+      argv = captured.first
+      assert_equal "fixture/deterministic", argv.fetch(argv.index("--model") + 1)
+    end
+  end
+
   def profile
     {"id" => "offline", "provider" => "fixture", "model" => "deterministic",
      "execution_kind" => "offline_fixture", "tool_policy" => {}}
