@@ -117,11 +117,28 @@ module AgentRuntime
         safe_preflight = preflight.slice("status", "allowed", "reason", "deadline", "executable_sha256", "executable_identity", "failure_reason")
           .select { |_, value| value.nil? || value == true || value == false || value.is_a?(String) || (value.is_a?(Numeric) && value.finite?) }
         mismatches = observed.filter_map { |field, value| field if value && requested[field] && value != requested[field] }
-        {"identity" => {"requested" => requested,
+        observations = steps.filter_map do |event|
+          identity = {"provider" => event.dig("part", "providerID"), "model" => event.dig("part", "modelID"), "route" => event.dig("part", "route")}
+            .select { |_, value| value.is_a?(String) && !value.empty? }
+          identity unless identity.empty?
+        end.uniq
+        {"model_identity_evidence" => {
+           "requested" => {"status" => (requested.values.any? { |value| !value.nil? }) ? "configured" : "unknown",
+                           "source" => "model_profile", "identity" => requested},
+           "cli_observed" => {"status" => observations.empty? ? "unknown" : "observed",
+                              "source" => "native_root_step", "observations" => observations},
+           "gateway_resolved" => {"status" => "unknown", "source" => "unavailable", "identity" => nil},
+           "served_attested" => {"status" => "unknown", "source" => "unavailable", "identity" => nil}
+         },
+         "counts" => {"root_step_observations" => steps.size,
+                      "tool_event_observations" => events.count { |event| event["type"] == "tool_use" }},
+         "identity" => {"requested" => requested,
                         "observed" => observed, "observation_basis" => "native_root_step", "verification" => "unknown",
                         "discrepancy" => mismatches.empty? ? "unknown" : "observed_requested_mismatch", "mismatched_fields" => mismatches},
          "preflight" => safe_preflight,
          "accounting_coverage" => {"complete" => false, "root_steps" => steps.empty? ? "unknown" : "partial",
+                                   "usage_scope" => "solver_only", "grader_overhead" => "unknown",
+                                   "grader_overhead_source" => "unavailable_in_execution_evidence",
                                    "provider_requests" => "unknown", "provider_retries" => "unknown",
                                    "auxiliary_usage" => "unknown", "title_usage" => "unknown", "compaction_usage" => "unknown", "child_usage" => "unknown",
                                    "provider_charges" => "unknown", "reported_cost_basis" => "native_step_observations", "billing_status" => "not_provider_billing"}}

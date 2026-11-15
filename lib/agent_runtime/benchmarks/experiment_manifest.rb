@@ -69,7 +69,7 @@ module AgentRuntime
         raise ArgumentError, "limits must be positive finite numbers" unless limits.is_a?(Hash) && !limits.empty? && limits.values.all? { |limit| limit.is_a?(Numeric) && limit.finite? && limit.positive? }
         raise ArgumentError, "execution_mode must be offline or live" unless %w[offline live].include?(value["execution_mode"])
         if value["execution_mode"] == "live"
-          raise ArgumentError, "live pilot requires retrying and single-agent" unless benchmark["name"] == "nl2repo" && benchmark["task_ids"] == ["retrying"] && value["solver_ids"] == ["single-agent"]
+          raise ArgumentError, "live pilot requires retrying and one reviewed architecture" unless benchmark["name"] == "nl2repo" && benchmark["task_ids"] == ["retrying"] && value["solver_ids"].length == 1 && %w[single-agent fixed-workflow dsl].include?(value["solver_ids"].first)
           raise ArgumentError, "live pilot requires one explicit real-provider model" unless models.length == 1 && models.first.dig("model_profile", "execution_kind") == "real_provider"
           raise ArgumentError, "live execution requires a finite timeout and sequential cells" unless limits["timeout"] && limits.fetch("max_parallelism", 1) == 1
         end

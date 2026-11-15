@@ -120,6 +120,12 @@ module AgentRuntime
       end
 
       class DSL
+        def live_authorized?(authorization)
+          !@executors.empty? && @executors.values.all? { |adapter| adapter.respond_to?(:live_authorized?) && adapter.live_authorized?(authorization) }
+        end
+
+        def compiled_program = AgentRuntime.compile(@program)
+
         def offline_fixture?
           !@executors.empty? && @executors.values.all? do |adapter|
             adapter.instance_of?(AgentRuntime::Adapters::OpenCodeCLI) && adapter.respond_to?(:offline_fixture?) && adapter.offline_fixture?
@@ -142,7 +148,7 @@ module AgentRuntime
         end
 
         def solve(task:, model:, budget:, workspace:)
-          ir = AgentRuntime.compile(@program)
+          ir = compiled_program
           # Runtime adapters enforce live gating too. Never silently enable live
           # calls merely because the benchmark selected a DSL program.
           executors = ir.fetch("executors", {})
@@ -163,13 +169,22 @@ module AgentRuntime
             next unless executors.fetch(step.fetch("executor"))["adapter"] == "opencode"
             step["config"] ||= {}
             step["config"]["live"] = @live
+            step["config"]["prompt"] = Solvers.task_instruction(task)
+            step["config"]["preserve_partial_outputs"] = true
             step["config"]["model"] = model if model
             step["config"]["model_profile"] = budget["model_profile"] if budget.key?("model_profile")
           end
           report = Runtime.new(store: @store, executors: @executors).run(ir, inputs: {"repository" => Solvers.task_repository(task, workspace)}, workspace: workspace)
           artifact = report.fetch("outputs", {})["repository"]
+          unless artifact
+            report.fetch("steps", {}).values.reverse_each do |step|
+              artifact = step.fetch("attempts", []).last&.dig("partial_outputs", "repository")
+              break if artifact
+            end
+          end
           observed_models = report.fetch("steps", {}).values.flat_map { |step| step.fetch("attempts", []).map { |attempt| attempt["model"] } }.compact.uniq
           result = {"status" => report.fetch("status"), "repository" => artifact && @store.value(artifact),
+                    "partial_repository_artifact" => (artifact unless report["status"] == "success"),
                     "model" => ((observed_models.size == 1) ? observed_models.first : nil), "observed_models" => observed_models, "requested_model" => model, "runtime_run_id" => report["run_id"],
                     "ir_digest" => report["ir_digest"], "usage" => nil, "cost" => nil}
           if budget.key?("model_profile")
@@ -183,3 +198,5 @@ module AgentRuntime
     end
   end
 end
+
+require_relative "comparative_solvers"

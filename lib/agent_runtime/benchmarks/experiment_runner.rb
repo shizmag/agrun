@@ -82,9 +82,11 @@ module AgentRuntime
         raise ArgumentError, "live pilot requires audited-v2" unless adapter.instance_of?(Adapters::NL2Repo) && adapter.audited_scoring?
         model = config.fetch("models").first
         profile = model.fetch("model_profile")
-        solver = @solvers.fetch("single-agent")
-        raise ArgumentError, "live pilot requires authorized OpenCode solver" unless solver.instance_of?(Solvers::OpenCode) && solver.respond_to?(:live_authorized?) && solver.live_authorized?(authorization)
-        scope = {"experiment_digest" => manifest.digest, "task" => "retrying", "solver" => "single-agent",
+        solver_id = config.fetch("solver_ids").first
+        solver = @solvers.fetch(solver_id)
+        expected_class = {"single-agent" => Solvers::OpenCode, "fixed-workflow" => Solvers::FixedWorkflow, "dsl" => Solvers::ComparativeDSL}.fetch(solver_id)
+        raise ArgumentError, "live pilot requires authorized OpenCode solver" unless solver.instance_of?(expected_class) && solver.respond_to?(:live_authorized?) && solver.live_authorized?(authorization)
+        scope = {"experiment_digest" => manifest.digest, "task" => "retrying", "solver" => solver_id,
                  "provider" => profile.fetch("provider"), "model" => profile.fetch("model"),
                  "endpoint" => profile.fetch("tool_policy").fetch("endpoint"),
                  "route" => profile.fetch("tool_policy").fetch("route"), "mode" => "live"}
