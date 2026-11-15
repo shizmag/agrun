@@ -16,6 +16,36 @@ M0.1 process results additionally expose Boolean `stdout_truncated` and
 `stderr_truncated`; truncated protocol output cannot establish adapter/evaluator
 success. Timeout and cancellation take precedence over protocol events.
 
+### M1.2a additive execution evidence
+
+`Result` and the DSL are unchanged. OpenCode launches now require an explicitly
+registered absolute local fixture executable and matching constructor
+`fixture_sha256`; `live` alone is insufficient. Real-provider profiles are denied
+in this milestone, even when credentials exist. This is a trusted local fixture
+guard, not a network sandbox or protection against hostile filesystem races.
+
+Explicit `config['model_profile']` selects the audited protocol path and requires
+`budget_policy` (positive wall_seconds, max_attempts, max_concurrent_sessions).
+Host-injected `budget`, `scopes` and `authorization` coordinate process-local
+admission; required unsupported hard token/request/tool/cost limits reject before
+launch. A runtime evidence block persists admission before spawning. Normal
+`execute(request)` callers remain supported. `timeout_cleanup_grace` optionally
+extends the emergency outer watchdog; primary ProcessRunner deadlines remain
+unchanged and cleanup/scheduling can overshoot them.
+
+`logs['execution']` schema `m12a-execution-v1` is saved in an immutable artifact;
+attempt `execution` is a compact index with its evidence reference. Raw evidence
+is explicitly redacted at persistence boundaries; native numeric token buckets
+remain reconstructable. Unknown native events are retained. Root-step identity
+is attempt-scoped observation identity, not a proven provider request ID. Native
+step_finish is not a session-terminal event; session_reported_complete remains
+unknown and invocation accounting completeness remains false. Opaque CLI costs
+are not provider charges. Reproducible estimates require pinned verified pricing.
+
+ProcessRunner results add `cleanup` metadata with reaping and observed errors.
+Immutable artifact reconstruction, not copied attempt usage, is the accounting
+authority. Independent benchmark grading remains separate from solver telemetry.
+
 ## Language/runtime
 
 `AgentRuntime.compile(path)` => IR Hash; `Compiler.validate!(ir)` => ir. `IR.dump(ir)` canonical JSON; `IR.digest(ir)` SHA256.

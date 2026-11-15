@@ -7,7 +7,9 @@ require_relative "submission"
 require_relative "fixture_adapter"
 require_relative "fixture_solvers"
 require_relative "repository_solver"
+require_relative "solvers"
 require_relative "adapters/nl2repo"
+require_relative "../execution/summary"
 
 module AgentRuntime
   module Benchmarks
@@ -71,7 +73,12 @@ module AgentRuntime
         if adapter.instance_of?(FixtureAdapter)
           raise ArgumentError, "offline experiments require built-in fixture solvers" unless config.fetch("solver_ids").all? { |id| FixtureSolvers::CATEGORIES.include?(id) && @solvers[id].instance_of?(FixtureSolvers::Solver) }
         elsif adapter.instance_of?(Adapters::NL2Repo)
-          raise ArgumentError, "NL2Repo offline experiments require the built-in repository-submission solver" unless config.fetch("solver_ids").all? { |id| id == "repository-submission" && @solvers[id].instance_of?(RepositorySolver) }
+          raise ArgumentError, "NL2Repo offline experiments require repository submission or registered pinned fixture execution" unless config.fetch("solver_ids").all? do |id|
+            solver = @solvers[id]
+            (id == "repository-submission" && solver.instance_of?(RepositorySolver)) ||
+              (solver.instance_of?(Solvers::OpenCode) && solver.offline_fixture? &&
+                config.fetch("models").all? { |model| model.dig("model_profile", "execution_kind") == "offline_fixture" })
+          end
         else
           raise ArgumentError, "offline experiments require the built-in fixture adapter or NL2Repo adapter"
         end
@@ -119,13 +126,22 @@ module AgentRuntime
         config = report.fetch("manifest")
         started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         begin
-          result = @solvers.fetch(cell.fetch("solver_id")).solve(task: task, model: cell["model"], budget: config.fetch("limits"), workspace: workspace)
+          budget = JSON.parse(JSON.generate(config.fetch("limits")))
+          model_entry = config.fetch("models").find { |entry| entry.fetch("id") == cell.fetch("model_id") }
+          budget["model_profile"] = model_entry.fetch("model_profile") if model_entry&.key?("model_profile")
+          solver = @solvers.fetch(cell.fetch("solver_id"))
+          solver.bind_store(@store) if solver.respond_to?(:bind_store)
+          result = solver.solve(task: task, model: cell["model"], budget: budget, workspace: workspace)
         ensure
           cell["agent_duration"] = Process.clock_gettime(Process::CLOCK_MONOTONIC) - started
         end
         cell["solver_status"] = result["status"]
         cell["usage"], cell["cost"] = result["usage"], result["cost"]
         cell["actual_model"] = result["model"]
+        if result["execution"]
+          cell["execution"] = Execution::Summary.from_run(store: @store, run_id: result.fetch("execution").fetch("run_id"))
+          cell["usage"], cell["cost"] = cell["execution"].values_at("usage", "cost")
+        end
         unless result["status"] == "success"
           cell["error"] = result["error"]
           status = %w[timeout cancelled].include?(result["status"]) ? result["status"] : "error"

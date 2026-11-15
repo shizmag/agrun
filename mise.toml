@@ -57,3 +57,18 @@ run = "bundle exec ruby script/m11_acceptance.rb"
 [tasks.verify]
 description = "All offline regressions, acceptance, conformance, lint and specification checks"
 run = ["mise run test", "mise run lint", "mise run smoke", "mise run acceptance", "mise run conformance", "openspec validate m11-benchmark-infrastructure --strict"]
+[tasks.m12-acceptance]
+description = "Run persisted M1.2a offline execution fixture acceptance (no providers)"
+run = "bundle exec ruby script/m12_execution_acceptance.rb"
+
+[tasks.m12-test]
+description = "Run M1.2a offline execution, usage, budget and lifecycle contracts"
+run = "bundle exec ruby -Itest -e 'Dir[\"test/execution/**/*_test.rb\", \"test/m12*_test.rb\"].sort.each { |file| require_relative file }'"
+
+[tasks.m12-mutations]
+description = "Run isolated offline execution mutations (no provider calls)"
+run = "bundle exec ruby script/m12_mutations.rb"
+
+[tasks.m12-audited-acceptance]
+description = "Explicit local pinned audited grading of an offline fake OpenCode solver"
+run = "bundle exec ruby script/m12_audited_acceptance.rb --allow-local-grading"

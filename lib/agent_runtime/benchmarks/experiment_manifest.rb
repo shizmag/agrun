@@ -33,6 +33,13 @@ module AgentRuntime
       end
 
       def validate!(value)
+        if value.is_a?(Hash) && value["models"].is_a?(Array)
+          value["models"].each do |model|
+            next unless model.is_a?(Hash) && model.key?("model_profile")
+            profile = model["model_profile"]
+            raise ArgumentError, "model_profile must explicitly select a model" unless profile.is_a?(Hash) && nonempty_string?(profile["model"]) && profile["model"] != "default"
+          end
+        end
         raise ArgumentError, "manifest fields do not match schema" unless value.is_a?(Hash) && value.keys.sort == FIELDS.sort
         raise ArgumentError, "unsupported manifest schema" unless value["schema_version"] == 1
         raise ArgumentError, "experiment identity required" unless nonempty_string?(value["experiment_id"])

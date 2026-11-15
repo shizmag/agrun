@@ -1,9 +1,10 @@
 require "json"
+require_relative "../execution/summary"
 
 module AgentRuntime
   module Benchmarks
     class Reports
-      COLUMNS = %w[id task_id solver_id model repetition status execution_status score verdict protocol quality_basis trust_scope reason failure_category expected collected executed passed failed skipped total usage cost error attempt_id submission grading_attempts agent_duration grading_duration].freeze
+      COLUMNS = %w[id task_id solver_id model repetition status execution_status score verdict protocol quality_basis trust_scope reason failure_category expected collected executed passed failed skipped total usage cost error attempt_id submission grading_attempts agent_duration grading_duration execution].freeze
 
       def initialize(store:)
         @store = store
@@ -12,6 +13,9 @@ module AgentRuntime
       def summary(experiment_id:)
         report = @store.report(experiment_id)
         cells = report.fetch("cells")
+        cells.each do |cell|
+          cell["execution"] = Execution::Summary.from_run(store: @store, run_id: cell.fetch("execution").fetch("run_id")) if cell["execution"]
+        end
         repetitions = report.fetch("manifest").fetch("repetitions")
         arms = cells.group_by { |cell| [cell.fetch("solver_id"), cell["model"], cell["protocol"], cell["quality_basis"]] }.map do |(solver, model, protocol, quality_basis), rows|
           tasks = rows.group_by { |row| row.fetch("task_id") }
@@ -74,6 +78,9 @@ module AgentRuntime
 
       def render(experiment_id:, format: "json")
         report = @store.report(experiment_id)
+        report.fetch("cells").each do |cell|
+          cell["execution"] = Execution::Summary.from_run(store: @store, run_id: cell.fetch("execution").fetch("run_id")) if cell["execution"]
+        end
         aggregate = summary(experiment_id: experiment_id)
         case format.to_s
         when "json"
@@ -97,6 +104,8 @@ module AgentRuntime
           aggregate.fetch("limitations").each { |limitation| lines << "- #{limitation}" }
           lines.concat(["", "## Raw cells", "", "| #{COLUMNS.join(" | ")} |", "| #{COLUMNS.map { "---" }.join(" | ")} |"])
           report.fetch("cells").each { |cell| lines << "| #{COLUMNS.map { |key| escape(cell[key].nil? ? "null" : cell[key]) }.join(" | ")} |" }
+          lines.concat(["", "## Execution evidence", ""])
+          report.fetch("cells").each { |cell| lines << "- #{escape(cell["id"])}: #{escape(JSON.generate(cell["execution"]))}" }
           lines.join("\n") + "\n"
         else
           raise ArgumentError, "unknown report format #{format}"

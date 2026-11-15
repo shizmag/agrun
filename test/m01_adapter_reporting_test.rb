@@ -115,7 +115,8 @@ class M01AdapterReportingTest < Minitest::Test
       assert_equal "observed-session", result.session_id
       assert_equal({"steps" => [{"input" => 7}, {"output" => 3}]}, result.usage)
       assert_equal 0.75, result.cost
-      assert_equal({"stdout" => stream, "stderr" => "diagnostic"}, result.logs)
+      assert_equal({"stdout" => stream, "stderr" => "diagnostic"}, result.logs.slice("stdout", "stderr"))
+      assert_equal({"errors" => [], "reaped" => true}, result.logs.fetch("cleanup"))
       absent = cli(root, "puts #{JSON.generate(FINISH).inspect}", {"model" => "requested/model"})
       [absent.model, absent.usage, absent.cost, absent.session_id].each { |value| assert_nil value }
     end
