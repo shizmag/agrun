@@ -6,8 +6,10 @@ module AgentRuntime
     class SandboxOpenCodeLaunch
       attr_reader :executable, :executable_sha256, :model
 
-      def initialize(executable:, executable_sha256:, endpoint:, model:, mock_only:, provider:, wire_model:)
-        unless mock_only == true && executable == "/usr/local/bin/opencode" &&
+      def initialize(executable:, executable_sha256:, endpoint:, model:, mock_only:, provider:, wire_model:, transport_mode: nil)
+        transport_valid = (mock_only == true && transport_mode.nil?) ||
+          (mock_only == false && transport_mode == "provider_relay" && wire_model == "cx/gpt-6-luna-low")
+        unless transport_valid && executable == "/usr/local/bin/opencode" &&
             executable_sha256.match?(/\A[0-9a-f]{64}\z/) &&
             endpoint == "http://127.0.0.1:18080/v1" && provider.match?(/\A[a-zA-Z0-9_-]+\z/) &&
             wire_model.is_a?(String) && !wire_model.empty? && model == "#{provider}/#{wire_model}"
