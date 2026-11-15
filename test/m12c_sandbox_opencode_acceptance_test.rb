@@ -47,8 +47,16 @@ class M12cSandboxOpenCodeAcceptanceTest < Minitest::Test
                 "instruction" => "Read README.md using native read, then run shell to write sandbox-positive.txt containing sandbox-positive."}
         result = solver.solve(task: task,
           model: launch.model, budget: {"timeout" => 90}, workspace: workspace)
-        assert_equal "blocked", result.fetch("status"), "#{name}: #{result.inspect}"
-        assert_nil observations.last.dig("sandbox", "export"), "unsupported writer quiescence must not publish candidate"
+        assert_equal "success", result.fetch("status"), "#{name}: #{result.inspect}"
+        sandbox = observations.last.fetch("sandbox")
+        assert_equal true, sandbox.fetch("cleanup").fetch("confirmed"), name
+        export = sandbox.fetch("export")
+        assert_match(/\A[0-9a-f]{64}\z/, export.fetch("digest"), name)
+        assert_equal Digest::SHA256.hexdigest(JSON.generate(export.fetch("manifest"))), export.fetch("digest"), name
+        assert_equal "public native-read canary\n", File.read(File.join(export.fetch("path"), "README.md")), name
+        assert_equal "sandbox-positive\n", File.read(File.join(export.fetch("path"), "sandbox-positive.txt")), name
+        assert_equal "public native-read canary\n", File.read(File.join(source, "README.md")), name
+        refute File.exist?(File.join(source, "sandbox-positive.txt")), name
         events = observations.last.fetch("execution").fetch("events")
         read = events.find { |event| event.dig("part", "tool") == "read" }
         assert_equal "completed", read&.dig("part", "state", "status"), name

@@ -60,11 +60,13 @@ class M12ExperimentExecutionTest < Minitest::Test
       report.fetch("cells").each do |cell|
         cell["usage"] = {"forged_usage" => 999999}
         cell["cost"] = 999999
+        cell["agent_duration"] = 0.002598999999463558
       end
       store.save_report(report)
       reports = AgentRuntime::Benchmarks::Reports.new(store: AgentRuntime::Store.new(store.root))
       json = JSON.parse(reports.render(experiment_id: "parity", format: "json"))
       assert_equal counts, json.fetch("cells").map { |cell| cell.fetch("execution").fetch("invocation_count") }
+      assert_equal [0.002598999999463558], json.fetch("cells").map { |cell| cell.fetch("agent_duration") }.uniq
       json.fetch("cells").each do |cell|
         assert_nil cell["cost"]
         assert_equal cell.dig("execution", "usage"), cell["usage"]
@@ -72,7 +74,7 @@ class M12ExperimentExecutionTest < Minitest::Test
       %w[json csv markdown].each do |format|
         output = reports.render(experiment_id: "parity", format: format)
         refute_includes output, "forged_usage"
-        refute_includes output, "999999"
+        refute_match(/(?<![\d.])999999(?![\d.])/, output)
       end
       assert_includes reports.render(experiment_id: "parity", format: "csv").lines.first, "execution"
       assert_includes reports.render(experiment_id: "parity", format: "markdown"), "## Execution evidence"

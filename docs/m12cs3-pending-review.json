@@ -1,0 +1,13 @@
+{
+  "verdict": "pending",
+  "independent": true,
+  "reviewer": "E",
+  "producer": "parent",
+  "evidence_sha256": null,
+  "scope": "installed_mock_infrastructure_only",
+  "limitations": [
+    "Native LSP classified N/A, not a paired-control pass or containment proof.",
+    "Artifact hashes and final clean candidate must be independently checked after commit.",
+    "No live-provider capability claim."
+  ]
+}

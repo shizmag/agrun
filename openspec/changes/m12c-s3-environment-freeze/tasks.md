@@ -1,0 +1,11 @@
+## Release gates
+- [x] Verify clean S2 base and create the S3 branch.
+- [x] Calibrate installed plugin positive, negative, inheritance and boundary controls.
+- [x] Resolve LSP applicability using the real protocol fixture and independently verified exact-version evidence; never promote an invalid positive to suppression PASS.
+- [x] Run installed security regression and investigate SQLite fork warnings.
+- [ ] Complete independent source/assertion review and required mutations.
+- [x] Run full regression, lint, smoke and strict specification validation.
+- [ ] Commit implementation and create a content-addressed environment freeze.
+- [ ] Validate freeze and fresh three-architecture acceptance from unchanged clean runtime.
+- [ ] Verify immutable submissions, audited grading, regrading and reconstruction.
+- [ ] Commit final evidence with clean worktree, no push, merge or paid calls.
