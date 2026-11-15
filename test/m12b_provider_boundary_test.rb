@@ -207,7 +207,33 @@ class M12bProviderBoundaryTest < Minitest::Test
     end.first.to_s
   end
 
-  def probe(mode: "observe", plugin: true, response_status: 200, title: true, cancel_after_request: false, environment_credential: false, hostile_project: false, actual_launch: false, tool_call: nil, tool_arguments: nil, model_override: nil, project_skill: false, ancestor_canaries: false)
+  public def test_external_directory_deny_blocks_absolute_host_read
+    probe(actual_launch: true, external_read_probe: true) do |result|
+      assert result[:status].success?, result[:output]
+      refute_empty result[:requests], result[:output]
+      assert_includes result[:output], "tool_use"
+      refute_includes result[:output], "HOST_CONFIDENTIAL_READ_CANARY"
+      assert result[:requests].none? { |request| request[:body].include?("HOST_CONFIDENTIAL_READ_CANARY") }
+      assert_match(/denied|reject|permission/i, result[:output])
+    end
+  end
+
+  public def test_external_host_read_positive_control
+    probe(actual_launch: true, external_read_probe: true, deny_external: false) do |result|
+      assert result[:status].success?, result[:output]
+      assert_includes result[:output], "HOST_CONFIDENTIAL_READ_CANARY"
+    end
+  end
+
+  public def test_external_directory_deny_does_not_confine_shell
+    probe(actual_launch: true, external_read_probe: true, external_tool: "shell") do |result|
+      assert result[:status].success?, result[:output]
+      assert_includes result[:output], "HOST_CONFIDENTIAL_READ_CANARY",
+        "This probe records the shell escape limitation, not sandbox enforcement"
+    end
+  end
+
+  def probe(mode: "observe", plugin: true, response_status: 200, title: true, cancel_after_request: false, environment_credential: false, hostile_project: false, actual_launch: false, tool_call: nil, tool_arguments: nil, model_override: nil, project_skill: false, ancestor_canaries: false, external_read_probe: false, deny_external: true, external_tool: "read")
     Dir.mktmpdir("agru-m12b-boundary-", ENV.fetch("TMPDIR", Dir.tmpdir)) do |root|
       workspace = File.join(root, "workspace")
       FileUtils.mkdir_p(workspace)
@@ -218,6 +244,12 @@ class M12bProviderBoundaryTest < Minitest::Test
         File.write(File.join(skill, "SKILL.md"), "---\nname: boundary-skill\ndescription: Boundary fixture\n---\nBOUNDARY_SKILL_PRIVATE_CONTENT\n")
       end
       workspace = File.realpath(workspace)
+      if external_read_probe
+        outside = File.join(root, "host-confidential.txt")
+        File.write(outside, "HOST_CONFIDENTIAL_READ_CANARY")
+        tool_call = external_tool
+        tool_arguments = (external_tool == "shell") ? {"command" => "cat #{outside}"} : {"path" => outside}
+      end
       server = TCPServer.new("127.0.0.1", 0)
       requests = []
       dispatched = Queue.new
@@ -332,6 +364,12 @@ class M12bProviderBoundaryTest < Minitest::Test
           path = launch_env.fetch("OPENCODE_CONFIG")
           actual_config = JSON.parse(File.read(path))
           actual_config.fetch("providers").fetch("omniroute").fetch("settings")["baseURL"] = "http://127.0.0.1:#{server.addr[1]}/v1"
+          if external_read_probe
+            # Deliberately reproduce the original permissive configuration so
+            # these controls remain independent of concurrent runtime hardening.
+            actual_config["permissions"] = [{"action" => "*", "resource" => "*", "effect" => "allow"}]
+            actual_config["permissions"] << {"action" => "external_directory", "resource" => "*", "effect" => "deny"} if deny_external
+          end
           File.write(path, JSON.generate(actual_config))
           argv = launch.argv + ["Reply BOUNDARY_OK without tools."]
           argv[argv.index("--model") + 1] = model_override if model_override
