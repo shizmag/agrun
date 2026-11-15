@@ -57,6 +57,10 @@ module AgentRuntime
       end
 
       class OpenCode
+        def live_authorized?(authorization)
+          @adapter.respond_to?(:live_authorized?) && @adapter.live_authorized?(authorization)
+        end
+
         def offline_fixture?
           @adapter.instance_of?(AgentRuntime::Adapters::OpenCodeCLI) && @adapter.respond_to?(:offline_fixture?) && @adapter.offline_fixture?
         end
@@ -86,15 +90,20 @@ module AgentRuntime
           adapter = @adapter || AgentRuntime::Adapters::OpenCodeCLI.new
           if budget.key?("model_profile")
             raise Error, "strict OpenCode solver requires shared Store" unless @store
-            config = {"live" => true, "model_profile" => budget.fetch("model_profile"), "prompt" => Solvers.task_instruction(task), "budget" => budget, "budget_policy" => Solvers.budget_policy(budget)}
+            config = {"live" => true, "model_profile" => budget.fetch("model_profile"), "prompt" => Solvers.task_instruction(task), "budget" => budget, "budget_policy" => Solvers.budget_policy(budget), "preserve_partial_outputs" => true}
+            config["experiment_id"] = budget.fetch("experiment_id") if budget.key?("experiment_id")
             ir = {"schema_version" => 1, "name" => "direct-opencode", "inputs" => {"repository" => "repository"},
                   "executors" => {"opencode" => {"adapter" => "opencode", "config" => config}},
                   "steps" => [{"id" => "solve", "executor" => "opencode", "inputs" => {"repository" => "repository"}, "outputs" => {"repository" => "repository"},
                                "needs" => [], "config" => {}, "timeout" => budget.fetch("timeout", 120), "retries" => 0}], "outputs" => {"repository" => "solve.repository"}}
             report = Runtime.new(store: @store, executors: {opencode: adapter}).run(ir, inputs: {"repository" => repository}, workspace: File.join(workspace, "runtime"))
             output = report.fetch("outputs")["repository"]
+            attempt = report.dig("steps", "solve", "attempts")&.last
+            output ||= attempt&.dig("partial_outputs", "repository") unless report["status"] == "success"
             summary = Execution::Summary.from_run(store: @store, run_id: report.fetch("run_id"))
             return {"status" => report.fetch("status"), "repository" => output && @store.value(output),
+                    "partial_repository_artifact" => (output unless report["status"] == "success"),
+                    "error" => attempt&.fetch("error", nil),
                     "requested_model" => model, "model" => nil,
                     "execution" => {"schema_version" => 1, "run_id" => report.fetch("run_id")}, "usage" => summary["usage"], "cost" => summary["cost"]}
           end
@@ -104,7 +113,7 @@ module AgentRuntime
             timeout: budget.fetch("timeout", 120), cancellation: nil)
           result = adapter.execute(request)
           outputs = result.outputs || {}
-          {"status" => result.status, "repository" => outputs["repository"] || repository,
+          {"status" => result.status, "repository" => outputs["repository"],
            "patch" => outputs["patch"], "usage" => result.usage, "cost" => result.cost,
            "model" => result.model, "requested_model" => model, "error" => result.error}
         end

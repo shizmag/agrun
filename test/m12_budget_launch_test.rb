@@ -79,8 +79,9 @@ class M12BudgetLaunchTest < Minitest::Test
         ready << true
         start.pop
       }
-      local = adapter(executable, budget, experiment, barrier: barrier)
-      threads = 2.times.map { |index| Thread.new { execute(root, local, "store-#{index}") } }
+      locals = 2.times.map { adapter(executable, budget, experiment, barrier: barrier) }
+      refute_same locals.first, locals.last
+      threads = locals.each_with_index.map { |local, index| Thread.new { execute(root, local, "store-#{index}") } }
       2.times { ready.pop }
       2.times { start << true }
       results = threads.map(&:value)

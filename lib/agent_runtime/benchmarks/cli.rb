@@ -8,6 +8,10 @@ module AgentRuntime
 
       def run(argv)
         command = argv.shift
+        if command == "live"
+          require_relative "live_cli"
+          return LiveCLI.new.run(argv)
+        end
         options = {root: ".agru", offline: true, dry_run: false, allow_download: false}
         OptionParser.new do |parser|
           parser.on("--root PATH") { |value| options[:root] = value }
@@ -49,33 +53,36 @@ module AgentRuntime
                 "limitations" => LIMITATIONS, "audited_scoring" => audited_metadata(options),
                 "controls" => (1..8).to_h { |number| [format("GR-%02d", number), {"status" => "blocked", "reason" => "native isolated validation not established"}] }})
           return 1
-        when "run", "report", "regrade", "compare"
+        when "report", "compare"
+          reports = Reports.new(store: Store.new(File.expand_path(options[:root])))
+          if command == "compare"
+            emit({"qualification" => "infrastructure-only demonstration", "experiments" => argv.map { |id| reports.summary(experiment_id: id) }})
+          else
+            case options.fetch(:format, "json")
+            when "json" then emit(reports.summary(experiment_id: argv.fetch(0)))
+            when "csv", "markdown" then puts reports.render(experiment_id: argv.fetch(0), format: options[:format])
+            else raise ArgumentError, "unsupported report format"
+            end
+          end
+        when "run", "regrade"
           store = Store.new(File.expand_path(options[:root]))
           begin
             registry = Registry.new
             registry.register("fixture", FixtureAdapter.new(store: store))
             require_relative "adapters/nl2repo"
-            registry.register("nl2repo", nl2repo_adapter(store, options))
+            live_regrade = command == "regrade" && store.report(argv.fetch(0)).dig("manifest", "execution_mode") == "live"
+            registry.register("nl2repo", nl2repo_adapter(store, options.merge(shared_dataset: live_regrade)))
             runner = ExperimentRunner.new(store: store, root: File.join(store.root, "experiments"), registry: registry,
-              solvers: FixtureSolvers::CATEGORIES.to_h { |id| [id, FixtureSolvers.build(id)] }.merge("repository-submission" => RepositorySolver.new(repository: options[:repository])))
-            reports = Reports.new(store: store)
+              solvers: live_regrade ? {} : FixtureSolvers::CATEGORIES.to_h { |id| [id, FixtureSolvers.build(id)] }.merge("repository-submission" => RepositorySolver.new(repository: options[:repository])))
             case command
             when "run"
               result = runner.run(manifest: read_manifest(argv.fetch(0)))
               emit(result.merge("id" => result.fetch("run_id")))
-            when "report"
-              case options.fetch(:format, "json")
-              when "json" then emit(reports.summary(experiment_id: argv.fetch(0)))
-              when "csv", "markdown" then puts reports.render(experiment_id: argv.fetch(0), format: options[:format])
-              else raise ArgumentError, "unsupported report format"
-              end
             when "regrade"
               validate_regrade_selection!(store, argv.fetch(0), argv.fetch(1), options)
               result = runner.regrade(experiment_id: argv.fetch(0), cell_id: argv.fetch(1))
               cell = result.fetch("cells").find { |entry| entry.fetch("id") == argv.fetch(1) }
               emit(cell)
-            when "compare"
-              emit({"qualification" => "infrastructure-only demonstration", "experiments" => argv.map { |id| reports.summary(experiment_id: id) }})
             end
           end
         else
@@ -96,7 +103,7 @@ module AgentRuntime
 
       def nl2repo_adapter(store, options)
         require_relative "adapters/nl2repo"
-        root = File.join(store.root, "nl2repo")
+        root = options[:shared_dataset] ? File.join(Adapters::NL2Repo::ROOT, ".agru", "nl2repo") : File.join(store.root, "nl2repo")
         grader = if options[:audited_scoring]
           require_relative "nl2repo_audited_grader"
           NL2RepoAuditedGrader.new(store: store, root: root)

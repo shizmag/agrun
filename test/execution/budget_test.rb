@@ -82,9 +82,10 @@ class ExecutionBudgetTest < Minitest::Test
       assert_raises(ArgumentError) { config(wall: bad) }
     end
     [0, -1, 1.5, "1", true, nil].each do |bad|
-      assert_raises(ArgumentError) { config(attempts: bad) }
+      assert_raises(ArgumentError) { config(attempts: bad) } unless bad.nil?
       assert_raises(ArgumentError) { config(sessions: bad) }
     end
+    assert_nil config(attempts: nil).to_h.fetch("max_attempts")
     assert_raises(ArgumentError) { @api::AdmissionConfig.new(wall_seconds: 1) }
   end
 

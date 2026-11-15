@@ -1,5 +1,6 @@
 require "digest"
 require "securerandom"
+require_relative "live_authorization"
 
 module AgentRuntime
   module Execution
@@ -48,9 +49,10 @@ module AgentRuntime
       end
 
       class AdmissionConfig
-        def initialize(wall_seconds:, max_attempts:, max_concurrent_sessions:, hard_limits: {}, observations: {})
-          unless wall_seconds.is_a?(Numeric) && wall_seconds.real? && wall_seconds.finite? && wall_seconds.positive? &&
-              [max_attempts, max_concurrent_sessions].all? { |value| value.is_a?(Integer) && value.positive? }
+        def initialize(wall_seconds:, max_concurrent_sessions:, max_attempts: nil, hard_limits: {}, observations: {})
+          valid_attempts = max_attempts.nil? || (max_attempts.is_a?(Integer) && max_attempts.positive?)
+          unless wall_seconds.is_a?(Numeric) && wall_seconds.real? && wall_seconds.finite? && wall_seconds.positive? && valid_attempts &&
+              max_concurrent_sessions.is_a?(Integer) && max_concurrent_sessions.positive?
             raise ArgumentError, "invalid_budget_config: limits must be positive and finite"
           end
           raise ArgumentError, "unsupported_hard_limit" unless hard_limits == {}
@@ -136,14 +138,19 @@ module AgentRuntime
           nil
         end
 
-        def admit(scopes:, profile:, request:, executable:, executable_sha256:, authorization: nil)
+        def admit(scopes:, profile:, request:, executable:, executable_sha256:, authorization: nil, authorization_scope: nil)
           validate_request!(request, profile, executable, executable_sha256)
           digest = Digest::SHA256.hexdigest(IR.dump(profile.to_h))
-          grant = authorization&.call(profile: profile, request: request,
+          live = profile.to_h.fetch("execution_kind") == "real_provider"
+          grant = live ? nil : authorization&.call(profile: profile, request: request,
             executable: executable, executable_sha256: executable_sha256)
           outcome = @mutex.synchronize do
             validate_chain!(scopes, request)
-            reserve(scopes, profile, request, executable, executable_sha256, digest, grant)
+            live_reason = nil
+            if live
+              grant, live_reason = live_grant(authorization, authorization_scope, profile, scopes)
+            end
+            reserve(scopes, profile, request, executable, executable_sha256, digest, grant, live_reason)
           end
           begin
             yield(outcome.is_a?(Lease) ? outcome.decision : outcome) if block_given?
@@ -206,16 +213,30 @@ module AgentRuntime
           end
         end
 
-        def reserve(scopes, profile, request, executable, sha, digest, grant)
+        def live_grant(authorization, scope, profile, scopes)
+          return [nil, "real_provider_disabled"] unless authorization.instance_of?(LiveAuthorization)
+          begin
+            grant = authorization.preflight!(scope: scope,
+              hard_limits: scopes.map { |item| item.config.to_h.fetch("hard_limits") }.reduce({}, :merge))
+            expected = profile.to_h.values_at("provider", "model")
+            return [nil, "authorization_mismatch"] unless scope.values_at("provider", "model") == expected
+            [grant, nil]
+          rescue ArgumentError
+            [nil, "authorization_mismatch"]
+          end
+        end
+
+        def reserve(scopes, profile, request, executable, sha, digest, grant, live_reason = nil)
           current = now
           experiment = scopes.find { |scope| scope.kind == "experiment" }
           key = [request.run_id, request.step_id, request.attempt]
-          reason = if profile.to_h.fetch("execution_kind") == "real_provider"
-            "real_provider_disabled"
+          live = profile.to_h.fetch("execution_kind") == "real_provider"
+          reason = if live_reason
+            live_reason
           elsif grant.nil?
             "authorization_required"
-          elsif !grant.is_a?(Hash) || grant.values_at("mode", "executable", "sha256", "profile_digest", "experiment_id", "run_id") !=
-              ["offline_fixture", executable, sha, digest, experiment.id, request.run_id]
+          elsif !live && (!grant.is_a?(Hash) || grant.values_at("mode", "executable", "sha256", "profile_digest", "experiment_id", "run_id") !=
+              ["offline_fixture", executable, sha, digest, experiment.id, request.run_id])
             "authorization_mismatch"
           elsif @attempts.key?(key)
             "duplicate_attempt"
@@ -233,7 +254,7 @@ module AgentRuntime
               limits = snapshot.fetch("limits")
               reason = if snapshot.fetch("remaining_wall_seconds") <= 0
                 "wall_exhausted"
-              elsif snapshot.fetch("attempts_before") >= limits.fetch("max_attempts")
+              elsif limits.fetch("max_attempts") && snapshot.fetch("attempts_before") >= limits.fetch("max_attempts")
                 "attempts_exhausted"
               elsif snapshot.fetch("active_before") >= limits.fetch("max_concurrent_sessions")
                 "concurrency_exhausted"
@@ -256,6 +277,10 @@ module AgentRuntime
           end
           auth = grant.is_a?(Hash) ? grant.slice("mode", "experiment_id", "run_id") : {}
           auth = {"mode" => "none", "experiment_id" => nil, "run_id" => nil}.merge(auth)
+          if live && grant
+            auth = grant.merge("mode" => "live", "experiment_id" => experiment.id, "run_id" => request.run_id,
+              "executable" => executable, "sha256" => sha, "profile_digest" => digest)
+          end
           decision = Decision.new({"schema_version" => 1, "decision_id" => SecureRandom.uuid,
             "allowed" => allowed, "reason" => reason || "admitted", "denied_scope" => denied_scope,
             "run_id" => request.run_id, "step_id" => request.step_id, "attempt" => request.attempt,

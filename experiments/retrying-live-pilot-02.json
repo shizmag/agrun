@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "experiment_id": "m12b-retrying-omniroute-pilot-02",
+  "benchmark": {
+    "name": "nl2repo",
+    "revision": "781a1da1ee41fb8edb0bed22f586d69111610edf",
+    "task_ids": [
+      "retrying"
+    ]
+  },
+  "solver_ids": [
+    "single-agent"
+  ],
+  "models": [
+    {
+      "id": "omniroute/cx/gpt-6-luna-low",
+      "model_profile": {
+        "provider": "omniroute",
+        "model": "cx/gpt-6-luna-low",
+        "execution_kind": "real_provider",
+        "tool_policy": {
+          "endpoint": "http://localhost:20128/v1",
+          "route": "cx/gpt-6-luna-low",
+          "model_fallback": false,
+          "executable": "/Users/vladimirkasterin/.opencode/bin/opencode",
+          "executable_sha256": "9f3147cae4ca323827d3ca39451b0d3431b2906e79a08e9b09d1eb34bb703f52"
+        },
+        "id": "omniroute-cx-gpt-6-luna-low"
+      }
+    }
+  ],
+  "repetitions": 1,
+  "limits": {
+    "timeout": 600,
+    "max_parallelism": 1,
+    "max_concurrent_sessions": 1
+  },
+  "execution_mode": "live",
+  "subset_role": "transport-validation-not-architecture-comparison"
+}

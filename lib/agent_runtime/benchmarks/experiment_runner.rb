@@ -10,6 +10,7 @@ require_relative "repository_solver"
 require_relative "solvers"
 require_relative "adapters/nl2repo"
 require_relative "../execution/summary"
+require_relative "../execution/live_authorization"
 
 module AgentRuntime
   module Benchmarks
@@ -19,11 +20,15 @@ module AgentRuntime
         @submissions = Submission.new(store: store)
       end
 
-      def run(manifest:, cancellation: nil)
+      def run(manifest:, cancellation: nil, live_authorization: nil)
         manifest = ExperimentManifest.new(manifest) unless manifest.is_a?(ExperimentManifest)
         config = manifest.data
         adapter = @registry.fetch(config.fetch("benchmark").fetch("name"))
-        validate_offline!(config, adapter)
+        if config["execution_mode"] == "live"
+          validate_live!(manifest, adapter, live_authorization)
+        else
+          validate_offline!(config, adapter)
+        end
         validate_identity!(config, adapter)
         existing = begin
           @store.report(config.fetch("experiment_id"))
@@ -58,7 +63,11 @@ module AgentRuntime
         raise ArgumentError, "unknown experiment cell #{cell_id}" unless cell
         raise ArgumentError, "cell has no submission" unless cell["submission"]
         adapter = @registry.fetch(report.fetch("manifest").fetch("benchmark").fetch("name"))
-        validate_offline!(report.fetch("manifest"), adapter)
+        if report.dig("manifest", "execution_mode") == "live"
+          raise ArgumentError, "live regrade requires audited-v2" unless adapter.instance_of?(Adapters::NL2Repo) && adapter.audited_scoring?
+        else
+          validate_offline!(report.fetch("manifest"), adapter)
+        end
         validate_identity!(report.fetch("manifest"), adapter)
         task = Adapter.public_task(adapter.load_task(cell.fetch("task_id")))
         grade(report, cell, adapter, task, limits || report.fetch("manifest").fetch("limits"), regrade: true)
@@ -66,6 +75,21 @@ module AgentRuntime
       end
 
       private
+
+      def validate_live!(manifest, adapter, authorization)
+        raise ArgumentError, "live authorization required" unless authorization.instance_of?(Execution::LiveAuthorization)
+        config = manifest.data
+        raise ArgumentError, "live pilot requires audited-v2" unless adapter.instance_of?(Adapters::NL2Repo) && adapter.audited_scoring?
+        model = config.fetch("models").first
+        profile = model.fetch("model_profile")
+        solver = @solvers.fetch("single-agent")
+        raise ArgumentError, "live pilot requires authorized OpenCode solver" unless solver.instance_of?(Solvers::OpenCode) && solver.respond_to?(:live_authorized?) && solver.live_authorized?(authorization)
+        scope = {"experiment_digest" => manifest.digest, "task" => "retrying", "solver" => "single-agent",
+                 "provider" => profile.fetch("provider"), "model" => profile.fetch("model"),
+                 "endpoint" => profile.fetch("tool_policy").fetch("endpoint"),
+                 "route" => profile.fetch("tool_policy").fetch("route"), "mode" => "live"}
+        authorization.preflight!(scope: scope)
+      end
 
       def validate_offline!(config, adapter)
         raise ArgumentError, "only offline execution is supported" unless config["execution_mode"] == "offline"
@@ -127,6 +151,10 @@ module AgentRuntime
         started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         begin
           budget = JSON.parse(JSON.generate(config.fetch("limits")))
+          budget["experiment_id"] = report.fetch("run_id")
+          if config.fetch("execution_mode") == "live"
+            budget["budget_policy"] = {"wall_seconds" => budget.fetch("timeout"), "max_attempts" => nil, "max_concurrent_sessions" => 1}
+          end
           model_entry = config.fetch("models").find { |entry| entry.fetch("id") == cell.fetch("model_id") }
           budget["model_profile"] = model_entry.fetch("model_profile") if model_entry&.key?("model_profile")
           solver = @solvers.fetch(cell.fetch("solver_id"))
@@ -144,6 +172,19 @@ module AgentRuntime
         end
         unless result["status"] == "success"
           cell["error"] = result["error"]
+          if result["repository"]
+            begin
+              cell["partial_submission"] = if result["partial_repository_artifact"]
+                artifact = @submissions.verify(result.fetch("partial_repository_artifact"))
+                raise Error, "partial repository artifact path mismatch" unless @store.value(artifact) == result.fetch("repository")
+                artifact
+              else
+                @submissions.capture(repository: result.fetch("repository"), run_id: report.fetch("run_id"), step_id: cell.fetch("id"), attempt: 1)
+              end
+            rescue => error
+              cell["partial_capture_error"] = "#{error.class}: #{error.message}"
+            end
+          end
           status = %w[timeout cancelled].include?(result["status"]) ? result["status"] : "error"
           transition(report, cell, "completed", execution_status: status)
           return

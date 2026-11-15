@@ -5,24 +5,44 @@ require_relative "../execution/event_stream"
 require_relative "../execution/usage"
 require_relative "../execution/budget"
 require_relative "../execution/redaction"
+require_relative "../execution/opencode_launch"
 require "digest"
 require "securerandom"
+require "tmpdir"
 
 module AgentRuntime
   module Adapters
     class OpenCodeCLI
       def initialize(runner: ProcessRunner.new, executable: "opencode", live: false,
-        fixture_sha256: nil, budget: nil, scopes: nil, authorization: nil)
+        fixture_sha256: nil, budget: nil, scopes: nil, authorization: nil,
+        authorization_scope: nil, launch_config: nil)
         @runner, @executable, @live = runner, executable, live
         @fixture_sha256, @budget, @scopes, @authorization = fixture_sha256, budget, scopes, authorization
+        @authorization_scope = Execution::Budget.immutable(authorization_scope) if authorization_scope
+        @launch_config = launch_config
         @scope_mutex = Mutex.new
         @local_scopes = {}
       end
 
       def timeout_cleanup_grace = 1.0
 
+      def live_authorized?(authorization)
+        @live && @authorization.instance_of?(Execution::LiveAuthorization) && @authorization.equal?(authorization) &&
+          @authorization_scope && @budget && @scopes && defined?(Execution::OpenCodeLaunch) &&
+          @launch_config.instance_of?(Execution::OpenCodeLaunch) &&
+          File.absolute_path(@executable) == @executable && File.file?(@executable) && File.executable?(@executable) &&
+          @launch_config.executable == @executable &&
+          Digest::SHA256.file(@executable).hexdigest == @launch_config.executable_sha256 &&
+          !!@authorization.preflight!(scope: @authorization_scope, hard_limits: {})
+      rescue ArgumentError, SystemCallError
+        false
+      end
+
       def execute(request)
         config = request.config || {}
+        if config.dig("model_profile", "execution_kind") == "real_provider"
+          return execute_observed(request) { |decision| yield decision if block_given? }
+        end
         unless fixture_valid?
           decision = {"admitted" => false, "reason" => "offline_fixture_identity_required"}
           yield decision if block_given?
@@ -71,12 +91,26 @@ module AgentRuntime
       end
 
       def execute_observed(request)
+        request = request.dup
+        request.config = Execution::Budget.immutable(JSON.parse(JSON.generate(request.config)))
+        request.inputs = Execution::Budget.immutable(JSON.parse(JSON.generate(request.inputs)))
         config = request.config
         secrets = config.fetch("env", {}).filter_map { |key, value| value if Execution::Redaction::SENSITIVE_KEY.match?(key) }
         frozen_config = Execution::Redaction.redact(JSON.parse(JSON.generate(config)), secrets: secrets)
         profile_data = frozen_config.fetch("model_profile")
         fields = profile_data.slice("id", "provider", "model", "execution_kind", "tool_policy")
         profile = Execution::Budget::ModelProfile.new(**fields.transform_keys(&:to_sym))
+        live_provider = profile.to_h.fetch("execution_kind") == "real_provider"
+        if live_provider
+          unless @live && @authorization.instance_of?(Execution::LiveAuthorization) && @authorization_scope &&
+              @budget && @scopes && defined?(Execution::OpenCodeLaunch) && @launch_config.instance_of?(Execution::OpenCodeLaunch)
+            decision = {"allowed" => false, "reason" => "verified_live_launch_required"}
+            yield decision if block_given?
+            return Result.new(status: "blocked", outputs: {}, error: {"type" => "authorization", "message" => decision["reason"]},
+              logs: {"execution" => {"schema_version" => "m12a-execution-v1", "outcome" => "blocked", "admission" => decision}})
+          end
+          verify_live_launch!(profile.to_h)
+        end
         policy = Execution::Budget::AdmissionConfig.new(**config.fetch("budget_policy").transform_keys(&:to_sym))
         coordinator = @budget || @scope_mutex.synchronize { @local_budget ||= Execution::Budget::Coordinator.new }
         scopes = admission_scopes(coordinator, policy, request)
@@ -87,7 +121,9 @@ module AgentRuntime
            "experiment_id" => experiment.id, "run_id" => request.run_id}
         end
         lease = coordinator.admit(scopes: scopes, profile: profile, request: request,
-          executable: @executable, executable_sha256: @fixture_sha256, authorization: authorization) do |decision|
+          executable: @executable,
+          executable_sha256: live_provider ? Digest::SHA256.file(@executable).hexdigest : @fixture_sha256,
+          authorization: authorization, authorization_scope: @authorization_scope) do |decision|
           yield decision.to_h if block_given?
         end
         admitted = lease.is_a?(Execution::Budget::Lease)
@@ -109,8 +145,19 @@ module AgentRuntime
         execution = patch = artifact_error = nil
         begin
           execution, patch = GitPatch.new(directory).capture do
-            execution = @runner.call(argv: argv, cwd: directory, timeout: remaining,
-              cancellation: request.cancellation, env: fixture_environment(config))
+            if live_provider
+              @launch_config.with_environment(workspace: directory) do |environment|
+                secrets.concat(environment.filter_map { |key, value| value if Execution::Redaction::SENSITIVE_KEY.match?(key) && value })
+                env = ENV.to_h.transform_values { nil }.merge(environment)
+                execution = @runner.call(argv: @launch_config.argv + ["--", prompt], cwd: directory, timeout: remaining,
+                  cancellation: request.cancellation, env: env)
+              end
+            else
+              with_fixture_environment(config) do |env|
+                execution = @runner.call(argv: argv, cwd: directory, timeout: remaining,
+                  cancellation: request.cancellation, env: env)
+              end
+            end
           end
         rescue => error
           raise unless execution
@@ -127,6 +174,27 @@ module AgentRuntime
           "runtime" => {"ruby" => RUBY_DESCRIPTION, "adapter_protocol" => "opencode-2.3.0"},
           "redaction_applied" => true,
           "attempt_id" => "#{request.run_id}/#{request.step_id}/#{request.attempt}")
+        trace["launch_config"] = @launch_config.to_h if live_provider
+        if live_provider
+          observations = trace.fetch("events").flat_map do |event|
+            [event, event["part"], event["info"]].select { |item| item.is_a?(Hash) }.filter_map do |item|
+              observed = item.slice("providerID", "modelID")
+              observed unless observed.empty?
+            end
+          end
+          trace["native_model_observations"] = observations
+          mismatches = observations.select do |observed|
+            (observed.key?("providerID") && observed["providerID"] != profile_data.fetch("provider")) ||
+              (observed.key?("modelID") && observed["modelID"] != profile_data.fetch("model"))
+          end
+          unless mismatches.empty?
+            trace["model_identity_discrepancies"] = mismatches
+            trace["outcome"] = "failure" unless %w[timeout cancelled].include?(trace["outcome"])
+            trace["completion"]["operationally_complete"] = false
+            trace["protocol_error"] = {"type" => "protocol", "code" => "model_identity_mismatch",
+                                       "message" => "Observed native provider/model differs from the authorized profile"}
+          end
+        end
         if trace.fetch("usage").fetch("coverage").fetch("conflicting_requests").positive?
           trace["outcome"] = "unknown" unless %w[timeout cancelled failure].include?(trace["outcome"])
           trace["completion"]["operationally_complete"] = false
@@ -146,12 +214,25 @@ module AgentRuntime
         Result.new(status: "blocked", outputs: {}, error: {"type" => "configuration", "message" => error.message},
           logs: {"execution" => {"schema_version" => "m12a-execution-v1", "outcome" => "blocked", "admission" => {"admitted" => false, "reason" => "invalid_configuration"}}})
       rescue SystemCallError => error
-        Result.new(status: "failure", outputs: {}, retry_safe: true,
+        Result.new(status: "failure", outputs: {}, retry_safe: !live_provider,
           error: {"type" => "launch", "classification" => "transport", "message" => error.class.name},
           logs: {"execution" => {"schema_version" => "m12a-execution-v1", "outcome" => "failure",
                                  "launch_observed" => false, "admission" => decision, "identity" => identity, "model_profile" => profile_data}})
       ensure
         coordinator.release(lease: lease) if admitted
+      end
+
+      def verify_live_launch!(profile)
+        unless live_authorized?(@authorization) &&
+            "#{profile.fetch("provider")}/#{profile.fetch("model")}" == @launch_config.model_profile &&
+            @launch_config.scope.all? { |key, value| @authorization_scope[key] == value }
+          raise ArgumentError, "live_launch_identity_mismatch"
+        end
+        tools = profile.fetch("tool_policy")
+        unless tools["endpoint"] == @launch_config.scope.fetch("endpoint") &&
+            tools["route"] == @launch_config.scope.fetch("route") && tools["model_fallback"] == false
+          raise ArgumentError, "live_launch_policy_mismatch"
+        end
       end
 
       def admission_scopes(coordinator, policy, request)
@@ -173,6 +254,19 @@ module AgentRuntime
         inherited = ENV.keys.select { |key| Execution::Redaction::SENSITIVE_KEY.match?(key) }.to_h { |key| [key, nil] }
         configured = config.fetch("env", {}).reject { |key, _| Execution::Redaction::SENSITIVE_KEY.match?(key) }
         inherited.merge(configured)
+      end
+
+      def with_fixture_environment(config)
+        Dir.mktmpdir("agru-opencode-") do |root|
+          env = ENV.to_h.transform_values { nil }
+          env.merge!(fixture_environment(config))
+          %w[HOME XDG_CONFIG_HOME XDG_DATA_HOME XDG_STATE_HOME XDG_CACHE_HOME OPENCODE_TEST_HOME OPENCODE_CONFIG_DIR].each do |key|
+            path = File.join(root, key.downcase)
+            Dir.mkdir(path, 0o700)
+            env[key] = path
+          end
+          yield env
+        end
       end
 
       def translate(execution, request, config)

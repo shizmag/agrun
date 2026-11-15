@@ -10,6 +10,10 @@ BUNDLE_PATH = "{{config_root}}/.bundle/gems"
 description = "Run all Minitest tests offline"
 run = "bundle exec ruby -Itest -e 'Dir[\"test/**/*_test.rb\"].sort.each { |file| require_relative file }'"
 
+[tasks.m12b-acceptance]
+description = "Run pinned mock CLI execution with actual local audited grading; no provider calls"
+run = "bundle exec ruby script/m12b_mock_acceptance.rb"
+
 [tasks.lint]
 description = "Check Ruby formatting"
 run = "bundle exec standardrb"
@@ -72,3 +76,10 @@ run = "bundle exec ruby script/m12_mutations.rb"
 [tasks.m12-audited-acceptance]
 description = "Explicit local pinned audited grading of an offline fake OpenCode solver"
 run = "bundle exec ruby script/m12_audited_acceptance.rb --allow-local-grading"
+[tasks.m12b-test]
+description = "Offline M1.2b authorization, lifecycle and reporting acceptance"
+run = "bundle exec ruby -Itest -e 'Dir[\"test/m12b*_test.rb\", \"test/opencode_launch_test.rb\"].sort.each { |file| require_relative file }'"
+
+[tasks.m12b-mutation]
+description = "Isolated offline M1.2b adversarial mutations"
+run = "bundle exec ruby script/m12b_mutation_check.rb"

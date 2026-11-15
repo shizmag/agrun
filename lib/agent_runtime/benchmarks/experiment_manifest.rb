@@ -53,7 +53,12 @@ module AgentRuntime
         raise ArgumentError, "repetitions must be a positive integer" unless value["repetitions"].is_a?(Integer) && value["repetitions"].positive?
         limits = value["limits"]
         raise ArgumentError, "limits must be positive finite numbers" unless limits.is_a?(Hash) && !limits.empty? && limits.values.all? { |limit| limit.is_a?(Numeric) && limit.finite? && limit.positive? }
-        raise ArgumentError, "only offline execution is supported" unless value["execution_mode"] == "offline"
+        raise ArgumentError, "execution_mode must be offline or live" unless %w[offline live].include?(value["execution_mode"])
+        if value["execution_mode"] == "live"
+          raise ArgumentError, "live pilot requires retrying and single-agent" unless benchmark["name"] == "nl2repo" && benchmark["task_ids"] == ["retrying"] && value["solver_ids"] == ["single-agent"]
+          raise ArgumentError, "live pilot requires one explicit real-provider model" unless models.length == 1 && models.first.dig("model_profile", "execution_kind") == "real_provider"
+          raise ArgumentError, "live execution requires a finite timeout and sequential cells" unless limits["timeout"] && limits.fetch("max_parallelism", 1) == 1
+        end
         raise ArgumentError, "subset_role required" unless nonempty_string?(value["subset_role"])
       end
     end

@@ -136,6 +136,17 @@ module AgentRuntime
           data["execution"] = JSON.parse(JSON.generate(result.logs["execution"].except("events", "requests", "raw", "stdout", "stderr", "process", "frozen_config")))
           data["execution"]["evidence"] = data["log"] if data["log"]
         end
+        if result.status != "success" && config["preserve_partial_outputs"] == true
+          data["partial_outputs"] = {}
+          step["outputs"].each do |name, type|
+            next unless type == "repository" && result.outputs&.key?(name)
+            begin
+              data["partial_outputs"][name] = @store.put(type: type, value: result.outputs.fetch(name), run_id: run_id, step_id: step["id"], attempt: attempt, inputs: input_artifacts.values.map { |a| a["id"] }, metadata: {"partial" => true})
+            rescue => error
+              (data["partial_capture_errors"] ||= {})[name] = "#{error.class}: #{error.message}"
+            end
+          end
+        end
         if result.status == "success"
           begin
             outputs = step["outputs"].to_h do |name, type|

@@ -95,3 +95,29 @@ legacy/audited-v1 evidence and their stronger unresolved authentication gates ar
 unchanged. Invalid, incomplete, ambiguous or infrastructure-failed evidence stays
 unscored; an explicit proven missing-candidate collection policy may assign zero
 without claiming that expected cases executed. See `docs/m1.1c-scoring-contract.md`.
+
+## Controlled provider execution (M1.2b)
+
+Real-provider profiles additionally require a concrete scoped `LiveAuthorization`
+and an isolated, digest-bound `OpenCodeLaunch`; fixture callbacks and credentials
+alone cannot enable them. Authorization binds the frozen experiment, task, solver,
+provider, endpoint, route and upstream model, and has a finite epoch expiry. It is
+trusted local operator consent, not cryptographic authentication. Numeric token,
+request, run and monetary quotas are not invented when the operator explicitly
+accepts uncapped financial exposure. `AdmissionConfig#max_attempts` may be nil;
+wall-time and concurrency limits remain finite. A duplicate attempt identity is
+still rejected after release. Local admission is not a durable account-wide quota.
+
+`ExperimentRunner#run(manifest:, cancellation: nil, live_authorization: nil)` accepts
+the narrowly defined live retrying/single-agent manifest only through audited-v2.
+`regrade` does not require another live authorization or invoke a solver. Native
+CLI root-step usage is partial observation, not every provider request or charge.
+Requested identities never fill missing observed identity; raw immutable execution
+artifacts remain authoritative for report reconstruction.
+
+The additive trusted step configuration `preserve_partial_outputs: true` captures
+failed adapter repository outputs into attempt `partial_outputs` artifacts. These
+are not successful step outputs, are never bound downstream, and do not change
+execution status. Direct strict OpenCode uses this option to return an immutable
+failed repository to the benchmark runner, which records `partial_submission`
+without automatic grading. Collection failure remains separate evidence.

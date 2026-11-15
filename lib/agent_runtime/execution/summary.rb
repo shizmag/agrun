@@ -34,6 +34,8 @@ module AgentRuntime
                 "attempt_id" => record["attempt_id"], "evidence" => log.fetch("id"),
                 "status" => attempt["status"], "admission" => record["admission"],
                 "launch_observed" => record["launch_observed"] == true && process["status"] != "blocked"}
+        base.merge!(telemetry(record, []))
+        base["process_cleanup"] = cleanup_projection(process["cleanup"])
         if !record["launch_observed"] && !record.key?("events") && !process.key?("stdout")
           return base.merge("outcome" => record["outcome"], "usage" => nil, "cost" => nil,
             "completion" => {"operationally_complete" => false, "session_reported_complete" => nil, "accounting_complete" => false})
@@ -56,15 +58,73 @@ module AgentRuntime
           parsed["outcome"] = "failure"
           parsed["completion"] = parsed.fetch("completion").merge("operationally_complete" => false)
         end
+        base.merge!(telemetry(record, parsed["protocol_error"] ? [] : parsed.fetch("events")))
         base.merge({"schema_version" => "m12a-execution-summary-v1", "availability" => "available",
          "attempt_id" => record["attempt_id"], "evidence" => log.fetch("id"),
          "status" => attempt["status"], "outcome" => parsed["outcome"], "session_id" => parsed["session_id"],
          "completion" => parsed["completion"], "accounting_scope" => parsed["accounting_scope"],
           "protocol_error" => parsed["protocol_error"], "admission" => record["admission"],
-          "process_outcome" => process_outcome, "artifact_status" => artifact_failed ? "failure" : "unavailable", "cleanup" => cleanup,
+          "process_outcome" => process_outcome, "artifact_status" => artifact_failed ? "failure" : "unavailable", "cleanup" => cleanup_projection(cleanup),
+         "native_cost_observations" => parsed.fetch("native_cost_observations"),
+         "cost_evidence" => {"actual_charge_status" => "unknown", "actual_charge" => nil, "estimate" => normalized.dig("usage", "estimate")},
          "usage" => normalized.fetch("usage"), "cost" => normalized.fetch("cost")})
       rescue JSON::ParserError, KeyError, TypeError => error
         raise Error, "invalid execution evidence: #{error.message}"
+      end
+
+      # Never expose arbitrary error messages, paths, or extra producer fields.
+      def cleanup_projection(cleanup)
+        return {"status" => "unknown", "errors" => nil} unless cleanup.is_a?(Hash)
+        errors = cleanup["errors"]
+        if errors.is_a?(Array)
+          projected = errors.map do |error|
+            next {"type" => "unknown"} unless error.is_a?(Hash)
+            fields = {}
+            fields["operation"] = %w[kill reap close].include?(error["operation"]) ? error["operation"] : "unknown" if error.key?("operation")
+            fields["type"] = %w[artifact_collection process_cleanup].include?(error["type"]) ? error["type"] : "unknown" if error.key?("type")
+            fields["class"] = %w[RuntimeError IOError SystemCallError Errno::ECHILD Errno::ESRCH Errno::EPERM].include?(error["class"]) ? error["class"] : "unknown" if error.key?("class")
+            fields.empty? ? {"type" => "unknown"} : fields
+          end
+        end
+        reaped = cleanup["reaped"]
+        status = if projected&.any? || reaped == false
+          "failure"
+        elsif projected == [] && reaped == true
+          "success"
+        else
+          "unknown"
+        end
+        result = {"status" => status, "errors" => projected}
+        result["reaped"] = reaped if [true, false].include?(reaped)
+        result
+      end
+
+      # Native root steps do not attest upstream routing or complete billing.
+      def telemetry(record, events)
+        profile = record["model_profile"].is_a?(Hash) ? record["model_profile"] : {}
+        policy = profile["tool_policy"].is_a?(Hash) ? profile["tool_policy"] : {}
+        requested = %w[provider model].to_h { |field| [field, profile[field]] }
+        %w[route endpoint].each { |field| requested[field] = policy.key?(field) ? policy[field] : profile[field] }
+        steps = events.select { |event| event["type"] == "step_finish" && event["part"].is_a?(Hash) }
+        observed = {"provider" => "providerID", "model" => "modelID", "route" => "route"}.to_h do |field, native|
+          values = steps.filter_map do |event|
+            value = event.fetch("part")[native]
+            value if value.is_a?(String) && !value.empty?
+          end.uniq
+          [field, values.one? ? values.first : nil]
+        end
+        preflight = record["preflight"].is_a?(Hash) ? record["preflight"] : {}
+        safe_preflight = preflight.slice("status", "allowed", "reason", "deadline", "executable_sha256", "executable_identity", "failure_reason")
+          .select { |_, value| value.nil? || value == true || value == false || value.is_a?(String) || (value.is_a?(Numeric) && value.finite?) }
+        mismatches = observed.filter_map { |field, value| field if value && requested[field] && value != requested[field] }
+        {"identity" => {"requested" => requested,
+                        "observed" => observed, "observation_basis" => "native_root_step", "verification" => "unknown",
+                        "discrepancy" => mismatches.empty? ? "unknown" : "observed_requested_mismatch", "mismatched_fields" => mismatches},
+         "preflight" => safe_preflight,
+         "accounting_coverage" => {"complete" => false, "root_steps" => steps.empty? ? "unknown" : "partial",
+                                   "provider_requests" => "unknown", "provider_retries" => "unknown",
+                                   "auxiliary_usage" => "unknown", "title_usage" => "unknown", "compaction_usage" => "unknown", "child_usage" => "unknown",
+                                   "provider_charges" => "unknown", "reported_cost_basis" => "native_step_observations", "billing_status" => "not_provider_billing"}}
       end
 
       def from_run(store:, run_id:)

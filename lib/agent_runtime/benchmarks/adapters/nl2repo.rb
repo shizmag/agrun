@@ -45,6 +45,10 @@ module AgentRuntime
           Adapter.freeze_json(JSON.parse(JSON.generate({"name" => "nl2repo", "revision" => @manifest.fetch("revision"), "manifest_digest" => @manifest_digest, "official_score" => "blocked"})))
         end
 
+        def audited_scoring?
+          defined?(NL2RepoAuditedGrader) && @audited_grader.instance_of?(NL2RepoAuditedGrader)
+        end
+
         def list_tasks
           @manifest.fetch("tasks").map { |record| load_task(record.fetch("id")) }
         end
