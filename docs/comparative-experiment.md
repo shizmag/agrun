@@ -11,8 +11,8 @@ experiment.freeze(experiment_id: manifest.data.fetch("experiment_id"),
   destination: "research-freeze", verification: verification)
 ```
 
-The manifest controls the complete Cartesian matrix. Three tasks, three solver
-IDs and one model/repetition produce nine cells. Each submitted cell is regraded
+The manifest controls the complete Cartesian matrix. One task, three solver
+IDs, one model and three repetitions produce nine cells. Each submitted cell is regraded
 from its persisted repository. Verification requires a fresh grading attempt,
 unchanged submission and solver-attempt identities, and matching execution
 status, score, verdict, protocol and quality basis. Missing submissions remain
@@ -38,7 +38,8 @@ summary, submission identities, verification checks and limitations.
 `SHA256SUMS` binds its exact bytes. Verification is offline and does not need
 the original Store. It establishes bundle integrity, not authenticity or
 re-execution of grading; changing both files can forge an unsigned bundle.
-The export does not copy repository trees or hidden procedures. Reports may
+The export carries portable repository manifest entries (including file bytes and
+modes), not mutable solver workspaces or hidden procedures. Reports may
 contain operational paths, logs and adapter metadata; review before publishing.
 
 Evidence kinds are explicit: `offline_fixture`, `simulated_relay`, or
