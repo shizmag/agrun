@@ -32,7 +32,7 @@ test('real Docker private-volume stdio carries streaming HTTP without container 
     assert.match(result.output, /\[DONE\]/);
   } finally { bridge.close(); }
 });
-test('installed OpenCode completes offline through the same private stdio bridge', async () => {
+test('installed OpenCode completes a full offline tool conversation through the private stdio bridge', async () => {
   let requests = 0;
   const server = http.createServer((req, res) => {
     requests++;
@@ -40,7 +40,13 @@ test('installed OpenCode completes offline through the same private stdio bridge
     req.resume(); req.on('end', () => {
       assert.ok((JSON.parse(Buffer.concat(chunks)).tools || []).length <= 128);
       res.writeHead(200, {'content-type': 'text/event-stream'});
-      res.end('data: {"id":"offline","object":"chat.completion.chunk","model":"cx/gpt-6-luna-low","choices":[{"index":0,"delta":{"role":"assistant","content":"OFFLINE_GATEWAY_OK"},"finish_reason":null}]}\n\ndata: {"id":"offline","object":"chat.completion.chunk","choices":[{"index":0,"delta":{},"finish_reason":"stop"}]}\n\ndata: [DONE]\n\n');
+      if (requests === 1) {
+        res.end('data: '+JSON.stringify({id:'offline',object:'chat.completion.chunk',model:'cx/gpt-6-luna-low',choices:[{index:0,delta:{role:'assistant',tool_calls:[{index:0,id:'offline-read',type:'function',function:{name:'read',arguments:JSON.stringify({filePath:'/workspace/offline.txt'})}}]},finish_reason:null}]})+'\n\ndata: '+JSON.stringify({id:'offline',object:'chat.completion.chunk',choices:[{index:0,delta:{},finish_reason:'tool_calls'}]})+'\n\ndata: [DONE]\n\n');
+      } else {
+        const body = JSON.parse(Buffer.concat(chunks));
+        assert.ok(body.messages.some(m => m.role === 'tool'), 'installed client must submit a real tool result');
+        res.end('data: {"id":"offline","object":"chat.completion.chunk","model":"cx/gpt-6-luna-low","choices":[{"index":0,"delta":{"role":"assistant","content":"OFFLINE_GATEWAY_OK"},"finish_reason":null}]}\n\ndata: {"id":"offline","object":"chat.completion.chunk","choices":[{"index":0,"delta":{},"finish_reason":"stop"}]}\n\ndata: [DONE]\n\n');
+      }
     });
   });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -61,7 +67,7 @@ test('installed OpenCode completes offline through the same private stdio bridge
   const bridge = await launchBridge({server: relay, timeoutMs: 30000,
     image: 'node@sha256:d6aa754f16b3197301076f047b5def2f02ea1dbbc2ca920407d46d7ec7f87b20'});
   try {
-    const config = JSON.stringify({$schema: 'https://opencode.ai/config.json', tools: {'*': false, skill: false}, agent: {title: {disable: true}},
+    const config = JSON.stringify({$schema: 'https://opencode.ai/config.json', tools: {'*': false, read: true, skill: false}, agent: {title: {disable: true}},
       provider: {mock: {npm: '@ai-sdk/openai-compatible', name: 'mock',
         options: {baseURL: 'http://127.0.0.1:18080/v1', apiKey: 'offline'},
         models: {'cx/gpt-6-luna-low': {name: 'offline', options: {max_completion_tokens: 128}}}}}});
@@ -78,6 +84,6 @@ test('installed OpenCode completes offline through the same private stdio bridge
     });
     assert.equal(result.status, 0, result.output);
     assert.match(result.output, /OFFLINE_GATEWAY_OK/);
-    assert.equal(requests, 1);
+    assert.equal(requests, 2);
   } finally { bridge.close(); server.close(); fs.rmSync(directory, {recursive: true}); }
 });
