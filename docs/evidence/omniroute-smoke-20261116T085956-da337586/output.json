@@ -1,0 +1,18 @@
+{
+  "exit": 1,
+  "events": [
+    {
+      "type": "error",
+      "timestamp": 1794819600657,
+      "sessionID": "ses_e1c6a52e8ffeldjgUoLH53D501",
+      "error": {
+        "type": "provider.auth",
+        "message": "Provider request failed with HTTP 403",
+        "status": 403,
+        "response": {
+          "body": ""
+        }
+      }
+    }
+  ]
+}

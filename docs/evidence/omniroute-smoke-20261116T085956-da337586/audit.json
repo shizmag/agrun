@@ -1,0 +1,38 @@
+[
+  {
+    "audit": {
+      "run_id": "omniroute-smoke-20261116T085956-da337586",
+      "architecture": "smoke",
+      "step_id": "smoke",
+      "attempt": "omniroute-smoke-20261116T085956-da337586",
+      "request_id": "4e28d494-b658-4be6-9175-afd0fd9a6aca",
+      "session_id": null,
+      "session_correlation": "unavailable",
+      "requested_model": "cx/gpt-6-luna-low",
+      "provider_route": "omniroute",
+      "gateway_model": null,
+      "response_model": null,
+      "served_model": null,
+      "usage": null,
+      "observed_usage": null,
+      "pricing": null,
+      "accounting_complete": false,
+      "accounting_issues": [
+        "usage_not_reported",
+        "session_unobservable",
+        "served_identity_unattested"
+      ],
+      "request_fields": [
+        "model",
+        "messages",
+        "tools",
+        "stream",
+        "stream_options",
+        "max_completion_tokens"
+      ],
+      "error": "inference_policy",
+      "status": 403,
+      "duration_ms": 3.102125
+    }
+  }
+]
