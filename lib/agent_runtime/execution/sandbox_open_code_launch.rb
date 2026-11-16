@@ -67,7 +67,7 @@ module AgentRuntime
            {"action" => "provider.use", "resource" => "*", "effect" => "deny"},
            {"action" => "provider.use", "resource" => @provider, "effect" => "allow"},
            *%w[plugin.use mcp.use skill.use].map { |action| {"action" => action, "resource" => "*", "effect" => "deny"} },
-            {"action" => "tool.use", "resource" => "bash", "effect" => "allow"},
+           {"action" => "tool.use", "resource" => "bash", "effect" => "allow"},
            {"action" => "tool.use", "resource" => "shell", "effect" => "allow"}
          ]}
       end
