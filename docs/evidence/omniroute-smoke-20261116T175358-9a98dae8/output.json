@@ -1,0 +1,43 @@
+{
+  "exit": 0,
+  "events": [
+    {
+      "type": "text",
+      "timestamp": 1794851644357,
+      "sessionID": "ses_e1a81695cffehWv15BcXThjo3S",
+      "part": {
+        "id": "prt_1e57ea386001lrY2Y2NfH8yPZc",
+        "sessionID": "ses_e1a81695cffehWv15BcXThjo3S",
+        "messageID": "msg_1e57e9a1f001fi7vfEx0PkI1K3",
+        "type": "text",
+        "text": "OK",
+        "time": {
+          "start": 1794851644294,
+          "end": 1794851644357
+        }
+      }
+    },
+    {
+      "type": "step_finish",
+      "timestamp": 1794851644362,
+      "sessionID": "ses_e1a81695cffehWv15BcXThjo3S",
+      "part": {
+        "id": "prt_1e57ea3ca001c06zJoPQhTS07b",
+        "sessionID": "ses_e1a81695cffehWv15BcXThjo3S",
+        "messageID": "msg_1e57e9a1f001fi7vfEx0PkI1K3",
+        "type": "step-finish",
+        "reason": "stop",
+        "cost": 0,
+        "tokens": {
+          "input": 756,
+          "output": 5,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        }
+      }
+    }
+  ]
+}

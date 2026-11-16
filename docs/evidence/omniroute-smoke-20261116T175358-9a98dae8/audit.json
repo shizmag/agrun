@@ -1,0 +1,82 @@
+[
+  {
+    "audit": {
+      "run_id": "omniroute-smoke-20261116T175358-9a98dae8",
+      "architecture": "smoke",
+      "step_id": "smoke",
+      "attempt": "omniroute-smoke-20261116T175358-9a98dae8",
+      "request_id": "2cb522b1-2177-4b6d-9628-a3e4b74f9c91",
+      "session_id": null,
+      "session_correlation": "unavailable",
+      "requested_model": "cx/gpt-6-luna-low",
+      "provider_route": "omniroute",
+      "gateway_model": null,
+      "response_model": "gpt-6-luna",
+      "served_model": null,
+      "response_models": [
+        "gpt-6-luna"
+      ],
+      "response_model_consistent": true,
+      "usage": {
+        "prompt_tokens": 756,
+        "completion_tokens": 5,
+        "total_tokens": 761
+      },
+      "observed_usage": {
+        "prompt_tokens": 756,
+        "completion_tokens": 5,
+        "total_tokens": 761,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": null
+      },
+      "pricing": null,
+      "accounting_complete": false,
+      "upstream_attempted": true,
+      "upstream_response_status": 200,
+      "accounting_issues": [
+        "session_unobservable",
+        "served_identity_unattested"
+      ],
+      "request_fields": [
+        "model",
+        "messages",
+        "tools",
+        "stream",
+        "stream_options",
+        "max_completion_tokens"
+      ],
+      "stream_diagnostic": {
+        "streaming": true,
+        "seen_done": true,
+        "finish_seen": true,
+        "malformed": false,
+        "stream_ended": true,
+        "stream_closed": false,
+        "malformed_reasons": [],
+        "usage_observation_count": 1,
+        "usage_totals_distinct": [
+          761
+        ],
+        "heartbeat_count": 1,
+        "heartbeat_variants": {
+          "constant": 0,
+          "timestamped_default": 0,
+          "early_startup": 1,
+          "timestamped_empty": 0
+        },
+        "unknown_keepalive_shapes": [],
+        "trailing_nonempty": false
+      },
+      "usage_reporting_semantics": "cumulative_observed",
+      "error": null,
+      "status": 200,
+      "duration_ms": 2452.837791
+    }
+  },
+  {
+    "audit": {
+      "type": "gateway_lifecycle",
+      "close_reason": "helper_exit"
+    }
+  }
+]
