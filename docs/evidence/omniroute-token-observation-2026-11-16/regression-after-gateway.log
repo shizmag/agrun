@@ -1,0 +1,30 @@
+[test] $ bundle exec ruby -Itest -e 'Dir["test/**/*_test.rb"].sort.each { |file| require_relative file }'
+Run options: --seed 40941
+
+# Running:
+
+.......SSSSSSSSS.........................SSSSSSSSS...................................................................................REJECT missing release (outer checksum recomputed)
+REJECT corrupt release (outer checksum recomputed)
+REJECT different valid release (outer checksum recomputed)
+REJECT duplicate checks (outer checksum recomputed)
+REJECT wrong named pair (outer checksum recomputed)
+REJECT missing submission (outer checksum recomputed)
+REJECT duplicate submission (outer checksum recomputed)
+REJECT byte tamper (original checksum)
+...........................................................S.........................S..../Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+/Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+/Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+/Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+/Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+/Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+.................SS........................S....................................S..................S.........................................................................S......................................SS................................./Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+/Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+/Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+/Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+...............SS..........S...............SSSSSS.SS.SSS..S...SS..........................S.........................................................................................................................................................SSSSSSSSSSSSSSSSSSSSSSSSS................................................................................................................................................................................SS..................SS.....................
+
+Finished in 108.093208s, 8.8627 runs/s, 52.8803 assertions/s.
+
+958 runs, 5716 assertions, 0 failures, 0 errors, 75 skips
+
+You have skipped tests. Run with --verbose for details.
