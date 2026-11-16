@@ -9,6 +9,48 @@ const https = require('node:https');
 const {execFileSync} = require('node:child_process');
 const {start} = require('../lib/agent_runtime/execution/provider_relay.cjs');
 const inference = {max_completion_tokens: 32000, stream: true, stream_options: {include_usage: true}};
+test('unfinished uploads have bounded admission, deadlines and reusable slots', async () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'agru-admission-'));
+  const credentialFile = path.join(root, 'credential'); fs.writeFileSync(credentialFile, 'offline-only');
+  const records = [], clients = [];
+  const origin = 'https://localhost:1';
+  const relay = start({origin, approvedOrigins: [origin], model: 'cx/gpt-6-luna-low',
+    route: 'offline', timeoutMs: 300, inference, credentialFile,
+    identity: {run_id: 'run', architecture: 'arm', step_id: 'step', attempt: 'attempt'}}, r => records.push(r));
+  const socketPath = path.join(root, 'relay.sock');
+  await new Promise(resolve => relay.listen(socketPath, resolve));
+  function upload() {
+    let client;
+    const result = new Promise((resolve, reject) => {
+      client = http.request({socketPath, method: 'POST', path: '/v1/chat/completions',
+        headers: {'content-length': 1048576}}, res => {
+        res.resume(); res.on('end', () => resolve(res.statusCode));
+      });
+      client.on('error', reject); client.flushHeaders(); client.write('{');
+    });
+    clients.push(client); return result;
+  }
+  try {
+    const held = Array.from({length: 2}, upload);
+    assert.equal(await upload(), 429);
+    assert.deepEqual(await Promise.all(held), [504, 504]);
+    const next = upload();
+    assert.equal(await next, 504, 'expired uploads must release capacity');
+    const cancelled = upload();
+    // Allow the local server to accept the headers before cancellation.
+    await new Promise(resolve => setTimeout(resolve, 20));
+    relay.cancelUpstream();
+    assert.equal(await cancelled, 503);
+    assert.equal(await upload(), 503);
+    assert.equal(records.filter(r => r.error === 'concurrency_limit').length, 1);
+    assert.equal(records.filter(r => r.error === 'request_timeout').length, 3);
+    assert.ok(records.every(r => r.attempt === 'attempt' && r.request_id));
+  } finally {
+    clients.forEach(client => client.destroy()); relay.cancelUpstream();
+    await new Promise(resolve => relay.close(resolve));
+    fs.rmSync(root, {recursive: true, force: true});
+  }
+});
 test('offline HTTPS enforces TLS, rejects redirects and parses CR-framed SSE', async () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'agru-tls-'));
   const key = path.join(root, 'key.pem'), cert = path.join(root, 'cert.pem');
