@@ -23,6 +23,19 @@ ledger = AgentRuntime::Execution::TokenBudgetLedger.new(
 ledger.begin_request(request_id: id, cell_id: id, attempt_id: id,
   input_tokens: 1_048_576 + 1_000_000, completion_tokens: 128)
 image = "sha256:cbc8bd81c7ede30f09de318df230452f4d3a05e1e8aa9f08a4d46b7f24f437f1"
+identity_paths = %w[scripts/omniroute_token_smoke.rb scripts/local_gateway_smoke.cjs
+  lib/agent_runtime/execution/provider_relay.cjs lib/agent_runtime/execution/local_gateway_launcher.cjs
+  lib/agent_runtime/execution/local_gateway_stdio.cjs lib/agent_runtime/execution/loopback_bridge.cjs]
+revision, = Open3.capture2("git", "rev-parse", "HEAD")
+File.write(File.join(evidence, "execution_identity.json"), JSON.pretty_generate({
+  git_revision: revision.strip, image: image,
+  implementation_sha256: identity_paths.to_h { |path| [path, Digest::SHA256.file(path).hexdigest] },
+  intent_digest: Digest::SHA256.file("experiments/omniroute-luna6-token-observation.json").hexdigest,
+  ledger_path: File.join(root, ".agru/authorizations/omniroute-luna6-20261116.tokens.jsonl"),
+  tool_policy: {allow_tools: true, schema_validation: "strict bounded", requested_disabled: ["*", "skill"]},
+  limits: {requests: 1, body_bytes: 1_048_576, reserved_input_tokens: 2_048_576,
+           completion_tokens: 128, aggregate_reserved_tokens: 1_000_000_000, timeout_seconds: 120}
+}))
 records = []
 container = "#{id}-solver"
 Dir.mktmpdir("agru-trusted-") do |trusted|
@@ -79,8 +92,18 @@ Dir.mktmpdir("agru-trusted-") do |trusted|
     gateway_wait&.join
     File.write(File.join(evidence, "audit.json"), JSON.pretty_generate(records).gsub(secret, "[REDACTED]"))
     record = records.filter_map { |r| r["audit"] }.find { |r| r["status"] == 200 } || records.filter_map { |r| r["audit"] }.first || {}
-    ledger.settle(request_id: id, observed_model: record["response_model"],
-      usage: record["observed_usage"], reporter: "trusted-gateway")
+    models = records.filter_map { |r| r["audit"] }.flat_map { |r| Array(r["response_models"]) + [r["response_model"]] }.compact.uniq
+    unexpected_model = models.find { |model| !%w[cx/gpt-6-luna-low gpt-6-luna].include?(model) }
+    invalid_observation = records.filter_map { |r| r["audit"] }.any? do |r|
+      (Array(r["accounting_issues"]) & %w[response_model_invalid response_models_truncated]).any?
+    end
+    unexpected_model = "untrusted-response-model-observation" if invalid_observation
+    begin
+      ledger.settle(request_id: id, observed_model: unexpected_model || record["response_model"] || models.first,
+        usage: record["observed_usage"], reporter: "trusted-gateway")
+    ensure
+      File.write(File.join(evidence, "ledger_snapshot.json"), JSON.pretty_generate(ledger.snapshot).gsub(secret, "[REDACTED]"))
+    end
   end
 end
 puts JSON.generate({evidence: evidence, request_id: id, solver_executed: true,
