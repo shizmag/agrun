@@ -1,0 +1,19 @@
+Run options: --verbose --seed 35958
+
+# Running:
+
+SimulatedProviderTest#test_offline_https_exchange_binds_caller_identity = 0.00 s = S
+SimulatedProviderTest#test_rejects_unknown_models_before_starting_docker = 0.00 s = .
+AuthorizedProviderDockerTest#test_actual_relay_lifecycle_without_provider_requests = 0.00 s = S
+
+Finished in 0.000446s, 6726.4553 runs/s, 2242.1518 assertions/s.
+
+  1) Skipped:
+SimulatedProviderTest#test_offline_https_exchange_binds_caller_identity [test/simulated_provider_test.rb:13]:
+explicit offline Docker opt-in required
+
+  2) Skipped:
+AuthorizedProviderDockerTest#test_actual_relay_lifecycle_without_provider_requests [test/authorized_provider_docker_test.rb:9]:
+set AGRU_AUTHORIZED_PROVIDER_DOCKER=1 for local Docker lifecycle
+
+3 runs, 1 assertions, 0 failures, 0 errors, 2 skips

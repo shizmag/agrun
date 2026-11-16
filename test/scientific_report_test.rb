@@ -21,6 +21,9 @@ class ScientificReportTest < Minitest::Test
       assert_equal 2, arm.fetch("planned_cells")
       assert_equal 0, arm.fetch("conditional_denominator")
       assert_equal ["retrying"], arm.fetch("excluded_tasks")
+      assert_raises(ArgumentError) do
+        AgentRuntime::Benchmarks::ScientificReport.new(store: store).render(experiment_id: "pilot", evidence_kind: "live_provider")
+      end
     end
   end
 

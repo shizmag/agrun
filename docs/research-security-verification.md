@@ -90,6 +90,69 @@ All rerun commands above ran sequentially. Initial errors remain recorded but
 are superseded for individual-control verification by these successful runs;
 there is no claim that the earlier combined invocation passed.
 
+## Final review update
+
+Full regression supplied by parent: `regression-final.log` in the evidence
+directory records **934 runs, 5596 assertions, 0 failures/errors, 74 skips**.
+Parent also reports final smoke passed (`smoke-final.log`) and
+`openspec validate m11-benchmark-infrastructure --strict` valid. These are
+integration/schema checks, not additional containment controls.
+This does not turn skipped controls into passes. The reviewer independently ran:
+
+```sh
+node --test test/provider_relay_test.cjs
+AGRU_M12D_TRANSPORT_TEST=1 mise exec -- bundle exec ruby -Itest test/m12d_installed_transport_test.rb
+mise exec -- bundle exec ruby -Itest -e 'require_relative "test/simulated_provider_test"; require_relative "test/authorized_provider_docker_test"' -- --verbose
+AGRU_M12D_TRANSPORT_TEST=1 AGRU_AUTHORIZED_PROVIDER_DOCKER=1 mise exec -- bundle exec ruby -Itest -e 'require_relative "test/simulated_provider_test"; require_relative "test/authorized_provider_docker_test"'
+```
+
+Respective logs: `relay-final-review.log` (**4 Node tests pass**, no skips),
+`installed-transport-final-review.log` (**1 run, 20 assertions, all pass**),
+`new-default-skips.log` (**3 runs, 1 assertion, 2 skips**) and
+`new-controls-enabled.log` (**3 runs, 17 assertions, all pass**).
+The two added default skips are exactly
+`SimulatedProviderTest#test_offline_https_exchange_binds_caller_identity`
+(`AGRU_M12D_TRANSPORT_TEST`) and
+`AuthorizedProviderDockerTest#test_actual_relay_lifecycle_without_provider_requests`
+(`AGRU_AUTHORIZED_PROVIDER_DOCKER`). Both are offline Docker controls, now passed
+with explicit opt-in. The authorized lifecycle uses a dummy credential and
+`https://provider.invalid`, sends no provider request, and is not live acceptance.
+
+### Security control matrix
+
+PASS below means the named bounded test passed, not exhaustive assurance.
+
+| Control | Actual evidence | Status / limitation |
+|---|---|---|
+| Host files/env/private layout and Docker socket denial | `sandbox-controls-pinned.log`, SandboxBoundaryTest and M12cs3HostEscapeTest | PASS; not kernel escape proof |
+| Non-root, caps, no-new-privileges, rootfs, direct network denial | `sandbox-controls-pinned.log`; installed transport negative sockets | PASS bounded container probes |
+| PID limits, timeout, cancellation and writer quiescence | SandboxBoundaryTest, SandboxSupervisorTest, M12cSandboxLifecycleTest in pinned log | PASS; inspect limits are not exhaustive exhaustion attacks |
+| Export traversal, special entries, size, symlink races and permission preservation | SandboxExportMetadataTest, M12cs2IntegratedAdversarialTest in pinned log | PASS bounded adversarial fixtures |
+| Installed hooks/config/credential/dispatch negative controls | `provider-boundary-installed.log` | PASS 24 historical version-frozen probes; host calibration only |
+| LSP/plugin negative and positive calibration | `installed-controls-revalidated.log` | PASS individual controls; whole invocation had parity setup error |
+| Auxiliary MCP diagnostic | `auxiliary-isolated.log` | PASS diagnostic only; positive MCP startup NOT_TESTED |
+| Relay method/path/model/inference allowlist and mandatory configuration | `relay-final-review.log` configuration case; installed transport log | PASS tested contract; arbitrary upstream behavior not implied |
+| Upload admission bounds, deadline, reusable slots | `relay-final-review.log`, unfinished uploads case | PASS |
+| Cancellation during unfinished upload and closed admission | `relay-final-review.log`, cancellation case | PASS |
+| HTTPS/TLS validation, redirects, CR-framed SSE | `relay-final-review.log`, offline HTTPS case | PASS local controlled HTTPS; not full SSE fuzzing |
+| Rejected-request attribution without credentials | `relay-final-review.log`, configuration/attribution case | PASS |
+| Caller identity propagation through reusable simulated provider | `new-controls-enabled.log`, SimulatedProviderTest | PASS synthetic exchange |
+| Authorized production launcher Docker lifecycle | `new-controls-enabled.log`, AuthorizedProviderDockerTest | PASS no-request lifecycle only |
+| Real upstream credential isolation under inference, served identity and actual billing | None (no paid calls authorized) | NOT_TESTED |
+| Durable local cross-process budget reservations | Commit `0e27abb`, `test/provider_budget_ledger_test.rb`; parent reports combined budget tests 10 runs / 43 assertions passing | PASS reported local tests: fork contention admits exactly one of four processes, reopen rejects cell/attempt reuse and changed expiry/corruption, expiry fails closed. Full-envelope reservations have no refund path; not external account charging proof |
+| Actual upstream retry/restart charging and account-wide reconciliation | No external calls | NOT_TESTED; local durable reservations do not attest external invoices or other clients |
+| CPU/memory/disk exhaustion resistance, malicious daemon/kernel escape | No comprehensive attack evidence | NOT_TESTED beyond bounded limits/PID/export probes |
+| Public-source LSP provenance refresh | Default network-gated source evidence test | NOT_TESTED intentionally offline |
+
+Highest-priority untested items: real-upstream credential/billing/identity
+acceptance (requires separate explicit authorization), end-to-end external
+retry/restart charging and reconciliation, and positive MCP startup if startup
+enforcement is a required claim. Durable local reservation behavior is now
+tested, not an open missing control. The isolated MCP 1-run/4-assertion pass is
+explicitly diagnostic: it asserts `No MCP servers configured` and absence of
+`MCP_STARTED` and `PLUGIN_STARTED`; it cannot prove positive startup. Broader
+exhaustion and SSE fuzzing remain assurance limits.
+
 ## Every default skip classified
 
 ```sh
@@ -130,14 +193,11 @@ and was superseded by the explicit installed-binary successful rerun above.
 
 ## Remaining gaps and limits
 
-- Parent reports cancellation during unfinished upload, CR/LF SSE handling and
-  mandatory inference allowlist now fixed, with three Node tests passing and
-  installed transport 1 run / 20 assertions passing. This is parent-supplied
-  update, not independently rerun Node evidence in this inventory. Production
-  helper work remains ongoing. Bounded incomplete records, retry/connection/
-  request quotas and malicious upstream behavior still need current evidence
-  mapped to each control; the happy exchange is not a substitute. Earlier relay
-  gaps are therefore historical, not asserted as still-open defects here.
+- Upload deadline/cancellation, CR-framed SSE, mandatory inference configuration
+  and bounded admission now have independently rerun Node evidence (four passing
+  tests); installed transport also passed again. Earlier relay gaps are historical,
+  not current defect claims. The matrix above states remaining assurance limits;
+  these tests do not imply complete production-provider acceptance.
 - No paid upstream, authentic served-model identity, complete cost accounting,
   or credential-bearing live launch was exercised. Fixture secrets are synthetic.
 - No kernel/container escape proof, hostile Docker daemon defense or formal

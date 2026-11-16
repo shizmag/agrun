@@ -11,6 +11,10 @@ module AgentRuntime
 
       def render(experiment_id:, evidence_kind:)
         raise ArgumentError, "unknown evidence kind" unless %w[simulated_relay live_provider offline_fixture].include?(evidence_kind)
+        if evidence_kind == "live_provider"
+          provenance = @store.report(experiment_id).dig("provenance", "solver_execution")
+          raise ArgumentError, "live report requires live execution provenance" unless provenance == "live"
+        end
         summary = Reports.new(store: @store).summary(experiment_id: experiment_id)
         manifest = summary.fetch("manifest")
         cells = summary.fetch("per_task_results").values.flatten

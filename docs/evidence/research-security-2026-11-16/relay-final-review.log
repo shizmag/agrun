@@ -1,0 +1,12 @@
+✔ unfinished uploads have bounded admission, deadlines and reusable slots (642.871666ms)
+✔ offline HTTPS enforces TLS, rejects redirects and parses CR-framed SSE (75.960333ms)
+✔ cancellation interrupts an unfinished upload and closes admission (1.276834ms)
+✔ configuration fails closed and rejected requests are attributable without credentials (4.682958ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 813.127875
