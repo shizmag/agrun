@@ -15,6 +15,34 @@ class ComparativeSolversTest < Minitest::Test
     end
   end
 
+  class UsageAdapter < RecordingAdapter
+    def execute(request)
+      super
+      AgentRuntime::Result.new(status: "success", outputs: {"repository" => request.inputs.fetch("repository"), "text" => "role result"},
+        usage: {"steps" => [{"input" => 12, "output" => 3}]})
+    end
+  end
+
+  def test_composed_roles_preserve_legacy_usage_as_incomplete_subtotals
+    in_tmp do |root|
+      repository = File.join(root, "source")
+      FileUtils.mkdir_p(repository)
+      adapter = UsageAdapter.new
+      solver = AgentRuntime::Benchmarks::Solvers::ComparativeDSL.new(store: AgentRuntime::Store.new(File.join(root, "store")), adapter: adapter, live: true)
+      task = Struct.new(:repository, :instruction).new(repository, "Implement public requirement")
+      result = solver.solve(task: task, model: "test", budget: {"timeout" => 10}, workspace: File.join(root, "workspace"))
+      assert_equal "success", result.fetch("status")
+      assert_equal 3, adapter.requests.size
+      assert_equal 36, result.dig("usage", "tokens", "input", "known_subtotal")
+      assert_equal 9, result.dig("usage", "tokens", "output", "known_subtotal")
+      assert_equal 3, result.dig("usage", "coverage", "accepted_requests")
+      assert_equal false, result.dig("usage", "coverage", "complete")
+      assert_nil result.dig("usage", "tokens", "input", "total")
+      assert_nil result.dig("usage", "tokens", "reasoning", "known_subtotal")
+      assert_nil result["cost"]
+    end
+  end
+
   def test_composed_roles_receive_task_profile_and_typed_plan
     in_tmp do |root|
       repository = File.join(root, "source")

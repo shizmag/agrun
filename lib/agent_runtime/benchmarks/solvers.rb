@@ -187,10 +187,33 @@ module AgentRuntime
                     "partial_repository_artifact" => (artifact unless report["status"] == "success"),
                     "model" => ((observed_models.size == 1) ? observed_models.first : nil), "observed_models" => observed_models, "requested_model" => model, "runtime_run_id" => report["run_id"],
                     "ir_digest" => report["ir_digest"], "usage" => nil, "cost" => nil}
+          summary = Execution::Summary.from_run(store: @store, run_id: report.fetch("run_id"))
+          result["usage"], result["cost"] = summary.values_at("usage", "cost")
+          if result["usage"].nil?
+            # Legacy native adapters retain token observations on each attempt,
+            # without the newer execution-evidence envelope. Preserve these as
+            # incomplete known subtotals, never as complete billing evidence.
+            requests = report.fetch("steps", {}).flat_map do |step_id, step|
+              step.fetch("attempts", []).flat_map do |attempt|
+                Array(attempt.dig("usage", "steps")).each_with_index.map do |tokens, index|
+                  cache = tokens["cache"].is_a?(Hash) ? tokens["cache"] : {}
+                  {"request_id" => index.to_s, "identity_kind" => "root_step_observation",
+                   "provider" => nil, "model" => nil, "reported_cost" => nil,
+                   "identity_scope" => "#{report.fetch("run_id")}:#{step_id}:#{attempt.fetch("attempt")}",
+                   "tokens" => {"input" => tokens["input"], "output" => tokens["output"],
+                                "reasoning" => tokens["reasoning"], "cache_read" => cache["read"], "cache_write" => cache["write"]},
+                   "input_cache_relation" => "unknown", "output_reasoning_relation" => "unknown"}
+                end
+              end
+            end
+            unless requests.empty?
+              require_relative "../execution/usage"
+              accounting = Execution::Usage.normalize(requests: requests, complete: false)
+              result["usage"] = accounting.fetch("usage").except("requests")
+            end
+          end
           if budget.key?("model_profile")
-            summary = Execution::Summary.from_run(store: @store, run_id: report.fetch("run_id"))
             result["execution"] = {"schema_version" => 1, "run_id" => report.fetch("run_id")}
-            result["usage"], result["cost"] = summary.values_at("usage", "cost")
           end
           result
         end

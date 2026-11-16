@@ -30,3 +30,13 @@ Verification establishes internal consistency, not external authenticity.
 SQLite inherited-connection warnings occurred during execution; all cells and
 regrades completed. Record independent review separately without rewriting these
 frozen bytes.
+
+## Portable evaluator reproduction
+
+`portable-regrade.json` records nine fresh audited evaluations restored from the
+V2 portable submission manifests into a new Store, without reading the original
+run Store. Trusted hidden assets were supplied separately from `.agru/nl2repo`;
+none were copied into this bundle. All nine reproduced results matched their
+original scores and verdicts. This uses the same evaluator implementation: it is
+reproducibility evidence, not an independently implemented evaluator or a new
+solver execution. It does not modify the frozen experiment or historical scores.

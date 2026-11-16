@@ -122,6 +122,20 @@ with explicit opt-in. The authorized lifecycle uses a dummy credential and
 
 PASS below means the named bounded test passed, not exhaustive assurance.
 
+Additional reviewer-owned adversarial test:
+`mise exec -- bundle exec ruby -Itest test/research_adversarial_controls_test.rb`
+passed **1 run / 7 assertions / no failures/errors/skips**, recorded in
+`adversarial-upstream-final.log`. The Ruby test also executes Node assertions for
+three loopback HTTPS scenarios: valid usage followed by missing `[DONE]`, an
+unterminated frame over 1 MiB, and an upstream that never responds. It requires
+one attributable error record per exchange, incomplete accounting and absence
+of the synthetic credential in records. Errors are respectively
+`upstream_protocol`, `response_frame_size`, and `request_timeout`. No paid calls.
+Initial harness attempts had a wrong cleanup method and hung in cleanup; retained
+`adversarial-upstream.log` is failed harness evidence, not a passing control.
+The corrected harness uses `cancelUpstream` and a ten-second watchdog. It uses
+`AGRU_RESEARCH_NODE` when set, otherwise Homebrew Node if present or PATH Node.
+
 | Control | Actual evidence | Status / limitation |
 |---|---|---|
 | Host files/env/private layout and Docker socket denial | `sandbox-controls-pinned.log`, SandboxBoundaryTest and M12cs3HostEscapeTest | PASS; not kernel escape proof |
@@ -135,6 +149,7 @@ PASS below means the named bounded test passed, not exhaustive assurance.
 | Upload admission bounds, deadline, reusable slots | `relay-final-review.log`, unfinished uploads case | PASS |
 | Cancellation during unfinished upload and closed admission | `relay-final-review.log`, cancellation case | PASS |
 | HTTPS/TLS validation, redirects, CR-framed SSE | `relay-final-review.log`, offline HTTPS case | PASS local controlled HTTPS; not full SSE fuzzing |
+| Truncated streaming response, oversized incomplete frame, stalled upstream | `adversarial-upstream-final.log`, ResearchAdversarialControlsTest | PASS offline adversaries; no complete accounting promoted from partial usage; synthetic credential absent from error records |
 | Rejected-request attribution without credentials | `relay-final-review.log`, configuration/attribution case | PASS |
 | Caller identity propagation through reusable simulated provider | `new-controls-enabled.log`, SimulatedProviderTest | PASS synthetic exchange |
 | Authorized production launcher Docker lifecycle | `new-controls-enabled.log`, AuthorizedProviderDockerTest | PASS no-request lifecycle only |
