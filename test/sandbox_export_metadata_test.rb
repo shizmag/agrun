@@ -4,6 +4,56 @@ require "rubygems/package"
 require "stringio"
 
 class SandboxExportMetadataTest < Minitest::Test
+  def test_descriptor_enumeration_preserves_handle_cwd_and_pinned_directory
+    in_tmp do |root|
+      source = File.join(root, "source")
+      Dir.mkdir(source)
+      File.write(File.join(source, "original"), "data")
+      cwd = Dir.pwd
+      File.open(source) do |directory|
+        File.rename(source, File.join(root, "moved"))
+        Dir.mkdir(source)
+        File.write(File.join(source, "replacement"), "other")
+        3.times do
+          assert_equal ["original"], runner.send(:descriptor_children, directory)
+          refute directory.closed?
+          assert directory.stat.directory?
+          assert_equal cwd, Dir.pwd
+        end
+      end
+    end
+  end
+
+  def test_directory_enumeration_does_not_inherit_writable_sqlite_connections
+    in_tmp do |root|
+      store_root = File.join(root, "store")
+      store = AgentRuntime::Store.new(store_root)
+      source = File.join(root, "source")
+      FileUtils.mkdir_p(source)
+      File.write(File.join(source, "evidence"), "retained")
+      store.save_report({"run_id" => "before", "status" => "success"})
+      _stdout, stderr = capture_subprocess_io do
+        3.times do |index|
+          manifest = runner.send(:copy_tree!, source, File.join(root, "copy#{index}"), timeout: 5, cancellation: nil)
+          assert_includes manifest, ["evidence", "file", Digest::SHA256.hexdigest("retained"), 0o644]
+          store.save_report({"run_id" => "after#{index}", "status" => "success"})
+        end
+      end
+      assert_empty stderr
+      database = store.instance_variable_get(:@db)
+      refute database.closed?
+      assert_equal "wal", database.get_first_value("PRAGMA journal_mode")
+      assert_equal "ok", database.get_first_value("PRAGMA integrity_check")
+      database.close
+      reopened = AgentRuntime::Store.new(store_root)
+      assert_equal "success", reopened.report("before").fetch("status")
+      3.times { |index| assert_equal "success", reopened.report("after#{index}").fetch("status") }
+    ensure
+      database&.close unless database&.closed?
+      reopened&.instance_variable_get(:@db)&.close
+    end
+  end
+
   def test_real_docker_read_only_executable_export
     skip "explicit Docker export opt-in required" unless ENV["AGRU_S2_EXPORT_DOCKER"] == "1"
     image = ENV.fetch("AGRU_S2_EXPORT_IMAGE", "sha256:cbc8bd81c7ede30f09de318df230452f4d3a05e1e8aa9f08a4d46b7f24f437f1")

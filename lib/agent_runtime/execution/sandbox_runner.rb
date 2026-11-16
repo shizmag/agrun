@@ -504,33 +504,16 @@ module AgentRuntime
       end
 
       def descriptor_children(directory)
-        reader, writer = IO.pipe
-        pid = fork do
-          reader.close
-          begin
-            names = Dir.fchdir(directory.fileno) { Dir.children(".").take(@limits.fetch("workspace_entries", 10_000) + 1).sort }
-            Marshal.dump(names, writer)
-            writer.close
-            exit! 0
-          rescue
-            exit! 1
-          end
-        end
-        writer.close
-        names = Marshal.load(reader)
-        Process.wait(pid)
-        raise BoundaryError, "descriptor directory enumeration failed" unless $?.success?
-        names
+        # Dir owns its descriptor. Duplicate the pinned traversal handle rather
+        # than forking with live SQLite connections or changing the process cwd.
+        duplicate = directory.dup
+        entries = Dir.for_fd(duplicate.fileno)
+        duplicate.autoclose = false
+        entries.lazy.reject { |name| name == "." || name == ".." }
+          .take(@limits.fetch("workspace_entries", 10_000) + 1).sort
       ensure
-        reader&.close
-        writer&.close unless writer&.closed?
-        if pid
-          begin
-            Process.wait(pid)
-          rescue Errno::ECHILD
-            nil
-          end
-        end
+        entries&.close
+        duplicate&.close if duplicate&.autoclose? && !duplicate.closed?
       end
     end
   end
