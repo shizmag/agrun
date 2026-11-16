@@ -100,6 +100,17 @@ module AgentRuntime
         raise ArgumentError, "unsupported freeze schema" unless payload.fetch("schema") == SCHEMA
         verification = payload.fetch("verification")
         report = payload.fetch("report")
+        release = payload.fetch("release_identity")
+        execution_release = report["execution_release_identity"]
+        [release, execution_release].compact.each do |identity|
+          unless identity["schema_version"] == "agru-release-content-v1" && identity["files"].is_a?(Hash) &&
+              !identity["files"].empty? && identity["content_digest"] == Digest::SHA256.hexdigest(JSON.generate(identity["files"]))
+            raise ArgumentError, "invalid portable release identity"
+          end
+        end
+        if execution_release && release != execution_release
+          raise ArgumentError, "execution release identity mismatch"
+        end
         if payload.key?("frozen_contract")
           raise ArgumentError, "frozen contract mismatch" unless payload["frozen_contract"] == frozen_contract(report) && payload["frozen_experiment_digest"] == IR.digest(payload["frozen_contract"])
         end
@@ -140,10 +151,10 @@ module AgentRuntime
             request.slice("task_id", "benchmark", "specification_digest", "limits", "audited_binding").merge("implementation_fingerprint" => attempt["implementation_fingerprint"])
           end
         end.uniq.sort_by { |binding| IR.digest(binding) }
-         {"schema" => "agru-frozen-contract-v1", "manifest" => report.fetch("manifest").except("experiment_id"),
+        {"schema" => "agru-frozen-contract-v1", "manifest" => report.fetch("manifest").except("experiment_id"),
          "execution_release_identity" => report.fetch("execution_release_identity", {}).slice("content_digest", "files"),
-          "schedule" => report.fetch("schedule", {}).except("cell_order").merge("ordered_cells" => order),
-          "simulation" => report.fetch("simulation", {}).except("attempts"),
+         "schedule" => report.fetch("schedule", {}).except("cell_order").merge("ordered_cells" => order),
+         "simulation" => report.fetch("simulation", {}).except("attempts"),
          "solver_configurations" => report.fetch("solver_configurations", {}), "grading_bindings" => bindings}
       end
 

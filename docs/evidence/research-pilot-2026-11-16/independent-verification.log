@@ -1,0 +1,26 @@
+Independent offline verification, 2026-11-16
+
+v2 preserved unchanged. v3 is a byte-preserving bundle copy; verifier hardening is source-only, not an altered claim about execution identity.
+Bundle SHA256 v2/v3: 756852b4b81daa24fd6d5b6e15e8b84ce3759f305a3f0e223bad75e339db53b2
+
+Command:
+mise exec -- bundle exec ruby -Ilib -ragent_runtime -ragent_runtime/benchmarks/comparative_cli -e 'exit AgentRuntime::Benchmarks::ComparativeCLI.new.run(ARGV)' -- verify docs/evidence/research-pilot-2026-11-16/v3 --root /nonexistent/agru-independent-no-store
+Result: integrity_verified=true, regrades_verified=true, evidence_kind=simulated_relay, experiment_id=https-bound-nine-20261116. Separate process; nonexistent original store; no network calls.
+
+Command:
+mise exec -- bundle exec ruby -Ilib:test test/independent_freeze_adversarial_test.rb
+Result: 1 runs, 8 assertions, 0 failures, 0 errors, 0 skips.
+REJECT missing release (outer checksum recomputed)
+REJECT corrupt release (outer checksum recomputed)
+REJECT different valid release (outer checksum recomputed)
+REJECT duplicate checks (outer checksum recomputed)
+REJECT wrong named pair (outer checksum recomputed)
+REJECT missing submission (outer checksum recomputed)
+REJECT duplicate submission (outer checksum recomputed)
+REJECT byte tamper (original checksum)
+
+Source finding/fix: verify_freeze now requires release_identity, validates portable schema/inventory digest, and compares against execution_release_identity when recorded. Existing current source already resolves exact named grading attempts and rejects duplicate checks/submissions. No original execution identity rewritten to match current code.
+
+Command:
+mise exec -- bundle exec standardrb --fix lib/agent_runtime/benchmarks/comparative_experiment.rb test/independent_freeze_adversarial_test.rb
+Result: exit 0.
