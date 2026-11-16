@@ -1,0 +1,28 @@
+{
+  "total_tokens": 1000000000,
+  "reserved_tokens": 18533952,
+  "request_count": 9,
+  "known_usage_tokens": 34394,
+  "unknown_usage_count": 1,
+  "unknown_model_count": 1,
+  "unresolved_violations": [
+    {
+      "type": "settle",
+      "request_id": "4a4c53ea-d684-44b5-97f4-e099ff22e26d",
+      "observed_model": "keepalive",
+      "usage": {
+        "prompt_tokens": 10772,
+        "completion_tokens": 2335,
+        "total_tokens": 13107,
+        "prompt_tokens_details": {
+          "cached_tokens": 10496
+        }
+      },
+      "reporter": "trusted-local-gateway",
+      "violation": "token_budget_model_name_mismatch_not_attestation",
+      "model_identity": "unattested",
+      "model_name_matches_request": false
+    }
+  ],
+  "halted": true
+}
