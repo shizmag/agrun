@@ -1,0 +1,29 @@
+Run options: --seed 62122
+
+# Running:
+
+................................F.F....F.F...............
+
+Finished in 40.682619s, 1.4011 runs/s, 9.2177 assertions/s.
+
+  1) Failure:
+SandboxBoundaryTest#test_real_synthetic_private_layout_and_host_environment_are_absent [test/sandbox_boundary_test.rb:173]:
+{"status" => "failure", "stdout" => "", "stderr" => "", "exit_code" => nil, "image_digest" => "alpine@sha256:3f4d6b32e26703c6082839234f43769d5046b3ac7c910033911d1e71d8cd630a", "resource_policy" => {"cpus" => 1, "memory_bytes" => 134217728, "pids" => 32, "tmpfs_bytes" => 16777216}, "cleanup" => {"attempted" => true, "confirmed" => true, "timeout" => 10, "process_runner_allowance" => 0.5, "private_confirmed" => true}, "container_name" => "agru-sandbox-856650d0d9c9250f9755b695f4bb0e31", "supervisor_sha256" => "5e8957d087e3a55ff1da2d9695b29778a9a44eda1dbb5788fc1fd3004abe3c55", "container_inspect" => {"Id" => "a96b63cac4863c3911b5955bdf03a1e16359d1e9559eaeb30797e5cde2025814", "Image" => "sha256:abbc135a7d3909a5eb6a56aac4c769cf15be025e3c9e226b8660f2b2b378158b", "HostConfig" => {"NetworkMode" => "none", "ReadonlyRootfs" => true, "Privileged" => false, "CapDrop" => ["ALL"], "CapAdd" => ["CAP_KILL", "CAP_SETGID", "CAP_SETUID"], "SecurityOpt" => ["no-new-privileges"], "Memory" => 134217728, "MemorySwap" => 134217728, "PidsLimit" => 32, "NanoCpus" => 1000000000, "Tmpfs" => {"/control" => "rw,noexec,nosuid,nodev,size=83886080,mode=0700", "/tmp" => "rw,noexec,nosuid,nodev,size=16777216,mode=1777", "/workspace" => "rw,exec,nosuid,nodev,size=67108864,uid=65534,gid=65534,mode=0700"}}, "Mounts" => [{"Type" => "bind", "Source" => "/var/folders/bq/f_1r5c892ljfbjx7nln4k0dw0000gn/T/agru-sandbox-20261116-32952-8u9ssi/workspace", "Destination" => "/input", "Mode" => "", "RW" => false, "Propagation" => "rprivate"}, {"Type" => "bind", "Source" => "/var/folders/bq/f_1r5c892ljfbjx7nln4k0dw0000gn/T/agru-sandbox-20261116-32952-8u9ssi/supervisor.py", "Destination" => "/supervisor.py", "Mode" => "", "RW" => false, "Propagation" => "rprivate"}], "User" => "0:0"}, "error" => "AgentRuntime::Execution::SandboxRunner::BoundaryError: container start failed"}.
+Expected: "success"
+  Actual: "failure"
+
+  2) Failure:
+SandboxBoundaryTest#test_real_workspace_tmpfs_quota [test/sandbox_boundary_test.rb:261]:
+Expected "" to include "No space left on device".
+
+  3) Failure:
+SandboxBoundaryTest#test_real_malicious_export_types_are_rejected [test/sandbox_boundary_test.rb:113]:
+Expected /unsafe workspace\/export entry/ to match "AgentRuntime::Execution::SandboxRunner::BoundaryError: container start failed".
+
+  4) Failure:
+SandboxBoundaryTest#test_real_container_host_canary_denial_and_export [test/sandbox_boundary_test.rb:77]:
+{"status" => "failure", "stdout" => "", "stderr" => "", "exit_code" => nil, "image_digest" => "alpine@sha256:3f4d6b32e26703c6082839234f43769d5046b3ac7c910033911d1e71d8cd630a", "resource_policy" => {"cpus" => 1, "memory_bytes" => 134217728, "pids" => 32, "tmpfs_bytes" => 16777216}, "cleanup" => {"attempted" => true, "confirmed" => true, "timeout" => 10, "process_runner_allowance" => 0.5, "private_confirmed" => true}, "container_name" => "agru-sandbox-7f02a4d79999b460ebd6e2c38c1d018d", "supervisor_sha256" => "5e8957d087e3a55ff1da2d9695b29778a9a44eda1dbb5788fc1fd3004abe3c55", "container_inspect" => {"Id" => "dd58000b0fff75d0578248b5715f7f445dbbafcd439426a5218441829cdb4b09", "Image" => "sha256:abbc135a7d3909a5eb6a56aac4c769cf15be025e3c9e226b8660f2b2b378158b", "HostConfig" => {"NetworkMode" => "none", "ReadonlyRootfs" => true, "Privileged" => false, "CapDrop" => ["ALL"], "CapAdd" => ["CAP_KILL", "CAP_SETGID", "CAP_SETUID"], "SecurityOpt" => ["no-new-privileges"], "Memory" => 134217728, "MemorySwap" => 134217728, "PidsLimit" => 32, "NanoCpus" => 1000000000, "Tmpfs" => {"/control" => "rw,noexec,nosuid,nodev,size=83886080,mode=0700", "/tmp" => "rw,noexec,nosuid,nodev,size=16777216,mode=1777", "/workspace" => "rw,exec,nosuid,nodev,size=67108864,uid=65534,gid=65534,mode=0700"}}, "Mounts" => [{"Type" => "bind", "Source" => "/var/folders/bq/f_1r5c892ljfbjx7nln4k0dw0000gn/T/agru-sandbox-20261116-32952-2mk5uk/workspace", "Destination" => "/input", "Mode" => "", "RW" => false, "Propagation" => "rprivate"}, {"Type" => "bind", "Source" => "/var/folders/bq/f_1r5c892ljfbjx7nln4k0dw0000gn/T/agru-sandbox-20261116-32952-2mk5uk/supervisor.py", "Destination" => "/supervisor.py", "Mode" => "", "RW" => false, "Propagation" => "rprivate"}], "User" => "0:0"}, "error" => "AgentRuntime::Execution::SandboxRunner::BoundaryError: container start failed"}.
+Expected: "success"
+  Actual: "failure"
+
+57 runs, 375 assertions, 4 failures, 0 errors, 0 skips

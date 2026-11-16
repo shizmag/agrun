@@ -1,0 +1,61 @@
+Run options: --seed 26722
+
+# Running:
+
+EEE.EEE.....
+
+Finished in 68.545388s, 0.1751 runs/s, 1.8820 assertions/s.
+
+  1) Error:
+M12cPhysicalHostBoundaryTest#test_host_listener_and_host_material_are_available_only_to_positive_controls:
+KeyError: key not found: "AGRU_M12C_AGENT_IMAGE"
+    test/m12c_physical_host_boundary_test.rb:50:in 'fetch'
+    test/m12c_physical_host_boundary_test.rb:50:in 'block in M12cPhysicalHostBoundaryTest#test_host_listener_and_host_material_are_available_only_to_positive_controls'
+    test/test_helper.rb:8:in 'block in Minitest::Test#in_tmp'
+    /Users/vladimirkasterin/.local/share/mise/installs/ruby/4.0.9/lib/ruby/4.0.0/tmpdir.rb:105:in 'Dir.mktmpdir'
+    test/test_helper.rb:8:in 'Minitest::Test#in_tmp'
+    test/m12c_physical_host_boundary_test.rb:26:in 'M12cPhysicalHostBoundaryTest#test_host_listener_and_host_material_are_available_only_to_positive_controls'
+
+  2) Error:
+M12cAuxiliaryCalibrationTest#test_installed_mcp_list_diagnostic_is_not_a_startup_positive_control:
+KeyError: key not found: "AGRU_M12C_AGENT_IMAGE"
+    test/m12c_auxiliary_calibration_test.rb:16:in 'fetch'
+    test/m12c_auxiliary_calibration_test.rb:16:in 'block in M12cAuxiliaryCalibrationTest#test_installed_mcp_list_diagnostic_is_not_a_startup_positive_control'
+    test/test_helper.rb:8:in 'block in Minitest::Test#in_tmp'
+    /Users/vladimirkasterin/.local/share/mise/installs/ruby/4.0.9/lib/ruby/4.0.0/tmpdir.rb:105:in 'Dir.mktmpdir'
+    test/test_helper.rb:8:in 'Minitest::Test#in_tmp'
+    test/m12c_auxiliary_calibration_test.rb:7:in 'M12cAuxiliaryCalibrationTest#test_installed_mcp_list_diagnostic_is_not_a_startup_positive_control'
+
+  3) Error:
+M12cSandboxOpenCodeAcceptanceTest#test_installed_agent_shell_and_native_read_through_three_architectures:
+KeyError: key not found: "AGRU_M12C_AGENT_IMAGE"
+    test/m12c_sandbox_opencode_acceptance_test.rb:11:in 'fetch'
+    test/m12c_sandbox_opencode_acceptance_test.rb:11:in 'M12cSandboxOpenCodeAcceptanceTest#test_installed_agent_shell_and_native_read_through_three_architectures'
+
+  4) Error:
+M12cInstalledNegativeTest#test_installed_client_does_not_follow_injected_redirect_to_host:
+KeyError: key not found: "AGRU_M12C_AGENT_IMAGE"
+    test/m12c_installed_negative_test.rb:33:in 'fetch'
+    test/m12c_installed_negative_test.rb:33:in 'block in M12cInstalledNegativeTest#test_installed_client_does_not_follow_injected_redirect_to_host'
+    test/test_helper.rb:8:in 'block in Minitest::Test#in_tmp'
+    /Users/vladimirkasterin/.local/share/mise/installs/ruby/4.0.9/lib/ruby/4.0.0/tmpdir.rb:105:in 'Dir.mktmpdir'
+    test/test_helper.rb:8:in 'Minitest::Test#in_tmp'
+    test/m12c_installed_negative_test.rb:29:in 'M12cInstalledNegativeTest#test_installed_client_does_not_follow_injected_redirect_to_host'
+
+  5) Error:
+M12cInstalledNegativeTest#test_installed_native_child_cannot_read_unsubmitted_host_canary:
+KeyError: key not found: "AGRU_M12C_AGENT_IMAGE"
+    test/m12c_installed_negative_test.rb:84:in 'fetch'
+    test/m12c_installed_negative_test.rb:84:in 'block in M12cInstalledNegativeTest#test_installed_native_child_cannot_read_unsubmitted_host_canary'
+    test/test_helper.rb:8:in 'block in Minitest::Test#in_tmp'
+    /Users/vladimirkasterin/.local/share/mise/installs/ruby/4.0.9/lib/ruby/4.0.0/tmpdir.rb:105:in 'Dir.mktmpdir'
+    test/test_helper.rb:8:in 'Minitest::Test#in_tmp'
+    test/m12c_installed_negative_test.rb:55:in 'M12cInstalledNegativeTest#test_installed_native_child_cannot_read_unsubmitted_host_canary'
+
+  6) Error:
+M12cs2OfflineParityTest#test_frozen_retrying_specification_through_complete_architectures:
+KeyError: key not found: "AGRU_M12C_AGENT_IMAGE"
+    test/m12cs2_offline_parity_test.rb:22:in 'fetch'
+    test/m12cs2_offline_parity_test.rb:22:in 'M12cs2OfflineParityTest#test_frozen_retrying_specification_through_complete_architectures'
+
+12 runs, 129 assertions, 0 failures, 6 errors, 0 skips

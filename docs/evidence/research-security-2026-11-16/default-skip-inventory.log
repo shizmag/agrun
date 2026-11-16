@@ -1,0 +1,408 @@
+Run options: --verbose --seed 230
+
+# Running:
+
+M12cs2OfflineParityTest#test_frozen_retrying_specification_through_complete_architectures = 0.00 s = S
+M12cPrivateCleanupTest#test_real_docker_rejects_agent_privileged_mode = 0.00 s = S
+M12cPrivateCleanupTest#test_real_docker_cleans_private_staging_with_read_only_directories = 0.00 s = S
+M12bProviderBoundaryTest#test_ancestor_agents_canary_is_detectable_without_isolated_launch = 0.00 s = S
+M12bProviderBoundaryTest#test_actual_launch_rejects_unconfigured_provider_without_fallback = 0.00 s = S
+M12bProviderBoundaryTest#test_actual_launch_project_skill_content_is_not_loaded = 0.00 s = S
+M12bProviderBoundaryTest#test_actual_launch_workspace_patch_succeeds = 0.00 s = S
+M12bProviderBoundaryTest#test_actual_launch_skill_lookup_is_not_proven_permission_blocked = 0.00 s = S
+M12bProviderBoundaryTest#test_automatic_title_request_is_observed = 0.00 s = S
+M12bProviderBoundaryTest#test_actual_launch_rejects_outside_patch = 0.00 s = S
+M12bProviderBoundaryTest#test_process_cancellation_does_not_dispatch_a_retry = 0.00 s = S
+M12bProviderBoundaryTest#test_native_http_request_is_observed_before_dispatch = 0.00 s = S
+M12bProviderBoundaryTest#test_native_retry_reenters_hook_and_can_be_vetoed = 0.00 s = S
+M12bProviderBoundaryTest#test_external_directory_deny_does_not_confine_shell = 0.00 s = S
+M12bProviderBoundaryTest#test_actual_launch_denies_shell_tool_call = 0.00 s = S
+M12bProviderBoundaryTest#test_actual_launch_ignores_ancestor_agents_and_configuration = 0.00 s = S
+M12bProviderBoundaryTest#test_actual_launch_rejects_outside_read = 0.00 s = S
+M12bProviderBoundaryTest#test_environment_credential_interpolation_reaches_only_loopback = 0.00 s = S
+M12bProviderBoundaryTest#test_actual_launch_rejects_subagent_and_network_calls = 0.00 s = S
+M12bProviderBoundaryTest#test_actual_launch_reads_workspace_file = 0.00 s = S
+M12bProviderBoundaryTest#test_actual_launch_rejects_worktree_removal = 0.00 s = S
+M12bProviderBoundaryTest#test_external_host_read_positive_control = 0.00 s = S
+M12bProviderBoundaryTest#test_explicit_config_can_disable_repository_configuration = 0.00 s = S
+M12bProviderBoundaryTest#test_missing_plugin_does_not_fail_closed = 0.00 s = S
+M12bProviderBoundaryTest#test_external_directory_deny_blocks_absolute_host_read = 0.00 s = S
+M12bProviderBoundaryTest#test_throwing_native_http_hook_vetoes_dispatch = 0.00 s = S
+M12bProviderBoundaryTest#test_actual_launch_configuration_uses_exact_wire_model_and_environment_secret = 0.00 s = S
+M12cs2IntegratedAdversarialTest#test_excessive_output_entries_fail_closed_after_agent_completion = 0.00 s = S
+M12cs2IntegratedAdversarialTest#test_normal_integrated_quiescent_export = 0.00 s = S
+M12cs2IntegratedAdversarialTest#test_open_fd_integrated_quiescent_export = 0.00 s = S
+M12cs2IntegratedAdversarialTest#test_agent_parent_escape_does_not_export_outside_workspace = 0.00 s = S
+M12cs2IntegratedAdversarialTest#test_background_integrated_quiescent_export = 0.00 s = S
+M12cs2IntegratedAdversarialTest#test_detached_integrated_quiescent_export = 0.00 s = S
+M12cs2IntegratedAdversarialTest#test_refuse_term_integrated_quiescent_export = 0.00 s = S
+M12cs2IntegratedAdversarialTest#test_repeated_write_integrated_quiescent_export = 0.00 s = S
+M12cs2IntegratedAdversarialTest#test_actual_truncated_archive_never_accepted = 0.00 s = S
+M12cSandboxOpenCodeAcceptanceTest#test_installed_agent_shell_and_native_read_through_three_architectures = 0.00 s = S
+M12cs3HostEscapeTest#test_auxiliary_process_cannot_write_host_canary = 0.00 s = S
+M12cInstalledNegativeTest#test_installed_native_child_cannot_read_unsubmitted_host_canary = 0.00 s = S
+M12cInstalledNegativeTest#test_installed_client_does_not_follow_injected_redirect_to_host = 0.00 s = S
+SandboxExportMetadataTest#test_root_mode_and_implicit_parent_are_preserved_safely = 0.00 s = .
+SandboxExportMetadataTest#test_descriptor_copy_preserves_read_only_executable_and_directory_modes_without_privileged_bits = 0.00 s = .
+SandboxExportMetadataTest#test_output_copy_is_not_restricted_to_input_file_descriptor_cap = 0.27 s = .
+SandboxExportMetadataTest#test_export_manifest_and_digest_bind_all_ordinary_permission_bits = 0.02 s = .
+SandboxExportMetadataTest#test_archive_entry_limit_is_enforced_before_export_copy = 0.00 s = .
+SandboxExportMetadataTest#test_privileged_modes_are_rejected_not_silently_stripped = 0.01 s = .
+SandboxExportMetadataTest#test_deterministic_directory_symlink_swap_never_accepts_external_bytes = 0.00 s = .
+SandboxExportMetadataTest#test_every_truncated_header_and_payload_is_rejected = 0.00 s = .
+SandboxExportMetadataTest#test_archive_requires_complete_terminator_and_rejects_trailing_data = 0.00 s = .
+SandboxExportMetadataTest#test_real_docker_read_only_executable_export = 0.00 s = S
+SandboxExportMetadataTest#test_input_resource_caps_reject_before_any_docker_dispatch = 2.28 s = .
+SandboxExportMetadataTest#test_archive_preserves_directory_modes_after_populating_children = 0.00 s = .
+SandboxExportMetadataTest#test_archive_rejects_duplicate_paths_and_traversal = 0.00 s = .
+SandboxExportMetadataTest#test_shared_deadline_is_checked_during_copy_and_extraction = 0.00 s = .
+SandboxExportMetadataTest#test_special_archive_members_are_rejected = 0.00 s = .
+SandboxExportMetadataTest#test_archive_byte_limit_is_enforced_before_export_copy = 0.00 s = .
+M12dInstalledTransportTest#test_real_opencode_exchange = 0.00 s = S
+SandboxBoundaryTest#test_real_unknown_image_fails_closed = 0.00 s = S
+SandboxBoundaryTest#test_input_symlink_and_hardlink_fail_before_docker = 0.01 s = .
+SandboxBoundaryTest#test_real_python_canary_open_denied = 0.00 s = S
+SandboxBoundaryTest#test_real_container_host_canary_denial_and_export = 0.00 s = S
+SandboxBoundaryTest#test_copy_does_not_change_parent_cwd_under_concurrency = 0.09 s = .
+SandboxBoundaryTest#test_real_synthetic_private_layout_and_host_environment_are_absent = 0.00 s = S
+SandboxBoundaryTest#test_inspect_failure_never_starts_execution = 0.00 s = .
+SandboxBoundaryTest#test_real_cancellation_removes_container = 0.00 s = S
+SandboxBoundaryTest#test_directory_replacement_race_never_copies_external_canary = 0.05 s = .
+SandboxBoundaryTest#test_real_timeout_removes_container_and_descendants = 0.00 s = S
+SandboxBoundaryTest#test_real_malicious_export_types_are_rejected = 0.00 s = S
+SandboxBoundaryTest#test_create_failure_attempts_cleanup_and_never_falls_back = 0.00 s = .
+SandboxBoundaryTest#test_descriptor_copy_limits_and_cancellation_fail_before_docker = 0.00 s = .
+SandboxBoundaryTest#test_real_workspace_tmpfs_quota = 0.00 s = S
+SandboxBoundaryTest#test_unpinned_image_is_rejected = 0.00 s = .
+SandboxBoundaryTest#test_arbitrary_network_policy_is_rejected = 0.00 s = .
+M12cs3PluginCalibrationTest#test_same_installed_tool_trigger_with_enabled_and_explicitly_disabled_plugin = 0.00 s = S
+ExecutionBudgetTest#test_shared_experiment_caps_distinct_runs = 0.00 s = .
+ExecutionBudgetTest#test_foreign_and_incomplete_scope_chains_reject_before_callback = 0.00 s = .
+ExecutionBudgetTest#test_release_is_idempotent_and_never_refunds_attempts = 0.00 s = .
+ExecutionBudgetTest#test_request_timeout_also_decreases_during_setup = 0.00 s = .
+ExecutionBudgetTest#test_callback_failure_releases_capacity_but_consumes_admitted_attempt = 0.00 s = .
+ExecutionBudgetTest#test_required_limits_reject_invalid_numbers = 0.00 s = .
+ExecutionBudgetTest#test_idle_scope_deadline_denies_at_exact_boundary = 0.00 s = .
+ExecutionBudgetTest#test_profile_normalizes_copies_and_deeply_freezes_values = 0.00 s = .
+ExecutionBudgetTest#test_offline_grant_requires_all_host_identity_bindings = 0.00 s = .
+ExecutionBudgetTest#test_duplicate_attempt_denies_after_release = 0.00 s = .
+ExecutionBudgetTest#test_setup_elapsed_reduces_timeout_and_expiry_prevents_spawn = 0.00 s = .
+ExecutionBudgetTest#test_real_provider_is_denied_even_with_matching_host_grant_and_live_config = 0.00 s = .
+ExecutionBudgetTest#test_concurrent_admissions_are_atomic_and_terminal_without_queue = 0.00 s = .
+ExecutionBudgetTest#test_default_authorization_denies_without_consuming_capacity = 0.00 s = .
+ExecutionBudgetTest#test_shared_pool_caps_distinct_experiments = 0.00 s = .
+ExecutionBudgetTest#test_unsupported_hard_limits_fail_instead_of_becoming_advisory = 0.00 s = .
+ExecutionBudgetTest#test_admission_callback_receives_json_decision_before_caller_can_execute = 0.00 s = .
+M12cMockRelayTest#test_network_disabled_relay_and_adversarial_client = 0.00 s = S
+M12cs3LspFixtureTest#test_real_framed_initialize_document_operation_and_shutdown = 0.00 s = S
+M12cPhysicalHostBoundaryTest#test_host_listener_and_host_material_are_available_only_to_positive_controls = 0.00 s = S
+M12cAuxiliaryCalibrationTest#test_installed_mcp_list_diagnostic_is_not_a_startup_positive_control = 0.00 s = S
+M12cSandboxLifecycleTest#test_expired_deadline_before_export_never_accepts_partial = 0.00 s = S
+M12cSandboxLifecycleTest#test_cancel_during_quiescence_never_exports = 0.00 s = S
+M12cSandboxLifecycleTest#test_container_disappearance_never_accepts_partial = 0.00 s = S
+M12cSandboxLifecycleTest#test_timeout_during_real_docker_archive_stream_never_accepts_partial = 0.00 s = S
+M12cSandboxLifecycleTest#test_untrusted_effective_environment_is_rejected_before_start = 0.00 s = S
+M12cSandboxLifecycleTest#test_caller_loader_environment_is_rejected_before_docker = 0.00 s = S
+M12cs3LspInstalledTest#test_unavailable_lsp_known_version_contract = 0.00 s = S
+M12cs3LspSourceEvidenceTest#test_public_version_source_evidence = 0.00 s = S
+SandboxSupervisorTest#test_forced_cleanup_has_no_readiness_and_container_disappearance_loses_tmpfs = 0.00 s = S
+SandboxSupervisorTest#test_ordinary_completion_exports_private_file_as_ustar = 0.00 s = S
+SandboxSupervisorTest#test_provisioning_preserves_private_modes_and_agent_can_edit_inputs = 0.00 s = S
+SandboxSupervisorTest#test_control_tmpfs_exhaustion_never_publishes_readiness = 0.00 s = S
+SandboxSupervisorTest#test_detached_term_resistant_writer_is_dead_before_export = 0.00 s = S
+SandboxSupervisorTest#test_detached_writer_open_descriptor_is_stopped_before_export = 0.00 s = S
+SandboxSupervisorTest#test_term_refusing_writer_open_descriptor_is_stopped_before_export = 0.00 s = S
+SandboxSupervisorTest#test_unreadable_input_directory_fails_closed_instead_of_omitting_subtree = 0.00 s = S
+SandboxSupervisorTest#test_background_writer_open_descriptor_is_stopped_before_export = 0.00 s = S
+
+Finished in 2.738884s, 40.8926 runs/s, 82.8805 assertions/s.
+
+  1) Skipped:
+M12cs2OfflineParityTest#test_frozen_retrying_specification_through_complete_architectures [test/m12cs2_offline_parity_test.rb:16]:
+explicit S2 offline Docker opt-in required
+
+  2) Skipped:
+M12cPrivateCleanupTest#test_real_docker_rejects_agent_privileged_mode [test/m12c_private_cleanup_test.rb:6]:
+explicit Docker export opt-in required
+
+  3) Skipped:
+M12cPrivateCleanupTest#test_real_docker_cleans_private_staging_with_read_only_directories [test/m12c_private_cleanup_test.rb:21]:
+explicit Docker export opt-in required
+
+  4) Skipped:
+M12bProviderBoundaryTest#test_ancestor_agents_canary_is_detectable_without_isolated_launch [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+  5) Skipped:
+M12bProviderBoundaryTest#test_actual_launch_rejects_unconfigured_provider_without_fallback [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+  6) Skipped:
+M12bProviderBoundaryTest#test_actual_launch_project_skill_content_is_not_loaded [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+  7) Skipped:
+M12bProviderBoundaryTest#test_actual_launch_workspace_patch_succeeds [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+  8) Skipped:
+M12bProviderBoundaryTest#test_actual_launch_skill_lookup_is_not_proven_permission_blocked [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+  9) Skipped:
+M12bProviderBoundaryTest#test_automatic_title_request_is_observed [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+ 10) Skipped:
+M12bProviderBoundaryTest#test_actual_launch_rejects_outside_patch [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+ 11) Skipped:
+M12bProviderBoundaryTest#test_process_cancellation_does_not_dispatch_a_retry [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+ 12) Skipped:
+M12bProviderBoundaryTest#test_native_http_request_is_observed_before_dispatch [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+ 13) Skipped:
+M12bProviderBoundaryTest#test_native_retry_reenters_hook_and_can_be_vetoed [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+ 14) Skipped:
+M12bProviderBoundaryTest#test_external_directory_deny_does_not_confine_shell [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+ 15) Skipped:
+M12bProviderBoundaryTest#test_actual_launch_denies_shell_tool_call [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+ 16) Skipped:
+M12bProviderBoundaryTest#test_actual_launch_ignores_ancestor_agents_and_configuration [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+ 17) Skipped:
+M12bProviderBoundaryTest#test_actual_launch_rejects_outside_read [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+ 18) Skipped:
+M12bProviderBoundaryTest#test_environment_credential_interpolation_reaches_only_loopback [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+ 19) Skipped:
+M12bProviderBoundaryTest#test_actual_launch_rejects_subagent_and_network_calls [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+ 20) Skipped:
+M12bProviderBoundaryTest#test_actual_launch_reads_workspace_file [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+ 21) Skipped:
+M12bProviderBoundaryTest#test_actual_launch_rejects_worktree_removal [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+ 22) Skipped:
+M12bProviderBoundaryTest#test_external_host_read_positive_control [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+ 23) Skipped:
+M12bProviderBoundaryTest#test_explicit_config_can_disable_repository_configuration [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+ 24) Skipped:
+M12bProviderBoundaryTest#test_missing_plugin_does_not_fail_closed [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+ 25) Skipped:
+M12bProviderBoundaryTest#test_external_directory_deny_blocks_absolute_host_read [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+ 26) Skipped:
+M12bProviderBoundaryTest#test_throwing_native_http_hook_vetoes_dispatch [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+ 27) Skipped:
+M12bProviderBoundaryTest#test_actual_launch_configuration_uses_exact_wire_model_and_environment_secret [test/m12b_provider_boundary_test.rb:12]:
+set AGRU_OPENCODE_BOUNDARY=1 for installed OpenCode loopback probes
+
+ 28) Skipped:
+M12cs2IntegratedAdversarialTest#test_excessive_output_entries_fail_closed_after_agent_completion [test/m12cs2_integrated_adversarial_test.rb:11]:
+explicit Docker export opt-in required
+
+ 29) Skipped:
+M12cs2IntegratedAdversarialTest#test_normal_integrated_quiescent_export [test/m12cs2_integrated_adversarial_test.rb:11]:
+explicit Docker export opt-in required
+
+ 30) Skipped:
+M12cs2IntegratedAdversarialTest#test_open_fd_integrated_quiescent_export [test/m12cs2_integrated_adversarial_test.rb:11]:
+explicit Docker export opt-in required
+
+ 31) Skipped:
+M12cs2IntegratedAdversarialTest#test_agent_parent_escape_does_not_export_outside_workspace [test/m12cs2_integrated_adversarial_test.rb:11]:
+explicit Docker export opt-in required
+
+ 32) Skipped:
+M12cs2IntegratedAdversarialTest#test_background_integrated_quiescent_export [test/m12cs2_integrated_adversarial_test.rb:11]:
+explicit Docker export opt-in required
+
+ 33) Skipped:
+M12cs2IntegratedAdversarialTest#test_detached_integrated_quiescent_export [test/m12cs2_integrated_adversarial_test.rb:11]:
+explicit Docker export opt-in required
+
+ 34) Skipped:
+M12cs2IntegratedAdversarialTest#test_refuse_term_integrated_quiescent_export [test/m12cs2_integrated_adversarial_test.rb:11]:
+explicit Docker export opt-in required
+
+ 35) Skipped:
+M12cs2IntegratedAdversarialTest#test_repeated_write_integrated_quiescent_export [test/m12cs2_integrated_adversarial_test.rb:11]:
+explicit Docker export opt-in required
+
+ 36) Skipped:
+M12cs2IntegratedAdversarialTest#test_actual_truncated_archive_never_accepted [test/m12cs2_integrated_adversarial_test.rb:11]:
+explicit Docker export opt-in required
+
+ 37) Skipped:
+M12cSandboxOpenCodeAcceptanceTest#test_installed_agent_shell_and_native_read_through_three_architectures [test/m12c_sandbox_opencode_acceptance_test.rb:10]:
+explicit mock Docker acceptance opt-in required
+
+ 38) Skipped:
+M12cs3HostEscapeTest#test_auxiliary_process_cannot_write_host_canary [test/m12cs3_host_escape_test.rb:9]:
+explicit Docker opt-in required
+
+ 39) Skipped:
+M12cInstalledNegativeTest#test_installed_native_child_cannot_read_unsubmitted_host_canary [test/m12c_installed_negative_test.rb:54]:
+set AGRU_M12C_INSTALLED_NEGATIVE=1
+
+ 40) Skipped:
+M12cInstalledNegativeTest#test_installed_client_does_not_follow_injected_redirect_to_host [test/m12c_installed_negative_test.rb:9]:
+set AGRU_M12C_INSTALLED_NEGATIVE=1
+
+ 41) Skipped:
+SandboxExportMetadataTest#test_real_docker_read_only_executable_export [test/sandbox_export_metadata_test.rb:8]:
+explicit Docker export opt-in required
+
+ 42) Skipped:
+M12dInstalledTransportTest#test_real_opencode_exchange [test/m12d_installed_transport_test.rb:8]:
+explicit offline Docker opt-in required
+
+ 43) Skipped:
+SandboxBoundaryTest#test_real_unknown_image_fails_closed [test/sandbox_boundary_test.rb:95]:
+set AGRU_SANDBOX_TEST_IMAGE for actual Docker controls
+
+ 44) Skipped:
+SandboxBoundaryTest#test_real_python_canary_open_denied [test/sandbox_boundary_test.rb:186]:
+set AGRU_SANDBOX_PYTHON_IMAGE for Python boundary control
+
+ 45) Skipped:
+SandboxBoundaryTest#test_real_container_host_canary_denial_and_export [test/sandbox_boundary_test.rb:66]:
+set AGRU_SANDBOX_TEST_IMAGE to an installed digest-pinned clean image
+
+ 46) Skipped:
+SandboxBoundaryTest#test_real_synthetic_private_layout_and_host_environment_are_absent [test/sandbox_boundary_test.rb:95]:
+set AGRU_SANDBOX_TEST_IMAGE for actual Docker controls
+
+ 47) Skipped:
+SandboxBoundaryTest#test_real_cancellation_removes_container [test/sandbox_boundary_test.rb:95]:
+set AGRU_SANDBOX_TEST_IMAGE for actual Docker controls
+
+ 48) Skipped:
+SandboxBoundaryTest#test_real_timeout_removes_container_and_descendants [test/sandbox_boundary_test.rb:95]:
+set AGRU_SANDBOX_TEST_IMAGE for actual Docker controls
+
+ 49) Skipped:
+SandboxBoundaryTest#test_real_malicious_export_types_are_rejected [test/sandbox_boundary_test.rb:95]:
+set AGRU_SANDBOX_TEST_IMAGE for actual Docker controls
+
+ 50) Skipped:
+SandboxBoundaryTest#test_real_workspace_tmpfs_quota [test/sandbox_boundary_test.rb:95]:
+set AGRU_SANDBOX_TEST_IMAGE for actual Docker controls
+
+ 51) Skipped:
+M12cs3PluginCalibrationTest#test_same_installed_tool_trigger_with_enabled_and_explicitly_disabled_plugin [test/m12cs3_plugin_calibration_test.rb:11]:
+set AGRU_M12CS3_PLUGIN_CALIBRATION=1 (mock-only Docker)
+
+ 52) Skipped:
+M12cMockRelayTest#test_network_disabled_relay_and_adversarial_client [test/m12c_mock_relay_test.rb:6]:
+set AGRU_M12C_MOCK_DOCKER=1 for mock-only Docker acceptance
+
+ 53) Skipped:
+M12cs3LspFixtureTest#test_real_framed_initialize_document_operation_and_shutdown [test/m12cs3_lsp_fixture_test.rb:6]:
+set AGRU_M12CS3_LSP=1 for offline Node fixture test
+
+ 54) Skipped:
+M12cPhysicalHostBoundaryTest#test_host_listener_and_host_material_are_available_only_to_positive_controls [test/m12c_physical_host_boundary_test.rb:11]:
+set AGRU_M12C_HOST_BOUNDARY=1 for physical macOS Docker acceptance
+
+ 55) Skipped:
+M12cAuxiliaryCalibrationTest#test_installed_mcp_list_diagnostic_is_not_a_startup_positive_control [test/m12c_auxiliary_calibration_test.rb:6]:
+set AGRU_M12C_AUX_CALIBRATION=1
+
+ 56) Skipped:
+M12cSandboxLifecycleTest#test_expired_deadline_before_export_never_accepts_partial [test/m12c_sandbox_lifecycle_test.rb:25]:
+explicit Docker lifecycle opt-in required
+
+ 57) Skipped:
+M12cSandboxLifecycleTest#test_cancel_during_quiescence_never_exports [test/m12c_sandbox_lifecycle_test.rb:25]:
+explicit Docker lifecycle opt-in required
+
+ 58) Skipped:
+M12cSandboxLifecycleTest#test_container_disappearance_never_accepts_partial [test/m12c_sandbox_lifecycle_test.rb:25]:
+explicit Docker lifecycle opt-in required
+
+ 59) Skipped:
+M12cSandboxLifecycleTest#test_timeout_during_real_docker_archive_stream_never_accepts_partial [test/m12c_sandbox_lifecycle_test.rb:25]:
+explicit Docker lifecycle opt-in required
+
+ 60) Skipped:
+M12cSandboxLifecycleTest#test_untrusted_effective_environment_is_rejected_before_start [test/m12c_sandbox_lifecycle_test.rb:25]:
+explicit Docker lifecycle opt-in required
+
+ 61) Skipped:
+M12cSandboxLifecycleTest#test_caller_loader_environment_is_rejected_before_docker [test/m12c_sandbox_lifecycle_test.rb:25]:
+explicit Docker lifecycle opt-in required
+
+ 62) Skipped:
+M12cs3LspInstalledTest#test_unavailable_lsp_known_version_contract [test/m12cs3_lsp_installed_test.rb:9]:
+set AGRU_M12CS3_LSP_INSTALLED=1 for offline Docker calibration
+
+ 63) Skipped:
+M12cs3LspSourceEvidenceTest#test_public_version_source_evidence [test/m12cs3_lsp_source_evidence_test.rb:7]:
+set AGRU_M12CS3_LSP_SOURCE=1 for public-source verification (network, no provider calls)
+
+ 64) Skipped:
+SandboxSupervisorTest#test_forced_cleanup_has_no_readiness_and_container_disappearance_loses_tmpfs [test/sandbox_supervisor_test.rb:183]:
+set AGRU_SUPERVISOR_DOCKER_TEST=1 for actual Docker test
+
+ 65) Skipped:
+SandboxSupervisorTest#test_ordinary_completion_exports_private_file_as_ustar [test/sandbox_supervisor_test.rb:183]:
+set AGRU_SUPERVISOR_DOCKER_TEST=1 for actual Docker test
+
+ 66) Skipped:
+SandboxSupervisorTest#test_provisioning_preserves_private_modes_and_agent_can_edit_inputs [test/sandbox_supervisor_test.rb:183]:
+set AGRU_SUPERVISOR_DOCKER_TEST=1 for actual Docker test
+
+ 67) Skipped:
+SandboxSupervisorTest#test_control_tmpfs_exhaustion_never_publishes_readiness [test/sandbox_supervisor_test.rb:183]:
+set AGRU_SUPERVISOR_DOCKER_TEST=1 for actual Docker test
+
+ 68) Skipped:
+SandboxSupervisorTest#test_detached_term_resistant_writer_is_dead_before_export [test/sandbox_supervisor_test.rb:105]:
+set AGRU_SUPERVISOR_DOCKER_TEST=1 for actual Docker test
+
+ 69) Skipped:
+SandboxSupervisorTest#test_detached_writer_open_descriptor_is_stopped_before_export [test/sandbox_supervisor_test.rb:183]:
+set AGRU_SUPERVISOR_DOCKER_TEST=1 for actual Docker test
+
+ 70) Skipped:
+SandboxSupervisorTest#test_term_refusing_writer_open_descriptor_is_stopped_before_export [test/sandbox_supervisor_test.rb:183]:
+set AGRU_SUPERVISOR_DOCKER_TEST=1 for actual Docker test
+
+ 71) Skipped:
+SandboxSupervisorTest#test_unreadable_input_directory_fails_closed_instead_of_omitting_subtree [test/sandbox_supervisor_test.rb:183]:
+set AGRU_SUPERVISOR_DOCKER_TEST=1 for actual Docker test
+
+ 72) Skipped:
+SandboxSupervisorTest#test_background_writer_open_descriptor_is_stopped_before_export [test/sandbox_supervisor_test.rb:183]:
+set AGRU_SUPERVISOR_DOCKER_TEST=1 for actual Docker test
+
+112 runs, 227 assertions, 0 failures, 0 errors, 72 skips

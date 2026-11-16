@@ -1,5 +1,26 @@
 # M0 shared contracts
 
+## Comparative research additions
+
+The compositional pilot in `programs/comparative.rb` adds deterministic inventory
+and manifest-validation stages to three inference stages. These validate artifact
+integrity, not benchmark correctness; hidden procedures remain evaluator-only.
+`Benchmarks::Reports` groups planned arms by solver/model, retaining missing or
+failed task repetitions in exclusion denominators and refusing to combine mixed
+quality provenance into a macro score.
+
+`Execution::SimulatedProvider#start(attempt_id:, cell_id:, model_profile:)` is an
+explicit offline-only HTTPS simulator. It uses the real trusted provider relay,
+ephemeral credentials and a private Unix volume, but its answers and usage are
+synthetic. It is not evidence of provider reachability or model quality. Callers
+must close it in an ensure block. Its frozen chat-completions inference contract
+is specified in `docs/provider-relay-inference-contract.md`.
+
+`Benchmarks::ReleaseIdentity.capture(root:)` binds actual implementation bytes,
+including uncommitted files, in addition to the Git revision. Verification rejects
+changed, missing or added files in its bounded implementation inventory; it is a
+content-integrity check, not a signature or an authenticity guarantee.
+
 ## Optional model catalog evidence
 
 Benchmark CLI manifest loading may explicitly accept `--model-catalog PATH` and

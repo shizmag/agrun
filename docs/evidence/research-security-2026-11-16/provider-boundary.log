@@ -1,0 +1,153 @@
+Run options: --seed 49365
+
+# Running:
+
+EEEEEEEEEEEEEEEEEEEEEEEE
+
+Finished in 0.001350s, 17777.7773 runs/s, 0.0000 assertions/s.
+
+  1) Error:
+M12bProviderBoundaryTest#test_external_host_read_positive_control:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+  2) Error:
+M12bProviderBoundaryTest#test_explicit_config_can_disable_repository_configuration:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+  3) Error:
+M12bProviderBoundaryTest#test_environment_credential_interpolation_reaches_only_loopback:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+  4) Error:
+M12bProviderBoundaryTest#test_throwing_native_http_hook_vetoes_dispatch:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+  5) Error:
+M12bProviderBoundaryTest#test_actual_launch_configuration_uses_exact_wire_model_and_environment_secret:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+  6) Error:
+M12bProviderBoundaryTest#test_native_retry_reenters_hook_and_can_be_vetoed:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+  7) Error:
+M12bProviderBoundaryTest#test_actual_launch_denies_shell_tool_call:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+  8) Error:
+M12bProviderBoundaryTest#test_actual_launch_rejects_subagent_and_network_calls:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+  9) Error:
+M12bProviderBoundaryTest#test_actual_launch_rejects_outside_read:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+ 10) Error:
+M12bProviderBoundaryTest#test_missing_plugin_does_not_fail_closed:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+ 11) Error:
+M12bProviderBoundaryTest#test_actual_launch_rejects_unconfigured_provider_without_fallback:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+ 12) Error:
+M12bProviderBoundaryTest#test_automatic_title_request_is_observed:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+ 13) Error:
+M12bProviderBoundaryTest#test_actual_launch_skill_lookup_is_not_proven_permission_blocked:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+ 14) Error:
+M12bProviderBoundaryTest#test_actual_launch_rejects_worktree_removal:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+ 15) Error:
+M12bProviderBoundaryTest#test_native_http_request_is_observed_before_dispatch:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+ 16) Error:
+M12bProviderBoundaryTest#test_actual_launch_rejects_outside_patch:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+ 17) Error:
+M12bProviderBoundaryTest#test_external_directory_deny_does_not_confine_shell:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+ 18) Error:
+M12bProviderBoundaryTest#test_actual_launch_reads_workspace_file:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+ 19) Error:
+M12bProviderBoundaryTest#test_actual_launch_ignores_ancestor_agents_and_configuration:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+ 20) Error:
+M12bProviderBoundaryTest#test_process_cancellation_does_not_dispatch_a_retry:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+ 21) Error:
+M12bProviderBoundaryTest#test_actual_launch_project_skill_content_is_not_loaded:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+ 22) Error:
+M12bProviderBoundaryTest#test_external_directory_deny_blocks_absolute_host_read:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+ 23) Error:
+M12bProviderBoundaryTest#test_ancestor_agents_canary_is_detectable_without_isolated_launch:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+ 24) Error:
+M12bProviderBoundaryTest#test_actual_launch_workspace_patch_succeeds:
+KeyError: key not found: "AGRU_OPENCODE_BOUNDARY_BINARY"
+    test/m12b_provider_boundary_test.rb:13:in 'fetch'
+    test/m12b_provider_boundary_test.rb:13:in 'M12bProviderBoundaryTest#setup'
+
+24 runs, 0 assertions, 0 failures, 24 errors, 0 skips

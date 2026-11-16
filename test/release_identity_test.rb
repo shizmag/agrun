@@ -10,6 +10,9 @@ class ReleaseIdentityTest < Minitest::Test
       File.write(File.join(root, "lib", "runtime.rb"), "original")
       identity = AgentRuntime::Benchmarks::ReleaseIdentity.capture(root: root)
       assert AgentRuntime::Benchmarks::ReleaseIdentity.verify!(identity, root: root)
+      File.write(File.join(root, "lib", "injected.rb"), "added")
+      assert_raises(ArgumentError) { AgentRuntime::Benchmarks::ReleaseIdentity.verify!(identity, root: root) }
+      File.unlink(File.join(root, "lib", "injected.rb"))
       File.write(File.join(root, "lib", "runtime.rb"), "changed")
       assert_raises(ArgumentError) { AgentRuntime::Benchmarks::ReleaseIdentity.verify!(identity, root: root) }
     end
