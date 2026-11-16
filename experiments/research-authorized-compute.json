@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "experiment_id": "research-authorized-compute-nine-cell-v1",
+  "benchmark": {"name": "nl2repo", "revision": "781a1da1ee41fb8edb0bed22f586d69111610edf", "task_ids": ["retrying"]},
+  "solver_ids": ["single-agent", "fixed-workflow", "dsl"],
+  "models": [{"id": "omniroute/cx/gpt-6-luna-low", "model_profile": {
+    "id": "omniroute-cx-gpt-6-luna-low", "provider": "omniroute", "model": "cx/gpt-6-luna-low", "execution_kind": "real_provider",
+    "tool_policy": {"endpoint": "http://localhost:20128/v1", "route": "cx/gpt-6-luna-low", "model_fallback": false,
+      "executable": "/usr/local/bin/opencode", "executable_sha256": "5c7d89bc2d5fa5d83cc7768b813ca671368e70b8b9eda9d1ca9e6ec6b66d8ce0",
+      "image": "sha256:cbc8bd81c7ede30f09de318df230452f4d3a05e1e8aa9f08a4d46b7f24f437f1"}
+  }}],
+  "repetitions": 3,
+  "limits": {"timeout": 600, "max_parallelism": 1, "max_concurrent_sessions": 1, "max_attempts": 1},
+  "execution_mode": "live",
+  "subset_role": "compute-exact-nine-12-requests-384000-tokens-requires-external-authorization"
+}

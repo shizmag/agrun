@@ -11,7 +11,7 @@ module AgentRuntime
 
       def capture(root:)
         root = File.expand_path(root)
-        paths = %w[lib programs models sandbox integrations benchmarks].flat_map do |directory|
+        paths = %w[lib programs models sandbox integrations benchmarks script].flat_map do |directory|
           Dir.glob(File.join(root, directory, "**", "*"), File::FNM_DOTMATCH)
         end
         paths += %w[Gemfile Gemfile.lock mise.toml CONTRACTS.md].map { |name| File.join(root, name) }

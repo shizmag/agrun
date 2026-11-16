@@ -14,8 +14,28 @@ module AgentRuntime
           parser.on("--assets PATH") { |value| options[:assets] = value }
           parser.on("--image IMAGE") { |value| options[:image] = value }
           parser.on("--allow-simulated-execution") { options[:allow_simulated] = true }
+          parser.on("--allow-live-execution") { options[:allow_live] = true }
+          parser.on("--authorization PATH") { |value| options[:authorization_path] = value }
+          parser.on("--origin-config PATH") { |value| options[:origin_config] = value }
+          parser.on("--credential-file PATH") { |value| options[:credential_file] = value }
+          parser.on("--ledger PATH") { |value| options[:ledger_path] = value }
+          parser.on("--protocol NAME") { |value| options[:protocol] = value }
         end.parse!(argv)
         result = case command
+        when "regrade-freeze"
+          require_relative "portable_regrade"
+          PortableRegrade.new.run(bundle: argv.fetch(0), root: options.fetch(:root), assets: File.expand_path(options.fetch(:assets, ".agru/nl2repo")), destination: argv[1])
+        when "live-prepare", "live-run"
+          require_relative "authorized_comparison"
+          origin = JSON.parse(File.read(options.fetch(:origin_config))).fetch("reviewed_origin")
+          assets = File.expand_path(options.fetch(:assets, ".agru/nl2repo"))
+          if command == "live-prepare"
+            AuthorizedComparison.prepare(origin: origin, assets: assets, ledger_path: options.fetch(:ledger_path), protocol: options.fetch(:protocol, "operational"))
+          else
+            AuthorizedComparison.new.run(root: options[:root], assets: assets, destination: argv.fetch(0),
+              authorization_path: options.fetch(:authorization_path), origin: origin,
+              credential_file: options.fetch(:credential_file), ledger_path: options.fetch(:ledger_path), allow_live: options[:allow_live], protocol: options.fetch(:protocol, "operational"))
+          end
         when "plan", "readiness", "run"
           require_relative "simulated_comparison"
           if command == "plan"
