@@ -103,6 +103,8 @@ test('response model is reported identity, not requested route or served attesta
     assert.equal(records[6].stream_diagnostic.heartbeat_count, 1);
     assert.deepEqual(records[6].response_models, ['keepalive']);
     assert.equal(records[6].response_model, 'keepalive', 'real content is still an identity observation');
+    assert.equal(records[6].stream_diagnostic.heartbeat_variants.constant, 1);
+    assert.equal(records[6].stream_diagnostic.unknown_keepalive_shapes[0].content_present, true);
   } finally {
     await new Promise(resolve => relay.close(resolve));
     await new Promise(resolve => provider.close(resolve));

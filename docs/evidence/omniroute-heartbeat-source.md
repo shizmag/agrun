@@ -21,3 +21,22 @@ The name `keepalive` alone is not an exemption from identity observations.
 This documents installed implementation bytes, not provider identity attestation
 or proof of the raw shape of any earlier event. No live call was made for this
 inspection; previous evidence and ledger halt events remain unchanged.
+
+## Additional timestamped default emitter (subsequent read-only inspection)
+
+`/opt/homebrew/lib/node_modules/omniroute/dist/.build/next/server/chunks/open-sse_08n169v._.js`
+has SHA-256 `68622a13ad324c90bbff4eaf5dca93a94ce2ecebb96f7b2b02c90d28a5745ca1`.
+Its `createSseHeartbeatTransform` emits the same object with
+`created: Math.floor(Date.now()/1e3)`, `id: t.chunkId ?? "chatcmpl-keepalive"`,
+and `model: t.chunkModel ?? "keepalive"`; its default interval is 15000 ms.
+
+The additional classifier accepts only the default ID/model, exact original
+keys and empty delta structure, with a positive safe-integer timestamp.
+It does not classify configured ID/model variants. No wall-clock comparison is
+used, preserving replay determinism. Constant-zero and timestamped-default
+variants have separate bounded counters. Unrecognized keepalive events retain
+identity observations and bounded structural diagnostics containing booleans
+and fixed timestamp-kind enums only, never content or arbitrary key names.
+
+This source evidence does not establish the shape of any historical event.
+No live calls, ledger resolution, or previous evidence modifications occurred.
