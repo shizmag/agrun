@@ -61,7 +61,7 @@ module AgentRuntime
         value.is_a?(Hash) && value.keys.sort == KEYS.sort && KEYS.all? do |key|
           number = value[key]
           number.is_a?(Numeric) && number.real? && number.finite? && number > 0 &&
-            (key == "money" || number.is_a?(Integer))
+            number.is_a?(Integer) && number <= 9_007_199_254_740_991
         end
       end
 
@@ -81,6 +81,19 @@ module AgentRuntime
         raise ArgumentError, "provider_budget_path_invalid" if File.symlink?(@path) || File.symlink?(lock_path)
         File.open(lock_path, File::RDWR | File::CREAT, 0o600) do |lock|
           lock.flock(File::LOCK_EX)
+          lock.rewind
+          marker = lock.read
+          unless marker.empty? || marker == "initialized\n"
+            raise ArgumentError, "provider_budget_integrity_invalid"
+          end
+          if marker == "initialized\n" && !File.exist?(@path)
+            raise ArgumentError, "provider_budget_integrity_invalid"
+          end
+          if marker.empty? && !File.exist?(@path)
+            lock.write("initialized\n")
+            lock.flush
+            lock.fsync
+          end
           state = if File.exist?(@path)
             envelope = JSON.parse(File.read(@path))
             payload = envelope.fetch("payload")
@@ -111,6 +124,12 @@ module AgentRuntime
             end
             File.rename(temporary, @path)
             File.open(File.dirname(@path)) { |directory| directory.fsync }
+            if marker.empty?
+              lock.rewind
+              lock.write("initialized\n")
+              lock.flush
+              lock.fsync
+            end
           ensure
             File.unlink(temporary) if File.exist?(temporary)
           end

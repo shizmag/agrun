@@ -74,8 +74,8 @@ class AuthorizedProviderTest < Minitest::Test
   end
 
   def test_launcher_builds_isolated_trusted_container_without_running_docker
-    quota = {"requests" => 12, "tokens" => 384000, "money" => 1, "expiresAt" => 101000}
-    auth = authorization.merge("quota" => quota)
+    quota = {"requests" => 12, "tokens" => 384000, "moneyNanos" => 1, "expiresAt" => 101000}
+    auth = authorization.merge("quota" => quota, "reviewed_contract" => {}, "reviewed_contract_digest" => "fixture")
     klass = Class.new(AgentRuntime::Execution::AuthorizedProviderLauncher) do
       attr_reader :commands
 

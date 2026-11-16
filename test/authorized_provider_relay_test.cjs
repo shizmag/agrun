@@ -1,18 +1,21 @@
 'use strict';
 const assert = require('node:assert/strict');
+const crypto = require('node:crypto');
 const {budget} = require('../lib/agent_runtime/execution/authorized_provider_relay.cjs');
+const contract = {version: 1, reviewed: true, provider: 'https://provider.invalid', model: 'cx/gpt-6-luna-low', evidence: 'synthetic only', inputTokensPerByte: 1, inputTokenOverhead: 1, inputPriceNanosPerMillion: 1000000, outputPriceNanosPerMillion: 2000000};
 const quota = {requests: 2, tokens: 100, inputTokensPerByte: 1, inputTokenOverhead: 1,
-  inputPricePerMillion: 1, outputPricePerMillion: 2, money: 1, expiresAt: 200,
-  pricingEvidence: 'reviewed fixture price', tokenBoundEvidence: 'fixture byte upper bound'};
+  inputPriceNanosPerMillion: 1000000, outputPriceNanosPerMillion: 2000000, moneyNanos: 1000, expiresAt: 200};
+const config = {quota, origin: contract.provider, model: contract.model, reviewedContract: contract, reviewedContractDigest: crypto.createHash('sha256').update(JSON.stringify(contract)).digest('hex')};
 const body = {max_completion_tokens: 10};
-let admit = budget({quota}, () => 100);
+let admit = budget(config, () => 100);
 assert.equal(admit(Buffer.alloc(10), body).reserved_tokens, 21);
 admit(Buffer.alloc(10), body);
 assert.throws(() => admit(Buffer.alloc(1), body), /aggregate_budget_exhausted/);
-admit = budget({quota: {...quota, tokens: 20}}, () => 100);
+admit = budget({...config, quota: {...quota, tokens: 20}}, () => 100);
 assert.throws(() => admit(Buffer.alloc(10), body), /aggregate_budget_exhausted/);
-admit = budget({quota: {...quota, money: 0.000001}}, () => 100);
+admit = budget({...config, quota: {...quota, moneyNanos: 1}}, () => 100);
 assert.throws(() => admit(Buffer.alloc(10), body), /aggregate_budget_exhausted/);
-assert.throws(() => budget({quota}, () => 200)(Buffer.alloc(1), body), /aggregate_budget_exhausted/);
-assert.throws(() => budget({quota: {...quota, pricingEvidence: null}}), /quota_configuration_invalid/);
+assert.throws(() => budget(config, () => 200)(Buffer.alloc(1), body), /aggregate_budget_exhausted/);
+assert.throws(() => budget({...config, reviewedContractDigest: 'fake'}), /quota_configuration_invalid/);
+assert.throws(() => budget({...config, quota: {...quota, inputTokensPerByte: 0.1}}), /quota_configuration_invalid/);
 console.log('authorized provider aggregate reservation tests passed (offline)');

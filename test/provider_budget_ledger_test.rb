@@ -48,4 +48,13 @@ class ProviderBudgetLedgerTest < Minitest::Test
       end
     end
   end
+
+  def test_deleted_ledger_cannot_be_recreated_when_lock_remains
+    Dir.mktmpdir do |root|
+      path = File.join(root, "ledger")
+      ledger(path).reserve!(cell_id: "cell1", attempt_id: "one")
+      File.unlink(path)
+      assert_raises(ArgumentError) { ledger(path) }
+    end
+  end
 end

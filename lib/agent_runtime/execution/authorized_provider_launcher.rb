@@ -34,14 +34,14 @@ module AgentRuntime
         unless @authorization["quota"] == @quota &&
             @quota["requests"] == limits["requests_per_cell"] &&
             @quota["tokens"] == limits["total_tokens_per_cell"] &&
-            @quota["money"] == limits["money_per_cell"] &&
-            @quota["money"] <= limits["money_per_experiment"] &&
+            @quota["moneyNanos"].is_a?(Integer) && @quota["moneyNanos"] == limits["money_per_cell"] &&
+            @quota["moneyNanos"] <= limits["money_per_experiment"] &&
             @quota["expiresAt"] == @authorization.fetch("expires_at") * 1000
           raise ArgumentError, "authorized_provider_quota_mismatch"
         end
         reservation = @ledger.reserve!(cell_id: cell_id, attempt_id: attempt_id)
         unless reservation["experiment_digest"] == @authorization.fetch("bindings").fetch("experiment_digest") &&
-            reservation["caps"] == {"requests" => @quota["requests"], "tokens" => @quota["tokens"], "money" => @quota["money"]} &&
+            reservation["caps"] == {"requests" => @quota["requests"], "tokens" => @quota["tokens"], "money" => @quota["moneyNanos"]} &&
             reservation["expires_at"] == @authorization.fetch("expires_at") &&
             reservation.fetch("totals").fetch("money") <= limits.fetch("money_per_experiment")
           raise ArgumentError, "authorized_provider_ledger_mismatch"
@@ -53,6 +53,8 @@ module AgentRuntime
         end
         credential = File.expand_path(config.fetch("credentialFile"))
         config = config.merge("credentialFile" => "/credential", "quota" => @quota,
+          "reviewedContract" => @authorization.fetch("reviewed_contract"),
+          "reviewedContractDigest" => @authorization.fetch("reviewed_contract_digest"),
           "socket" => "/relay/provider.sock")
         File.write(File.join(@root, "relay.json"), JSON.generate(config), perm: 0o600)
         docker!("volume", "create", @relay_volume)
@@ -60,7 +62,7 @@ module AgentRuntime
         # Only this trusted, read-only Node process has network access. It accepts
         # a fixed origin/path; the untrusted solver never joins its network.
         docker!("run", "--detach", "--name", @prefix, "--read-only", "--user", "0:0",
-          "--cap-drop", "ALL", "--security-opt", "no-new-privileges", "--pids-limit", "64",
+          "--cap-drop", "ALL", "--cap-add", "CHOWN", "--security-opt", "no-new-privileges", "--pids-limit", "64",
           "--memory", "256m", "--cpus", "1", "--tmpfs", "/tmp:rw,noexec,nosuid,size=16m",
           "--mount", "type=bind,src=#{@root},dst=/trusted,readonly",
           "--mount", "type=bind,src=#{credential},dst=/credential,readonly",

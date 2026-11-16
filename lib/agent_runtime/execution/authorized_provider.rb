@@ -33,7 +33,7 @@ module AgentRuntime
       # scope, not a signature. The result is trusted-only: never mount it in the
       # solver. No credentials are read and no network/process calls are made.
       def relay_config(authorization:, attempt_id:, cell_id:)
-        unless authorization.is_a?(Hash) && (authorization.keys - %w[bindings expires_at limits quota]).empty? &&
+        unless authorization.is_a?(Hash) && (authorization.keys - %w[bindings expires_at limits quota reviewed_contract reviewed_contract_digest]).empty? &&
             authorization["bindings"] == @bindings && authorization["limits"] == @limits
           raise ArgumentError, "authorized_provider_scope_mismatch"
         end

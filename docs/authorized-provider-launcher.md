@@ -9,16 +9,22 @@ does not integrate the nine-cell research scheduler or authorize any live run.
 The solver must run with network disabled and mount only the private relay
 volume. Never mount the trusted config directory or credential file in it.
 The trusted root-owned Node container has a read-only filesystem, dropped
-capabilities, no-new-privileges, resource limits, a private read-only credential
+capabilities except CHOWN, no-new-privileges, resource limits, a private read-only credential
 mount, and a pinned image. Its code sends HTTPS requests only to its reviewed
 origin and fixed chat-completions path; it does not follow redirects or disable
 certificate verification. This is application-level origin restriction, **not**
 an OS-level egress firewall or a hostile-code security sandbox.
 
 The authorization includes exact `bindings`, `limits`, `expires_at` and `quota`.
-Quota keys are `requests`, `tokens`, `money`, `expiresAt` (epoch milliseconds),
-`inputTokensPerByte`, `inputTokenOverhead`, `inputPricePerMillion`,
-`outputPricePerMillion`, `pricingEvidence`, and `tokenBoundEvidence`.
+Quota keys are `requests`, `tokens`, `moneyNanos`, `expiresAt` (epoch milliseconds),
+`inputTokensPerByte`, `inputTokenOverhead`, `inputPriceNanosPerMillion`, and
+`outputPriceNanosPerMillion`. Money limits and ledger `money` values are integer
+nanounits of the authorized currency. Authorization must contain a version-1
+`reviewed_contract` with `reviewed: true`, `provider`, `model`, nonempty
+`evidence`, and the exact four input-bound/price fields; its
+`reviewed_contract_digest` is SHA-256 of compact JSON in insertion order.
+The relay checks digest, provider, model, and numeric equality and rounds each
+cost reservation upward to whole nanounits. This validates binding, not truth.
 The launcher checks request/token/money/expiry against authorized cell limits.
 The trusted relay reserves a request, serialized-input byte-derived token upper
 bound plus requested completion tokens, and corresponding price before any
@@ -39,7 +45,8 @@ one launcher alive across all inference stages of a cell.
 
 The ledger lives on a trusted host: its checksum detects corruption, not a
 malicious trusted-host rewrite, deletion, rollback, or selection of a fresh
-ledger path. The scheduler/operator must bind one persistent path to the
+ledger path. Deleting the data file while its initialized lock remains is
+rejected; deletion of both files and rollback are not preventable here. The scheduler/operator must bind one persistent path to the
 experiment and protect that path. Reservation evidence is not a bearer token
 or cryptographic signature.
 
@@ -56,8 +63,7 @@ existing relay. Do not advertise this as ready for the research live protocol.
 Tests include pure offline admission logic and a recording Docker adapter.
 `AGRU_AUTHORIZED_PROVIDER_DOCKER=1 mise exec -- bundle exec ruby -Itest
 test/authorized_provider_docker_test.rb` also starts the actual trusted relay
-with an ephemeral dummy credential and an invalid provider domain, inspects the
-socket from a network-disabled fixture solver, and closes it without connecting
-to the socket. It checks mode 0600, credential/config separation, empty audit and
-container logs. This lifecycle test passed locally; it does not demonstrate
-provider reachability or submit any inference request.
+with an ephemeral dummy credential and an invalid provider domain, connects to
+the socket as UID 65534 from a network-disabled fixture solver, and sends only
+a locally rejected malformed request. It checks mode 0600 and credential/config
+separation. It does not demonstrate provider reachability or submit inference.
