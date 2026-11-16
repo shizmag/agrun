@@ -53,5 +53,28 @@ Explicit smoke command (makes a live request and consumes another reservation):
 mise exec -- ruby scripts/omniroute_token_smoke.rb --execute
 ```
 
-The nine-cell token-authorized comparison is being integrated separately; the
-one-request smoke must not be described as a completed live experiment matrix.
+## Token-only comparative workflow
+
+The assembled nine-cell path has completed an installed-client offline
+validation: `docs/evidence/local-token-offline-20261116/`. Those observations are
+synthetic transport controls, not live model quality. The one-request live smoke
+must not be described as a completed live experiment matrix.
+
+Prepare the exact runtime/assets binding before execution:
+
+```sh
+mise exec -- bundle exec ruby bin/agru bench comparative token-prepare --assets .agru/nl2repo > .agru/token-authorization.json
+```
+
+The preparation output contains the exact bindings and an expiry. Review the
+binding, then supply a private mode-0600 credential file outside solver mounts.
+Execution explicitly opts in to live calls:
+
+```sh
+mise exec -- bundle exec ruby bin/agru bench comparative token-run --assets .agru/nl2repo --root .agru/luna-live --authorization .agru/token-authorization.json --credential-file /absolute/private/credential --allow-live-execution
+```
+
+Do not reset or relocate the shared token ledger. Runtime or asset changes
+invalidate the prepared binding. Financial exposure is not hard-bounded by this
+token-only protocol. A reservation is a conservative request allowance, not
+provider billing evidence or a verified tokenizer-derived upper bound.
