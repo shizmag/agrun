@@ -63,7 +63,7 @@ class TokenBudgetLedgerTest < Minitest::Test
       assert_equal({"total_tokens" => 20, "reserved_tokens" => 20,
                     "request_count" => 2, "known_usage_tokens" => 3,
                     "unknown_usage_count" => 1, "unknown_model_count" => 2,
-                    "halted" => false}, ledger(path).snapshot)
+                    "unresolved_violations" => [], "halted" => false}, ledger(path).snapshot)
       settlement = JSON.parse(File.readlines(path)[2])["data"]
       assert_nil settlement["observed_model"]
     end
@@ -109,6 +109,45 @@ class TokenBudgetLedgerTest < Minitest::Test
         end
         assert_raises(ArgumentError) { reserve(ledger(path), "two") }
       end
+    end
+  end
+
+  def test_identity_resolution_is_append_only_scoped_and_does_not_refund
+    Dir.mktmpdir do |dir|
+      path = File.join(dir, "ledger")
+      instance = ledger(path)
+      reserve(instance, "identity")
+      assert_raises(ArgumentError) do
+        instance.settle(request_id: "identity", observed_model: "keepalive",
+          usage: {"prompt_tokens" => 0, "completion_tokens" => 0}, reporter: "gateway")
+      end
+      original = File.read(path)
+      reason = "source_verified_heartbeat_contract_updated"
+      assert_raises(ArgumentError) do
+        instance.resolve_identity_halt!(request_id: "identity", evidence_digest: "bad", reason: reason)
+      end
+      assert_raises(ArgumentError) do
+        instance.resolve_identity_halt!(request_id: "identity", evidence_digest: "b" * 64, reason: "override")
+      end
+      assert_equal 1, instance.snapshot["unresolved_violations"].length
+      instance.resolve_identity_halt!(request_id: "identity", evidence_digest: "b" * 64, reason: reason)
+      assert File.read(path).start_with?(original)
+      refute ledger(path).snapshot["halted"]
+      assert_equal 10, instance.snapshot["reserved_tokens"]
+      assert_equal 0, instance.snapshot["known_usage_tokens"]
+      assert_raises(ArgumentError) do
+        instance.resolve_identity_halt!(request_id: "identity", evidence_digest: "c" * 64, reason: reason)
+      end
+      reserve(instance, "quota")
+      assert_raises(ArgumentError) do
+        instance.settle(request_id: "quota", observed_model: "keepalive",
+          usage: {"prompt_tokens" => 7, "completion_tokens" => 0}, reporter: "gateway")
+      end
+      assert_raises(ArgumentError) do
+        instance.resolve_identity_halt!(request_id: "quota", evidence_digest: "b" * 64, reason: reason)
+      end
+      assert instance.snapshot["halted"]
+      assert_equal 20, instance.snapshot["reserved_tokens"]
     end
   end
 

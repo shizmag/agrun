@@ -53,3 +53,23 @@ Concurrent requests already admitted cannot be recalled after a later violation.
 No network calls are made by this component. `snapshot` returns `total_tokens`,
 `reserved_tokens`, `request_count`, `known_usage_tokens`, `unknown_usage_count`,
 `unknown_model_count`, and `halted`; unsettled reservations count as unknown.
+
+## Reviewed identity-halt recovery
+
+`resolve_identity_halt!(request_id:, evidence_digest:, reason:)` appends a review
+resolution on the same ledger, never resets it. It only resolves an existing,
+unresolved `token_budget_model_name_mismatch_not_attestation` violation. The reason
+must be exactly `source_verified_heartbeat_contract_updated`; `evidence_digest`
+must be a lowercase 64-hex digest of the parent's reviewed source/classifier
+evidence. Duplicate resolutions, even with a changed digest, are rejected. Quota
+or usage violations cannot be resolved by this API. The parent must perform the
+source/classifier review before invoking it; the digest is provenance, not an
+automatic evidence verifier or a signature.
+
+Original settlement, model observation, usage and violation remain unchanged.
+In particular, a source-contract review does not retroactively prove the event
+structure or served identity of a historical response. No usage becomes known,
+no reservation is refunded, and no authorization limit or path changes.
+`snapshot["unresolved_violations"]` exposes the remaining violation records;
+`halted` remains true until all applicable identity halts are individually
+resolved and no non-resolvable violation remains.

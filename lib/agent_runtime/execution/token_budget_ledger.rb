@@ -31,7 +31,7 @@ module AgentRuntime
           raise ArgumentError, "token_budget_request_invalid"
         end
         transaction do |events|
-          raise ArgumentError, "token_budget_halted" if events.any? { |e| e["violation"] }
+          raise ArgumentError, "token_budget_halted" unless unresolved_violations(events).empty?
           reservations = events.select { |e| e["type"] == "reserve" }
           raise ArgumentError, "token_budget_request_duplicate" if reservations.any? { |e| e["request_id"] == request_id }
           tokens = input_tokens + completion_tokens
@@ -60,10 +60,10 @@ module AgentRuntime
           reservation = events.find { |e| e["type"] == "reserve" && e["request_id"] == request_id }
           raise ArgumentError, "token_budget_request_unknown" unless reservation
           raise ArgumentError, "token_budget_already_settled" if events.any? { |e| e["type"] == "settle" && e["request_id"] == request_id }
-          violation = if observed_model && ![@plan["model"], "gpt-6-luna"].include?(observed_model)
-            "token_budget_model_name_mismatch_not_attestation"
-          elsif usage && (usage["prompt_tokens"] > reservation["input_tokens"] || usage["completion_tokens"] > reservation["completion_tokens"])
+          violation = if usage && (usage["prompt_tokens"] > reservation["input_tokens"] || usage["completion_tokens"] > reservation["completion_tokens"])
             "token_budget_usage_exceeds_reservation"
+          elsif observed_model && ![@plan["model"], "gpt-6-luna"].include?(observed_model)
+            "token_budget_model_name_mismatch_not_attestation"
           end
           event = {"type" => "settle", "request_id" => request_id, "observed_model" => observed_model,
                    "usage" => usage, "reporter" => reporter, "violation" => violation,
@@ -77,6 +77,25 @@ module AgentRuntime
       end
       alias_method :settle!, :settle
 
+      # Explicit trusted-host review only. This acknowledges an updated heartbeat
+      # contract, not proof of the historical event's model or event structure.
+      def resolve_identity_halt!(request_id:, evidence_digest:, reason:)
+        unless /\A[0-9a-f]{64}\z/.match?(evidence_digest.to_s) &&
+            reason == "source_verified_heartbeat_contract_updated"
+          raise ArgumentError, "token_budget_resolution_invalid"
+        end
+        transaction do |events|
+          violation = unresolved_violations(events).find { |event| event["request_id"] == request_id }
+          unless violation && violation["violation"] == "token_budget_model_name_mismatch_not_attestation"
+            raise ArgumentError, "token_budget_resolution_not_identity_halt"
+          end
+          record = {"type" => "resolve_identity_halt", "request_id" => request_id,
+                    "evidence_digest" => evidence_digest, "reason" => reason}
+          events << record
+          record.dup
+        end
+      end
+
       # Provider response names are observations, not independent route proof.
       def snapshot
         transaction do |events|
@@ -89,11 +108,19 @@ module AgentRuntime
            "known_usage_tokens" => known.sum { |usage| usage.fetch("prompt_tokens") + usage.fetch("completion_tokens") },
            "unknown_usage_count" => reservations.length - known.length,
            "unknown_model_count" => reservations.length - settlements.count { |e| e["observed_model"] },
-           "halted" => events.any? { |e| e["violation"] }}
+           "unresolved_violations" => unresolved_violations(events).map(&:dup),
+           "halted" => !unresolved_violations(events).empty?}
         end
       end
 
       private
+
+      def unresolved_violations(events)
+        resolved = events.select { |event| event["type"] == "resolve_identity_halt" }.map { |event| event["request_id"] }
+        events.select do |event|
+          event["violation"] && !(event["violation"] == "token_budget_model_name_mismatch_not_attestation" && resolved.include?(event["request_id"]))
+        end
+      end
 
       def valid_usage?(usage)
         return true if usage.nil?
