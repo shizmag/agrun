@@ -60,13 +60,14 @@ module AgentRuntime
 
       def configuration
         {"model" => model, "smallModel" => model, "plugins" => [], "mcp" => {}, "lsp" => false,
+         "agents" => {"title" => {"disabled" => true}},
          "providers" => {@provider => {"package" => "@opencode/ai/providers/openai-compatible", "settings" => {"transport" => "http", "baseURL" => @endpoint, "apiKey" => "mock-only"},
                                        "models" => {@wire_model => {"name" => "Mock only"}}}},
          "policies" => [
            {"action" => "provider.use", "resource" => "*", "effect" => "deny"},
            {"action" => "provider.use", "resource" => @provider, "effect" => "allow"},
            *%w[plugin.use mcp.use skill.use].map { |action| {"action" => action, "resource" => "*", "effect" => "deny"} },
-           {"action" => "tool.use", "resource" => "bash", "effect" => "allow"},
+            {"action" => "tool.use", "resource" => "bash", "effect" => "allow"},
            {"action" => "tool.use", "resource" => "shell", "effect" => "allow"}
          ]}
       end

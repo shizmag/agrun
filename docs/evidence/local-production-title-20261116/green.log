@@ -1,0 +1,17 @@
+✔ private bridge preserves HTTP connection across an upstream idle-close window (1199.610791ms)
+✔ real Docker private-volume stdio carries streaming HTTP without container network (1007.572416ms)
+✔ installed OpenCode completes a full offline tool conversation through the private stdio bridge (4059.443667ms)
+✔ local transport is explicit, fixed and requires trusted admission (0.8935ms)
+✔ local relay audits bounded inference rejection reasons without forwarding or exposing values (13.681208ms)
+✔ concurrent rejection cannot settle or steal another request reservation (1.456792ms)
+✔ failed admission never permits dispatch and oversized bodies never reserve (0.118042ms)
+✔ wrong then authorized streamed identity halts admission through ledger settlement (0.09175ms)
+✔ allowed alias changes are accepted but truncated identities are not (0.605375ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6357.180042
