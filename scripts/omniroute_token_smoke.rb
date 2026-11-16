@@ -30,7 +30,7 @@ Dir.mktmpdir("agru-trusted-") do |trusted|
   File.write(credential, secret, mode: "w", perm: 0o600)
   config = {origin: "http://127.0.0.1:20128", approvedOrigins: ["http://127.0.0.1:20128"],
             model: "cx/gpt-6-luna-low", route: "omniroute", timeoutMs: 120_000,
-            credentialFile: credential,
+            credentialFile: credential, allowTools: true,
             identity: {run_id: id, architecture: "smoke", step_id: "smoke", attempt: id},
             inference: {max_completion_tokens: 128, stream: true, stream_options: {include_usage: true}}}
   config_path = File.join(trusted, "config.json")
@@ -43,9 +43,9 @@ Dir.mktmpdir("agru-trusted-") do |trusted|
       ready = JSON.parse(gateway_out.gets || "{}")
       raise "gateway not ready" unless ready["ready"]
       reader = Thread.new { gateway_out.each_line { |line| records << JSON.parse(line) } }
-      client_config = {agent: {title: {disable: true}}, provider: {mock: {npm: "@ai-sdk/openai-compatible", name: "mock",
-                                                                          options: {baseURL: "http://127.0.0.1:18080/v1", apiKey: "local-only"},
-                                                                          models: {"cx/gpt-6-luna-low" => {name: "Luna6", options: {max_completion_tokens: 128}, limit: {context: 128000, output: 128}}}}}}
+      client_config = {tools: {"*" => false, "skill" => false}, agent: {title: {disable: true}}, provider: {mock: {npm: "@ai-sdk/openai-compatible", name: "mock",
+                                                                                                                   options: {baseURL: "http://127.0.0.1:18080/v1", apiKey: "local-only"},
+                                                                                                                   models: {"cx/gpt-6-luna-low" => {name: "Luna6", options: {max_completion_tokens: 128}, limit: {context: 128000, output: 128}}}}}}
       # No host directories/config/credentials enter the solver. The only bind is
       # the reviewed bridge code; its volume contains only the relay socket.
       command = ["docker", "run", "--rm", "--name", container, "--network", "none",
@@ -67,7 +67,7 @@ Dir.mktmpdir("agru-trusted-") do |trusted|
         end
         event if event && %w[text finish error step_finish].include?(event["type"])
       end
-      File.write(File.join(evidence, "output.json"), JSON.pretty_generate({exit: status.exitstatus, events: events}))
+      File.write(File.join(evidence, "output.json"), JSON.pretty_generate({exit: status.exitstatus, events: events}).gsub(secret, "[REDACTED]"))
       gateway_in.close
       gateway_wait.value
       reader.join
@@ -77,10 +77,12 @@ Dir.mktmpdir("agru-trusted-") do |trusted|
     gateway_in&.close unless gateway_in&.closed?
     Process.kill("TERM", gateway_wait.pid) if gateway_wait&.alive?
     gateway_wait&.join
-    File.write(File.join(evidence, "audit.json"), JSON.pretty_generate(records))
+    File.write(File.join(evidence, "audit.json"), JSON.pretty_generate(records).gsub(secret, "[REDACTED]"))
     record = records.filter_map { |r| r["audit"] }.find { |r| r["status"] == 200 } || records.filter_map { |r| r["audit"] }.first || {}
     ledger.settle(request_id: id, observed_model: record["response_model"],
       usage: record["observed_usage"], reporter: "trusted-gateway")
   end
 end
-puts JSON.generate({evidence: evidence, request_id: id, inference_attempted: true})
+puts JSON.generate({evidence: evidence, request_id: id, solver_executed: true,
+                    upstream_response_succeeded: records.any? { |r| r.dig("audit", "status") == 200 },
+                    upstream_attempt_status: (records.any? { |r| r.dig("audit", "status") == 200 }) ? "response_observed" : "unknown"})
