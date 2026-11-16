@@ -35,4 +35,20 @@ class ScientificReportTest < Minitest::Test
       assert_includes arm.fetch("excluded_tasks"), "absent"
     end
   end
+
+  def test_failure_does_not_escape_successful_protocol_denominator
+    in_tmp do |root|
+      store = AgentRuntime::Store.new(root)
+      base = {"solver_id" => "opencode", "task_id" => "retrying", "model" => "frozen"}
+      store.save_report({"run_id" => "partial", "manifest" => {"repetitions" => 2}, "cells" => [
+        base.merge("id" => "ok", "repetition" => 1, "protocol" => "audited", "quality_basis" => "tests", "execution_status" => "success", "evaluation_status" => "valid", "score" => 1),
+        base.merge("id" => "failed", "repetition" => 2, "execution_status" => "timeout")
+      ]})
+      arms = AgentRuntime::Benchmarks::Reports.new(store: store).summary(experiment_id: "partial").fetch("arms")
+      assert_equal 1, arms.size
+      assert_equal 2, arms.first.fetch("observed_cells")
+      assert_equal 0, arms.first.fetch("conditional_denominator")
+      assert_nil arms.first.fetch("macro_score")
+    end
+  end
 end

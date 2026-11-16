@@ -1,4 +1,5 @@
 require_relative "reports"
+require_relative "resource_report"
 
 module AgentRuntime
   module Benchmarks
@@ -45,6 +46,7 @@ module AgentRuntime
           "* The audited grader is a trusted evaluator with its own environment and trust boundary; solver-directory separation alone is not a security sandbox.",
           "* Role prompts, textual handoffs, deterministic inventory and validation overhead are architecture-specific confounders. No claim is made about all possible agent architectures.",
           "* A hash freeze detects alteration relative to its recorded digest, not authenticity against an attacker able to replace both evidence and digest.", ""]
+        lines << ResourceReport.new.render(cells: cells, evidence_kind: evidence_kind)
         lines.join("\n")
       end
 
