@@ -12,8 +12,12 @@ module AgentRuntime
       def render(experiment_id:, evidence_kind:)
         raise ArgumentError, "unknown evidence kind" unless %w[simulated_relay live_provider offline_fixture local_transport_simulation].include?(evidence_kind)
         if evidence_kind == "live_provider"
-          provenance = @store.report(experiment_id).dig("provenance", "solver_execution")
-          raise ArgumentError, "live report requires live execution provenance" unless provenance == "live"
+          report = @store.report(experiment_id)
+          provenance = report.dig("provenance", "solver_execution")
+          local_live = report["transport"] == "local-token-gateway" && report["live_provider"] == true &&
+            report["offline_injected_provider"] == false && report.dig("manifest", "execution_mode") == "live" &&
+            report.fetch("solver_configurations", {}).values.then { |configs| !configs.empty? && configs.all? { |config| config["live"] == true } }
+          raise ArgumentError, "live report requires live execution provenance" unless provenance == "live" || local_live
         end
         summary = Reports.new(store: @store).summary(experiment_id: experiment_id)
         manifest = summary.fetch("manifest")
@@ -21,6 +25,7 @@ module AgentRuntime
         simulation_notice = (evidence_kind == "local_transport_simulation") ? "Synthetic in-process responses only; no live API calls. These outcomes validate infrastructure, not model quality or served-model identity." : nil
         lines = ["# AGRU comparative research pilot", "", "Experiment: `#{safe(experiment_id)}`",
           "Evidence: **#{evidence_kind}**", simulation_notice, "",
+          "Execution failures and unobserved stages remain in the planned-cell denominator. Live configuration is not evidence that every cell reached a provider, nor attestation of served-model identity.", "",
           "## Research question and setup", "",
           "How do complete-task, fixed role workflow, and typed compositional execution differ in observed quality, reliability and resource use on the frozen task?",
           "", "The operational comparison shares tools, public task information, model route and sandbox policy. Single agent has one inference stage; both multi-stage architectures have three. The DSL additionally branches repository inventory and validates artifact manifests. These are distinct interventions, not equal-compute treatments.",

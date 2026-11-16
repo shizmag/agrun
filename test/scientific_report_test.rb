@@ -2,6 +2,24 @@ require_relative "test_helper"
 require_relative "../lib/agent_runtime/benchmarks/scientific_report"
 
 class ScientificReportTest < Minitest::Test
+  def test_saved_local_live_configuration_allows_failed_cells_without_fabricating_execution
+    in_tmp do |root|
+      store = AgentRuntime::Store.new(root)
+      report = {"run_id" => "local", "manifest" => {"repetitions" => 1, "execution_mode" => "live"},
+                "transport" => "local-token-gateway", "live_provider" => true, "offline_injected_provider" => false,
+                "solver_configurations" => {"opencode" => {"live" => true}},
+                "cells" => [{"id" => "failed", "task_id" => "retrying", "solver_id" => "opencode", "execution_status" => "timeout"}]}
+      store.save_report(report)
+      text = AgentRuntime::Benchmarks::ScientificReport.new(store: store).render(experiment_id: "local", evidence_kind: "live_provider")
+      assert_includes text, "timeout"
+      assert_includes text, "not evidence that every cell reached a provider"
+      assert_nil store.report("local").dig("provenance", "solver_execution")
+      report["offline_injected_provider"] = true
+      store.save_report(report)
+      assert_raises(ArgumentError) { AgentRuntime::Benchmarks::ScientificReport.new(store: store).render(experiment_id: "local", evidence_kind: "live_provider") }
+    end
+  end
+
   def test_simulator_report_preserves_failed_denominators_and_unknown_usage
     in_tmp do |root|
       store = AgentRuntime::Store.new(root)
