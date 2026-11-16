@@ -1,0 +1,67 @@
+[
+  {
+    "audit": {
+      "run_id": "omniroute-smoke-20261116T090905-6c58c38a",
+      "architecture": "smoke",
+      "step_id": "smoke",
+      "attempt": "omniroute-smoke-20261116T090905-6c58c38a",
+      "request_id": "635cece6-47ab-4c2a-85ac-847f825a3974",
+      "session_id": null,
+      "session_correlation": "unavailable",
+      "requested_model": "cx/gpt-6-luna-low",
+      "provider_route": "omniroute",
+      "gateway_model": null,
+      "response_model": "gpt-6-luna",
+      "served_model": null,
+      "usage": {
+        "prompt_tokens": 756,
+        "completion_tokens": 5,
+        "total_tokens": 761
+      },
+      "observed_usage": {
+        "prompt_tokens": 756,
+        "completion_tokens": 5,
+        "total_tokens": 761,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": null
+      },
+      "pricing": null,
+      "accounting_complete": false,
+      "upstream_attempted": true,
+      "upstream_response_status": 200,
+      "accounting_issues": [
+        "session_unobservable",
+        "served_identity_unattested",
+        "response_invalid_or_incomplete"
+      ],
+      "request_fields": [
+        "model",
+        "messages",
+        "tools",
+        "stream",
+        "stream_options",
+        "max_completion_tokens"
+      ],
+      "stream_diagnostic": {
+        "streaming": true,
+        "seen_done": true,
+        "finish_seen": true,
+        "malformed": true,
+        "stream_ended": true,
+        "stream_closed": false,
+        "malformed_reasons": [
+          "model_conflict"
+        ],
+        "usage_observation_count": 1,
+        "usage_totals_distinct": [
+          761
+        ],
+        "trailing_nonempty": false
+      },
+      "usage_reporting_semantics": "cumulative_observed",
+      "error": "upstream_protocol",
+      "status": 200,
+      "duration_ms": 3144.551375
+    }
+  }
+]
