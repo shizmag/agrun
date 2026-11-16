@@ -86,4 +86,24 @@ class M12cSandboxOpenCodeTest < Minitest::Test
       assert_equal 1, boundary.calls.length
     end
   end
+
+  def test_provider_http_failures_are_not_sandbox_failures
+    in_tmp do |workspace|
+      [403, 502].each do |code|
+        boundary = Boundary.new(status: "failed")
+        original = boundary.method(:call)
+        boundary.define_singleton_method(:call) do |**options|
+          original.call(**options).merge("stdout" => "Provider request failed with HTTP #{code}")
+        end
+        adapter = AgentRuntime::Adapters::SandboxOpenCodeCLI.new(runner: boundary, launch: launch)
+        request = AgentRuntime::Request.new(inputs: {"repository" => workspace}, workspace: workspace,
+          config: {"prompt" => "write candidate"}, timeout: 10)
+        result = adapter.execute(request)
+        assert_equal "failed", result.status
+        assert_equal "provider", result.error.fetch("type")
+        assert_equal "provider_http_#{code}", result.error.fetch("message")
+        assert_empty result.outputs
+      end
+    end
+  end
 end

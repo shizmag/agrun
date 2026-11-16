@@ -29,7 +29,7 @@ module AgentRuntime
         observations["usage"] = normalized
         diagnostic = if status != "success"
           provider_status = execution.fetch("stdout", "").scan(/Provider request failed with HTTP (\d{3})/).flatten.last
-          {"type" => "sandbox", "message" => provider_status ? "provider_http_#{provider_status}" : execution["error"] || "sandbox_execution_#{status}"}
+          {"type" => provider_status ? "provider" : "sandbox", "message" => provider_status ? "provider_http_#{provider_status}" : execution["error"] || "sandbox_execution_#{status}"}
         end
         Result.new(status: status, outputs: (status == "success") ? {"repository" => exported} : {},
           duration: execution["duration"], usage: normalized["usage"], session_id: observations["session_id"],
