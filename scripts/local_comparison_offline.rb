@@ -23,4 +23,12 @@ report["portable_regrade"] = AgentRuntime::Benchmarks::PortableRegrade.new.run(b
 raise "offline nine-cell execution incomplete" unless report.fetch("report").fetch("cells").size == 9 &&
   report.fetch("report").fetch("cells").all? { |cell| cell["submission"] && cell.fetch("grading_attempts", []).size >= 2 }
 raise "offline ledger did not settle" unless report.fetch("token_ledger").fetch("known_usage_tokens").positive?
+audit_path = File.join(File.dirname(report.fetch("bundle").fetch("path")), "gateway-audit.jsonl")
+audit = File.readlines(audit_path).map { |line| JSON.parse(line) }
+raise "offline transport rejected installed tool conversation" unless audit.all? { |record| record.fetch("status") == 200 }
+requests = audit.group_by { |record| record.fetch("trusted_cell_id") }
+raise "offline stage request coverage missing" unless requests.size == 9 && requests.values.map(&:size).sort == [4, 4, 4, 12, 12, 12, 12, 12, 12]
+requests.each_value do |records|
+  raise "offline stage tool turns incomplete" unless records.group_by { |record| record.fetch("step_id") }.values.all? { |stage| stage.size == 4 }
+end
 puts JSON.pretty_generate(report)

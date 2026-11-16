@@ -49,19 +49,28 @@ async function main() {
     const {PassThrough} = require('node:stream');
     config.origin = 'https://offline.invalid'; config.approvedOrigins = [config.origin];
     const server = startOfflineTransport(config, audit, authorizeRequest, {request(url, options, callback) {
-      const request = new PassThrough(); request.resume();
+      const request = new PassThrough(); const chunks = [];
+      request.on('data', chunk => chunks.push(chunk));
       request.setTimeout = () => request;
       request.on('finish', () => {
         const response = new PassThrough(); response.statusCode = 200;
         response.headers = {'content-type': 'text/event-stream'};
         callback(response);
+        // Four installed-client inference requests per stage: three real reads,
+        // then completion. Three-stage solvers exactly exercise the shared cap.
+        const body = JSON.parse(Buffer.concat(chunks));
+        const tools = body.messages.filter(message => message.role === 'tool');
+        const read = (body.tools || []).find(tool => tool.function.name === 'read');
+        if (!read) throw Error('offline_fixture_requires_installed_read_tool');
+        const delta = tools.length < 3 ? {role: 'assistant', tool_calls: [{index: 0, id: `offline-read-${tools.length}`,
+          type: 'function', function: {name: 'read', arguments: JSON.stringify({filePath: '/etc/os-release'})}}]} :
+          {role: 'assistant', content: 'OFFLINE_ONLY'};
         response.end('data: ' + JSON.stringify({id: 'offline-only', object: 'chat.completion.chunk', model: config.model,
-          choices: [{index: 0, delta: {role: 'assistant', content: 'OFFLINE_ONLY'}, finish_reason: 'stop'}],
+          choices: [{index: 0, delta, finish_reason: tools.length < 3 ? 'tool_calls' : 'stop'}],
           usage: {prompt_tokens: 12, completion_tokens: 3, total_tokens: 15}}) + '\n\ndata: [DONE]\n\n');
       });
       return request;
     }});
-    server.keepAliveTimeout = config.timeoutMs;
     gateway = await launchBridge({server, timeoutMs: config.timeoutMs, image: privateConfig.image});
   } else gateway = await launch({config, image: privateConfig.image, authorizeRequest, audit});
   process.stdout.write(JSON.stringify({ready: true, relay_volume: gateway.relayVolume}) + '\n');
