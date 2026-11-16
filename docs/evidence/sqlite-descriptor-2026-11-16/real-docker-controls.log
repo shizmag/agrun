@@ -1,0 +1,11 @@
+Writable Store held open across real Docker controls; image sha256:cbc8bd81c7ede30f09de318df230452f4d3a05e1e8aa9f08a4d46b7f24f437f1
+Run options: --seed 47026
+
+# Running:
+
+...........................................
+
+Finished in 15.694630s, 2.7398 runs/s, 19.4971 assertions/s.
+
+43 runs, 306 assertions, 0 failures, 0 errors, 0 skips
+STORE CONTROL PASS: parent remained open; WAL; integrity_check=ok; before/after reports survived reopen
