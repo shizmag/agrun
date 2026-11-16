@@ -27,7 +27,8 @@ test('response model is reported identity, not requested route or served attesta
       completion_tokens_details: {reasoning_tokens: 4, secret: 'must-not-log'}}},
     {model: 'gpt-6.1', usage, interim: true},
     {model: 'gpt-6.1', usage, initialModel: 'cx/gpt-6-luna-low'},
-    {model: 'keepalive', usage, heartbeat: true, choices: [{delta: {content: 'real text'}}]}
+    {model: 'keepalive', usage, heartbeat: true, choices: [{delta: {content: 'real text'}}]},
+    {model: 'gpt-6-luna', usage, realistic: true}
   ];
   let index = 0;
   const provider = https.createServer({key: fs.readFileSync(key), cert: fs.readFileSync(cert)}, (req, res) => {
@@ -35,10 +36,20 @@ test('response model is reported identity, not requested route or served attesta
     req.on('end', () => {
       res.writeHead(200, {'content-type': 'text/event-stream'});
       const fixture = fixtures[index++];
+      if (fixture.realistic) {
+        const frame = value => `data: ${JSON.stringify(value)}\n\n`;
+        const heartbeat = {id: 'chatcmpl-keepalive', object: 'chat.completion.chunk', created: 0, model: 'keepalive', choices: []};
+        res.end(frame(heartbeat) + [1, 2, 3, 4].map(n => frame({...heartbeat, created: 1794834000 + n})).join('') +
+          frame({model: fixture.model, choices: [{index: 0, delta: {role: 'assistant', content: 'synthetic answer'}, finish_reason: null}]}) +
+          frame({model: fixture.model, choices: [{index: 0, delta: {}, finish_reason: 'stop'}]}) +
+          frame({model: fixture.model, choices: [], usage}) + 'data: [DONE]\n\n');
+        return;
+      }
       const interim = fixture.interim ? 'data: {"usage":{"prompt_tokens":0,"completion_tokens":0,"total_tokens":0}}\n\n' : '';
       const initial = fixture.initialModel ? `data: ${JSON.stringify({model: fixture.initialModel})}\n\n` : '';
       const heartbeat = fixture.heartbeat ? 'data: {"id":"chatcmpl-keepalive","object":"chat.completion.chunk","created":0,"model":"keepalive","choices":[{"index":0,"delta":{},"finish_reason":null}]}\n\ndata: {"id":"chatcmpl-keepalive","object":"chat.completion.chunk","created":0,"model":"keepalive","choices":[]}\n\n' : '';
-      res.end(`${interim}${initial}${heartbeat}data: ${JSON.stringify(fixture)}\n\ndata: [DONE]\n\n`);
+      const periodic = fixture.heartbeat ? 'data: {"id":"chatcmpl-keepalive","object":"chat.completion.chunk","created":1794834000,"model":"keepalive","choices":[]}\n\n' : '';
+      res.end(`${interim}${initial}${heartbeat}${periodic}data: ${JSON.stringify(fixture)}\n\ndata: [DONE]\n\n`);
     });
   });
   await new Promise(resolve => provider.listen(0, 'localhost', resolve));
@@ -66,7 +77,7 @@ test('response model is reported identity, not requested route or served attesta
       assert.equal(record.upstream_response_status, 200);
       assert.equal(record.stream_diagnostic.streaming, true);
       assert.equal(record.stream_diagnostic.seen_done, true);
-      assert.equal(record.stream_diagnostic.finish_seen, false);
+       assert.equal(record.stream_diagnostic.finish_seen, fixture.realistic === true);
       assert.equal(record.stream_diagnostic.stream_ended, true);
       assert.equal(record.provider_route, 'OmniRoute');
       assert.equal(record.response_model, fixture.model || null);
@@ -100,12 +111,30 @@ test('response model is reported identity, not requested route or served attesta
     assert.ok(records[5].accounting_issues.includes('response_model_changed'));
     assert.equal(records[5].served_model, null);
     assert.deepEqual(records[5].stream_diagnostic.malformed_reasons, []);
-    assert.equal(records[6].stream_diagnostic.heartbeat_count, 2);
+    assert.equal(records[6].stream_diagnostic.heartbeat_count, 3);
     assert.deepEqual(records[6].response_models, ['keepalive']);
     assert.equal(records[6].response_model, 'keepalive', 'real content is still an identity observation');
     assert.equal(records[6].stream_diagnostic.heartbeat_variants.constant, 1);
     assert.equal(records[6].stream_diagnostic.heartbeat_variants.early_startup, 1);
+    assert.equal(records[6].stream_diagnostic.heartbeat_variants.timestamped_empty, 1);
+    const shape = records[6].stream_diagnostic.unknown_keepalive_shapes[0];
+    assert.equal(shape.choices_count, 1);
+    assert.deepEqual(shape.required_field_types, {id: 'missing', object: 'missing', created: 'missing', model: 'string', choices: 'array'});
+    assert.deepEqual(shape.choice_field_types, {index: 'missing', delta: 'object', finish_reason: 'missing'});
+    assert.equal(shape.delta_field_types.content, 'string');
+    assert.equal(JSON.stringify(shape).includes('real text'), false);
     assert.equal(records[6].stream_diagnostic.unknown_keepalive_shapes[0].content_present, true);
+    const realistic = records[7];
+    assert.deepEqual(realistic.response_models, ['gpt-6-luna']);
+    assert.equal(realistic.response_model_consistent, true);
+    assert.equal(realistic.error, null);
+    assert.deepEqual(realistic.stream_diagnostic.heartbeat_variants,
+      {constant: 0, timestamped_default: 0, early_startup: 1, timestamped_empty: 4});
+    assert.equal(realistic.stream_diagnostic.heartbeat_count, 5);
+    assert.deepEqual(realistic.stream_diagnostic.unknown_keepalive_shapes, []);
+    assert.deepEqual(realistic.stream_diagnostic.malformed_reasons, []);
+    assert.equal(realistic.stream_diagnostic.usage_observation_count, 1);
+    assert.deepEqual(realistic.stream_diagnostic.usage_totals_distinct, [18]);
   } finally {
     await new Promise(resolve => relay.close(resolve));
     await new Promise(resolve => provider.close(resolve));

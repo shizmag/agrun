@@ -26,8 +26,17 @@ test('timestamped heartbeat accepts only the source-backed default identifiers',
 test('installed OmniRoute early startup uses exactly an empty choices array', () => {
   const startup = {...fixture(), choices: []};
   assert.equal(gatewayHeartbeatVariant(JSON.parse(JSON.stringify(startup))), 'early_startup');
-  for (const changed of [{created: 1}, {object: 'other'}, {usage: {}},
+  for (const changed of [{created: -1}, {object: 'other'}, {usage: {}},
     {choices: [{}]}, {choices: null}, {extra: true}, {id: 'other'}]) {
     assert.equal(gatewayHeartbeatVariant({...startup, ...changed}), null);
+  }
+});
+test('installed periodic OpenAI heartbeat timestamps the exact empty-choices default', () => {
+  for (const created of [1, 1794834000, Number.MAX_SAFE_INTEGER]) {
+    assert.equal(gatewayHeartbeatVariant({...fixture(), choices: [], created}), 'timestamped_empty');
+  }
+  for (const changed of [{created: -1}, {created: 1.5}, {created: Number.MAX_SAFE_INTEGER + 1},
+    {id: 'other'}, {model: 'other'}, {object: 'other'}, {usage: {}}, {choices: [{}]}, {extra: true}]) {
+    assert.equal(gatewayHeartbeatVariant({...fixture(), choices: [], created: 1794834000, ...changed}), null);
   }
 });
