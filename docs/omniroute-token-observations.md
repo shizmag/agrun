@@ -25,3 +25,33 @@ The local HTTP gateway needs an explicitly trusted loopback transport; it is not
 permission to disable TLS verification for HTTPS upstreams, expose credentials
 to solvers or give network-disabled solver containers general network access.
 Begin with a small bounded installed-OpenCode smoke before any larger matrix.
+
+## Verified smoke (2026-11-16)
+
+The clean installed-client result is saved at
+`docs/evidence/omniroute-smoke-20261116T091529-3bce89c7/`.
+OpenCode returned `OK`; the relay recorded HTTP 200 and normal streaming without
+protocol errors. Requested route `cx/gpt-6-luna-low` produced reported name
+`gpt-6-luna` and usage 756 input + 5 output = 761 tokens.
+
+Earlier failures are preserved. The installed gateway emits an exact empty
+heartbeat with `model: "keepalive"`; source hashes and the narrow classifier
+contract are in `docs/evidence/omniroute-heartbeat-source.md`. Real content under
+that name remains an identity observation. The resulting earlier ledger halt
+was resolved append-only after source and negative-control review, without
+rewriting the old event or refunding reservations.
+
+At the clean smoke, six client attempts reserved 12,292,224 tokens permanently;
+five upstream responses reported 3,805 tokens in total. The first locally
+rejected attempt remains unknown in accounting. These are not billing totals.
+The same ledger path must remain in use across subsequent executions:
+`.agru/authorizations/omniroute-luna6-20261116.tokens.jsonl`.
+
+Explicit smoke command (makes a live request and consumes another reservation):
+
+```sh
+mise exec -- ruby scripts/omniroute_token_smoke.rb --execute
+```
+
+The nine-cell token-authorized comparison is being integrated separately; the
+one-request smoke must not be described as a completed live experiment matrix.
