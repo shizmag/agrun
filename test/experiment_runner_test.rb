@@ -4,6 +4,19 @@ require_relative "../lib/agent_runtime/benchmarks/reports"
 require_relative "../lib/agent_runtime/benchmarks/registry"
 
 class ExperimentRunnerTest < Minitest::Test
+  def test_execution_identity_does_not_change_definition_identity
+    in_tmp do |root|
+      _, runner, manifest = setup_runner(root)
+      first = runner.run(manifest: manifest, execution_id: "execution-one")
+      second = runner.run(manifest: manifest, execution_id: "execution-two")
+      assert_equal "execution-one", first.fetch("run_id")
+      assert_equal "execution-two", second.fetch("run_id")
+      assert_equal first.fetch("definition_digest"), second.fetch("definition_digest")
+      assert_equal "fixture-experiment", first.fetch("definition_id")
+      refute_equal first.fetch("cells").first.fetch("id"), second.fetch("cells").first.fetch("id")
+    end
+  end
+
   def test_fixture_matrix_and_regrade_use_persisted_submission
     in_tmp do |root|
       store, runner, manifest = setup_runner(root)

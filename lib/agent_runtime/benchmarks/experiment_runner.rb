@@ -20,8 +20,13 @@ module AgentRuntime
         @submissions = Submission.new(store: store)
       end
 
-      def run(manifest:, cancellation: nil, live_authorization: nil)
+      def run(manifest:, cancellation: nil, live_authorization: nil, execution_id: nil)
         manifest = ExperimentManifest.new(manifest) unless manifest.is_a?(ExperimentManifest)
+        definition_digest = manifest.digest
+        definition_id = manifest.data.fetch("experiment_id")
+        if execution_id
+          manifest = ExperimentManifest.new(manifest.data.merge("experiment_id" => execution_id))
+        end
         config = manifest.data
         adapter = @registry.fetch(config.fetch("benchmark").fetch("name"))
         if config["execution_mode"] == "live"
@@ -38,17 +43,19 @@ module AgentRuntime
         end
         raise ArgumentError, "experiment already exists" if existing
         report = {"run_id" => config.fetch("experiment_id"), "kind" => "experiment", "manifest" => config,
+                  "definition_id" => definition_id, "definition_digest" => definition_digest,
                   "manifest_digest" => manifest.digest, "effective_parallelism" => 1,
                   "qualification" => qualification(adapter),
                   "provenance" => provenance(adapter),
                   "solver_configurations" => config.fetch("solver_ids").to_h { |id| [id, JSON.parse(JSON.generate(@solvers.fetch(id).configuration))] },
-                  "cells" => JSON.parse(JSON.generate(manifest.cells))}
+                  "cells" => JSON.parse(JSON.generate(ordered_cells(manifest)))}
         report.fetch("cells").each do |cell|
           cell["model"] ||= cell["model_id"]
           cell["execution_status"] = "not_started"
           cell["score"] = cell["verdict"] = cell["usage"] = cell["cost"] = nil
           cell["transitions"] = [{"status" => "not_started"}]
         end
+        report.merge!(execution_metadata(manifest, report.fetch("cells")))
         @store.save_report(report)
         report.fetch("cells").each do |cell|
           break if cancellation&.cancelled?
@@ -75,6 +82,14 @@ module AgentRuntime
       end
 
       private
+
+      def ordered_cells(manifest)
+        manifest.cells
+      end
+
+      def execution_metadata(manifest, cells)
+        {}
+      end
 
       def validate_live!(manifest, adapter, authorization)
         raise ArgumentError, "live authorization required" unless authorization.instance_of?(Execution::LiveAuthorization)

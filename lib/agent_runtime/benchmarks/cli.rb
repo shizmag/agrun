@@ -8,6 +8,10 @@ module AgentRuntime
 
       def run(argv)
         command = argv.shift
+        if command == "comparative"
+          require_relative "comparative_cli"
+          return ComparativeCLI.new.run(argv)
+        end
         if command == "live"
           require_relative "live_cli"
           return LiveCLI.new.run(argv)
