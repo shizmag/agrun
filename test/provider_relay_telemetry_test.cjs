@@ -25,7 +25,8 @@ test('response model is reported identity, not requested route or served attesta
     {usage},
     {model: 'gpt-6.1', usage: {prompt_tokens: 12, private_text: 'must-not-log',
       completion_tokens_details: {reasoning_tokens: 4, secret: 'must-not-log'}}},
-    {model: 'gpt-6.1', usage, interim: true}
+    {model: 'gpt-6.1', usage, interim: true},
+    {model: 'gpt-6.1', usage, initialModel: 'cx/gpt-6-luna-low'}
   ];
   let index = 0;
   const provider = https.createServer({key: fs.readFileSync(key), cert: fs.readFileSync(cert)}, (req, res) => {
@@ -34,7 +35,8 @@ test('response model is reported identity, not requested route or served attesta
       res.writeHead(200, {'content-type': 'text/event-stream'});
       const fixture = fixtures[index++];
       const interim = fixture.interim ? 'data: {"usage":{"prompt_tokens":0,"completion_tokens":0,"total_tokens":0}}\n\n' : '';
-      res.end(`${interim}data: ${JSON.stringify(fixture)}\n\ndata: [DONE]\n\n`);
+      const initial = fixture.initialModel ? `data: ${JSON.stringify({model: fixture.initialModel})}\n\n` : '';
+      res.end(`${interim}${initial}data: ${JSON.stringify(fixture)}\n\ndata: [DONE]\n\n`);
     });
   });
   await new Promise(resolve => provider.listen(0, 'localhost', resolve));
@@ -89,6 +91,13 @@ test('response model is reported identity, not requested route or served attesta
     assert.deepEqual(records[4].stream_diagnostic.usage_totals_distinct, [0, 18]);
     assert.equal(records[4].error, null);
     assert.equal(records[4].usage_reporting_semantics, 'cumulative_observed');
+    assert.equal(records[5].error, null);
+    assert.deepEqual(records[5].response_models, ['cx/gpt-6-luna-low', 'gpt-6.1']);
+    assert.equal(records[5].response_model, 'gpt-6.1');
+    assert.equal(records[5].response_model_consistent, false);
+    assert.ok(records[5].accounting_issues.includes('response_model_changed'));
+    assert.equal(records[5].served_model, null);
+    assert.deepEqual(records[5].stream_diagnostic.malformed_reasons, []);
   } finally {
     await new Promise(resolve => relay.close(resolve));
     await new Promise(resolve => provider.close(resolve));
