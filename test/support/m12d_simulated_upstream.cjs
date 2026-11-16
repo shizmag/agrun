@@ -20,7 +20,8 @@ https.createServer({key: fs.readFileSync('/secret/key.pem'), cert: fs.readFileSy
   const relay=start({origin:'https://localhost:9443', approvedOrigins:['https://localhost:9443'],
     model:'cx/gpt-6-luna-low',route:'OmniRoute-simulated',timeoutMs:10000,
     identity:{run_id:'m12d-installed',architecture:'transport-probe',step_id:'exchange',attempt:1},
-    inference:{max_completion_tokens:32000},credentialFile:'/secret/credential',caFile:'/secret/cert.pem'},
+    inference:{max_completion_tokens:32000,stream:true,stream_options:{include_usage:true}},allowTools:true,
+    credentialFile:'/secret/credential',caFile:'/secret/cert.pem'},
     r=>console.log(JSON.stringify(r)));
   relay.listen('/relay/relay.sock',()=>{fs.chmodSync('/relay/relay.sock',0o600); console.log('RELAY_READY');});
   process.on('SIGTERM',()=>{relay.cancelUpstream();process.exit(0);});

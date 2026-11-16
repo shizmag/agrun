@@ -117,6 +117,16 @@ module AgentRuntime
           return Result.new(status: "timeout", outputs: {}, error: "workflow deadline exhausted") unless remaining.positive?
           request.timeout = [request.timeout, remaining].min
           role = request.config.fetch("role")
+          if %w[inventory validate].include?(role)
+            repository = request.inputs.fetch("repository")
+            manifest = Store.manifest(repository)
+            evidence = {"kind" => role, "manifest" => manifest, "quality_verdict" => "not_evaluated",
+                        "purpose" => "Repository structure and integrity validation, not benchmark grading"}
+            outputs = {(role == "inventory") ? "inventory" : "validation" => JSON.generate(evidence)}
+            outputs["repository"] = repository if role == "validate"
+            return Result.new(status: "success", outputs: outputs,
+              duration: 0.0, logs: {"validation" => evidence})
+          end
           directions = {
             "planner" => "Plan the change. Do not implement it. Write a plan in your response and in WORKFLOW_PLAN.md.",
             "coder" => "Implement the task using the supplied plan or WORKFLOW_PLAN.md. Run relevant tests.",

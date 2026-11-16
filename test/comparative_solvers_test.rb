@@ -35,6 +35,12 @@ class ComparativeSolversTest < Minitest::Test
       assert_equal "role result", adapter.requests[1].inputs.fetch("plan")
       assert_includes adapter.requests[1].config.fetch("prompt"), '"plan":"role result"'
       assert_includes adapter.requests.last.config.fetch("prompt"), '"implementation":"role result"'
+      inventory = JSON.parse(adapter.requests[1].inputs.fetch("inventory"))
+      assert_equal "inventory", inventory.fetch("kind")
+      assert_equal "not_evaluated", inventory.fetch("quality_verdict")
+      validation = JSON.parse(adapter.requests.last.inputs.fetch("validation"))
+      assert_equal "validate", validation.fetch("kind")
+      assert_equal AgentRuntime::Store.manifest(repository), validation.fetch("manifest")
       assert_includes adapter.requests.last.config.fetch("prompt"), "Independently verify"
     end
   end
@@ -94,8 +100,11 @@ class ComparativeSolversTest < Minitest::Test
     composed = AgentRuntime::Benchmarks::Solvers::ComparativeDSL.program
     assert_equal %w[planner coder reviewer], fixed.fetch("steps").map { |step| step.fetch("id") }
     assert_equal "text", composed.fetch("steps").first.fetch("outputs").fetch("plan")
-    assert_equal "planner.plan", composed.fetch("steps")[1].fetch("inputs").fetch("plan")
-    assert_equal ["coder"], composed.fetch("steps").last.fetch("needs")
+    coder = composed.fetch("steps").find { |step| step.fetch("id") == "coder" }
+    assert_equal "planner.plan", coder.fetch("inputs").fetch("plan")
+    assert_equal "inventory.inventory", coder.fetch("inputs").fetch("inventory")
+    assert_equal %w[coder validate], composed.fetch("steps").last.fetch("needs").sort
+    assert_equal 5, composed.fetch("steps").size
     refute_equal fixed, composed
     AgentRuntime::Compiler.validate!(fixed)
     AgentRuntime::Compiler.validate!(composed)
