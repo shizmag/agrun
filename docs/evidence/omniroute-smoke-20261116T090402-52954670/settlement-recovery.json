@@ -1,0 +1,9 @@
+{
+  "total_tokens": 1000000000,
+  "reserved_tokens": 4097408,
+  "request_count": 2,
+  "known_usage_tokens": 761,
+  "unknown_usage_count": 1,
+  "unknown_model_count": 1,
+  "halted": false
+}
