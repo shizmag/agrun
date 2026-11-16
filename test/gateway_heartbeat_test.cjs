@@ -23,3 +23,11 @@ test('timestamped heartbeat accepts only the source-backed default identifiers',
   }
   assert.equal(gatewayHeartbeatVariant({...fixture(), created: Number.MAX_SAFE_INTEGER + 1}), null);
 });
+test('installed OmniRoute early startup uses exactly an empty choices array', () => {
+  const startup = {...fixture(), choices: []};
+  assert.equal(gatewayHeartbeatVariant(JSON.parse(JSON.stringify(startup))), 'early_startup');
+  for (const changed of [{created: 1}, {object: 'other'}, {usage: {}},
+    {choices: [{}]}, {choices: null}, {extra: true}, {id: 'other'}]) {
+    assert.equal(gatewayHeartbeatVariant({...startup, ...changed}), null);
+  }
+});

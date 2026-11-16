@@ -37,7 +37,7 @@ test('response model is reported identity, not requested route or served attesta
       const fixture = fixtures[index++];
       const interim = fixture.interim ? 'data: {"usage":{"prompt_tokens":0,"completion_tokens":0,"total_tokens":0}}\n\n' : '';
       const initial = fixture.initialModel ? `data: ${JSON.stringify({model: fixture.initialModel})}\n\n` : '';
-      const heartbeat = fixture.heartbeat ? 'data: {"id":"chatcmpl-keepalive","object":"chat.completion.chunk","created":0,"model":"keepalive","choices":[{"index":0,"delta":{},"finish_reason":null}]}\n\n' : '';
+      const heartbeat = fixture.heartbeat ? 'data: {"id":"chatcmpl-keepalive","object":"chat.completion.chunk","created":0,"model":"keepalive","choices":[{"index":0,"delta":{},"finish_reason":null}]}\n\ndata: {"id":"chatcmpl-keepalive","object":"chat.completion.chunk","created":0,"model":"keepalive","choices":[]}\n\n' : '';
       res.end(`${interim}${initial}${heartbeat}data: ${JSON.stringify(fixture)}\n\ndata: [DONE]\n\n`);
     });
   });
@@ -100,10 +100,11 @@ test('response model is reported identity, not requested route or served attesta
     assert.ok(records[5].accounting_issues.includes('response_model_changed'));
     assert.equal(records[5].served_model, null);
     assert.deepEqual(records[5].stream_diagnostic.malformed_reasons, []);
-    assert.equal(records[6].stream_diagnostic.heartbeat_count, 1);
+    assert.equal(records[6].stream_diagnostic.heartbeat_count, 2);
     assert.deepEqual(records[6].response_models, ['keepalive']);
     assert.equal(records[6].response_model, 'keepalive', 'real content is still an identity observation');
     assert.equal(records[6].stream_diagnostic.heartbeat_variants.constant, 1);
+    assert.equal(records[6].stream_diagnostic.heartbeat_variants.early_startup, 1);
     assert.equal(records[6].stream_diagnostic.unknown_keepalive_shapes[0].content_present, true);
   } finally {
     await new Promise(resolve => relay.close(resolve));
