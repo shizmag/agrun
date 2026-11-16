@@ -1,0 +1,27 @@
+{
+  "total_tokens": 1000000000,
+  "reserved_tokens": 650997184,
+  "request_count": 313,
+  "known_usage_tokens": 3543030,
+  "unknown_usage_count": 1,
+  "unknown_model_count": 1,
+  "unresolved_violations": [
+    {
+      "type": "settle",
+      "request_id": "omniroute-smoke-20261116T172937-4bd2de4a",
+      "observed_model": "keepalive",
+      "usage": {
+        "prompt_tokens": 756,
+        "completion_tokens": 5,
+        "total_tokens": 761,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": null
+      },
+      "reporter": "trusted-gateway",
+      "violation": "token_budget_model_name_mismatch_not_attestation",
+      "model_identity": "unattested",
+      "model_name_matches_request": false
+    }
+  ],
+  "halted": true
+}
