@@ -23,18 +23,34 @@ The launcher checks request/token/money/expiry against authorized cell limits.
 The trusted relay reserves a request, serialized-input byte-derived token upper
 bound plus requested completion tokens, and corresponding price before any
 upstream request. Reservations are never refunded after failures or cancellation.
-Quota exhaustion and expiry reject admission. Restarting a cell with a fresh
-launcher would reset counters: the scheduler must prohibit that or debit a
-durable shared ledger.
+Quota exhaustion and expiry reject admission. The launcher now requires a
+`ProviderBudgetLedger` through `ledger:` and durably reserves the entire cell
+cap before Docker spawn, with no refunds even when spawn fails. A reserved cell
+or attempt cannot be restarted against that ledger.
+
+`ProviderBudgetLedger.new(path:, experiment_digest:, cells:, totals:,
+expires_at:, wall_clock:)` freezes an exact nine-cell plan. Each cell and the
+experiment totals have `requests`, `tokens`, and `money` caps. Whole-plan sums
+must fit totals. `reserve!(cell_id:, attempt_id:)` returns reservation evidence;
+the launcher compares its experiment/caps/expiry to authorization. Persistence
+uses a separate flock lock file, mode-0600 atomic JSON replacement, fsync, and
+a deterministic checksum. Reopening with a different plan is rejected. Keep
+one launcher alive across all inference stages of a cell.
+
+The ledger lives on a trusted host: its checksum detects corruption, not a
+malicious trusted-host rewrite, deletion, rollback, or selection of a fresh
+ledger path. The scheduler/operator must bind one persistent path to the
+experiment and protect that path. Reservation evidence is not a bearer token
+or cryptographic signature.
 
 **Important limitations:** the input-token bound and prices are explicitly
 reviewed provider-contract assumptions, not measured tokenizer or billing
 proof. Nonempty evidence labels are not independently verified. Hidden provider
 tokens, tool/protocol overhead, rounding, and price changes can invalidate those
 assumptions. Without suitable evidence this is request/byte-based admission,
-not a defensible hard compute or monetary ceiling. There is no experiment-wide
-shared ledger, forced expiry cancellation of already admitted requests, or
-exact-nine scheduler here. Per-request network timeouts remain enforced by the
+not a defensible hard compute or monetary ceiling. There is no forced expiry
+cancellation of already admitted requests or exact-nine scheduler here.
+Per-request network timeouts remain enforced by the
 existing relay. Do not advertise this as ready for the research live protocol.
 
 Tests include pure offline admission logic and a recording Docker adapter.

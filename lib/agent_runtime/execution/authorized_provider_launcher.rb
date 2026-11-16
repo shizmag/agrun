@@ -3,6 +3,7 @@ require "tmpdir"
 require "securerandom"
 require "fileutils"
 require_relative "simulated_provider"
+require_relative "provider_budget_ledger"
 
 module AgentRuntime
   module Execution
@@ -11,10 +12,12 @@ module AgentRuntime
     class AuthorizedProviderLauncher
       attr_reader :relay_volume, :image, :logs
 
-      def initialize(provider:, authorization:, quota:)
+      def initialize(provider:, authorization:, quota:, ledger:)
         @provider = provider
         @authorization = JSON.parse(JSON.generate(authorization))
         @quota = JSON.parse(JSON.generate(quota))
+        raise ArgumentError, "authorized_provider_ledger_required" unless ledger.is_a?(ProviderBudgetLedger)
+        @ledger = ledger
         @image = SimulatedProvider::IMAGE
         @prefix = "agru-authorized-#{SecureRandom.hex(8)}"
         @relay_volume = "#{@prefix}-relay"
@@ -35,6 +38,13 @@ module AgentRuntime
             @quota["money"] <= limits["money_per_experiment"] &&
             @quota["expiresAt"] == @authorization.fetch("expires_at") * 1000
           raise ArgumentError, "authorized_provider_quota_mismatch"
+        end
+        reservation = @ledger.reserve!(cell_id: cell_id, attempt_id: attempt_id)
+        unless reservation["experiment_digest"] == @authorization.fetch("bindings").fetch("experiment_digest") &&
+            reservation["caps"] == {"requests" => @quota["requests"], "tokens" => @quota["tokens"], "money" => @quota["money"]} &&
+            reservation["expires_at"] == @authorization.fetch("expires_at") &&
+            reservation.fetch("totals").fetch("money") <= limits.fetch("money_per_experiment")
+          raise ArgumentError, "authorized_provider_ledger_mismatch"
         end
         @root = Dir.mktmpdir("agru-authorized-provider-")
         File.chmod(0o700, @root)

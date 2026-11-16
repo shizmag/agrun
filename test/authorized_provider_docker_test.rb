@@ -17,7 +17,7 @@ class AuthorizedProviderDockerTest < Minitest::Test
         "upstream_origin_digest" => Digest::SHA256.hexdigest(origin))
       limits = {"requests_per_cell" => 1, "total_tokens_per_cell" => 1000,
                 "completion_tokens_per_request" => 100, "seconds_per_cell" => 10,
-                "money_per_cell" => 1, "money_per_experiment" => 1, "currency" => "USD"}
+                "money_per_cell" => 1, "money_per_experiment" => 9, "currency" => "USD"}
       expiry = Time.now.to_f + 60
       quota = {"requests" => 1, "tokens" => 1000, "money" => 1, "expiresAt" => expiry * 1000,
                "inputTokensPerByte" => 1, "inputTokenOverhead" => 1,
@@ -26,8 +26,13 @@ class AuthorizedProviderDockerTest < Minitest::Test
       auth = {"bindings" => bindings, "limits" => limits, "expires_at" => expiry, "quota" => quota}
       provider = AgentRuntime::Execution::AuthorizedProvider.new(reviewed_origin: origin,
         credential_file: credential, bindings: bindings, limits: limits)
+      caps = {"requests" => 1, "tokens" => 1000, "money" => 1}
+      cells = (["fixture"] + (1..8).map { |i| "cell#{i}" }).to_h { |id| [id, caps] }
+      ledger = AgentRuntime::Execution::ProviderBudgetLedger.new(path: File.join(root, "ledger"),
+        experiment_digest: bindings["experiment_digest"], cells: cells,
+        totals: {"requests" => 9, "tokens" => 9000, "money" => 9}, expires_at: expiry)
       launcher = AgentRuntime::Execution::AuthorizedProviderLauncher.new(provider: provider,
-        authorization: auth, quota: quota)
+        authorization: auth, quota: quota, ledger: ledger)
       begin
         launcher.start(attempt_id: "offline", cell_id: "fixture", model_profile: bindings["model"])
         # Fixture solver has no network and only the Unix volume. Inspect, never

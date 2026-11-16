@@ -84,7 +84,12 @@ class AuthorizedProviderTest < Minitest::Test
         {"status" => "success", "stdout" => ""}
       end
     end
-    launcher = klass.new(provider: provider, authorization: auth, quota: quota)
+    caps = {"requests" => 12, "tokens" => 384000, "money" => 1}
+    cells = (["cell"] + (1..8).map { |i| "cell#{i}" }).to_h { |id| [id, caps] }
+    ledger = AgentRuntime::Execution::ProviderBudgetLedger.new(path: File.join(@root, "ledger"),
+      experiment_digest: @bindings["experiment_digest"], cells: cells,
+      totals: {"requests" => 108, "tokens" => 3456000, "money" => 9}, expires_at: 101, wall_clock: -> { 100 })
+    launcher = klass.new(provider: provider, authorization: auth, quota: quota, ledger: ledger)
     launcher.start(attempt_id: "attempt", cell_id: "cell", model_profile: "cx/gpt-6-luna-low")
     run = launcher.commands.find { |cmd| cmd.first == "run" }
     assert_includes run, "--read-only"
@@ -98,5 +103,9 @@ class AuthorizedProviderTest < Minitest::Test
     end
   ensure
     launcher&.close
+    %w[ledger ledger.lock].each do |name|
+      path = File.join(@root, name)
+      File.unlink(path) if File.exist?(path)
+    end
   end
 end
