@@ -52,8 +52,8 @@ module AgentRuntime
       def settle(request_id:, observed_model:, usage:, reporter:)
         valid_usage = usage.nil? || (usage.is_a?(Hash) && usage.keys.sort == %w[completion_tokens prompt_tokens] &&
           usage.values.all? { |v| v.is_a?(Integer) && v >= 0 })
-        unless reporter.is_a?(String) && !reporter.empty? && reporter.bytesize <= 1024 &&
-            observed_model.is_a?(String) && observed_model.bytesize <= 1024 &&
+        valid_model = observed_model.nil? || (observed_model.is_a?(String) && observed_model.bytesize <= 1024)
+        unless reporter.is_a?(String) && !reporter.empty? && reporter.bytesize <= 1024 && valid_model &&
             valid_usage
           raise ArgumentError, "token_budget_usage_invalid"
         end
@@ -61,8 +61,8 @@ module AgentRuntime
           reservation = events.find { |e| e["type"] == "reserve" && e["request_id"] == request_id }
           raise ArgumentError, "token_budget_request_unknown" unless reservation
           raise ArgumentError, "token_budget_already_settled" if events.any? { |e| e["type"] == "settle" && e["request_id"] == request_id }
-          violation = if observed_model != @plan["model"]
-            "token_budget_route_violation"
+          violation = if observed_model && observed_model != @plan["model"]
+            "token_budget_model_name_mismatch_not_attestation"
           elsif usage && (usage["prompt_tokens"] > reservation["input_tokens"] || usage["completion_tokens"] > reservation["completion_tokens"])
             "token_budget_usage_exceeds_reservation"
           end
@@ -75,6 +75,22 @@ module AgentRuntime
         result
       end
       alias_method :settle!, :settle
+
+      # Provider response names are observations, not independent route proof.
+      def snapshot
+        transaction do |events|
+          reservations = events.select { |e| e["type"] == "reserve" }
+          settlements = events.select { |e| e["type"] == "settle" }
+          known = settlements.filter_map { |e| e["usage"] }
+          {"total_tokens" => @plan["total_tokens"],
+           "reserved_tokens" => reservations.sum { |e| e["reserved_tokens"] },
+           "request_count" => reservations.length,
+           "known_usage_tokens" => known.sum { |usage| usage.values.sum },
+           "unknown_usage_count" => reservations.length - known.length,
+           "unknown_model_count" => reservations.length - settlements.count { |e| e["observed_model"] },
+           "halted" => events.any? { |e| e["violation"] }}
+        end
+      end
 
       private
 

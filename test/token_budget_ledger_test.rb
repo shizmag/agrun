@@ -53,14 +53,33 @@ class TokenBudgetLedgerTest < Minitest::Test
     end
   end
 
+  def test_snapshot_preserves_unknown_model_and_cumulative_usage
+    Dir.mktmpdir do |dir|
+      path = File.join(dir, "ledger")
+      reserve(ledger(path), "one")
+      ledger(path).settle(request_id: "one", observed_model: nil,
+        usage: {"prompt_tokens" => 2, "completion_tokens" => 1}, reporter: "gateway")
+      reserve(ledger(path), "two")
+      assert_equal({"total_tokens" => 20, "reserved_tokens" => 20,
+                    "request_count" => 2, "known_usage_tokens" => 3,
+                    "unknown_usage_count" => 1, "unknown_model_count" => 2,
+                    "halted" => false}, ledger(path).snapshot)
+      settlement = JSON.parse(File.readlines(path)[2])["data"]
+      assert_nil settlement["observed_model"]
+    end
+  end
+
   def test_route_and_usage_violations_are_durable
     [{model: "other", usage: nil},
       {model: "cx/gpt-6-luna-low", usage: {"prompt_tokens" => 7, "completion_tokens" => 0}}].each do |input|
       Dir.mktmpdir do |dir|
         path = File.join(dir, "ledger")
         reserve(ledger(path), "one")
-        assert_raises(ArgumentError) do
+        error = assert_raises(ArgumentError) do
           ledger(path).settle(request_id: "one", observed_model: input[:model], usage: input[:usage], reporter: "gateway")
+        end
+        if input[:model] == "other"
+          assert_equal "token_budget_model_name_mismatch_not_attestation", error.message
         end
         assert_raises(ArgumentError) { reserve(ledger(path), "two") }
       end
