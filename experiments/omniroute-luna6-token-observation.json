@@ -1,0 +1,19 @@
+{
+  "schema_version": "agru-token-observation-intent-v1",
+  "status": "authorized_intent_not_execution_evidence",
+  "provider_id": "omniroute",
+  "requested_model": "cx/gpt-6-luna-low",
+  "model_fallback": false,
+  "configuration_source": "opencode provider configuration",
+  "gateway_origin": "http://localhost:20128",
+  "gateway_api_path": "/v1/chat/completions",
+  "credential_environment_variable": "OMNIROUTE_API_KEY",
+  "aggregate_token_ceiling": 1000000000,
+  "ceiling_scope": "all executions under this authorization, not per cell or retry",
+  "initial_execution_policy": "small bounded transport smoke before comparative execution",
+  "measurements": ["requested_model", "upstream_reported_model", "reported_usage", "usage_completeness", "request_identity"],
+  "accounting_policy": "Unknown is not zero. Cached and reasoning subtokens must not be added twice to inclusive totals. Missing usage cannot refund a conservative reservation.",
+  "billing_guarantee": "none",
+  "served_model_attestation": "Upstream-reported names are observations, not independent proof of served model identity.",
+  "security_policy": "Gateway access only through a trusted transport. Solver containers retain direct-network denial. Existing HTTPS upstream TLS verification must not be disabled."
+}
