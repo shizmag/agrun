@@ -25,10 +25,17 @@ absolute provider token guarantee**: tokenizer and provider framing are unknown.
 After a response, the trusted gateway calls `settle(request_id:,
 observed_model:, usage:, reporter:)` (`settle!` alias). Usage is either nil or
 `{"prompt_tokens" => Integer, "completion_tokens" => Integer}` with nonnegative
-counts. `observed_model: nil` records an unknown model, never the requested name.
+counts. Optional `total_tokens` must be nil or equal their sum. Optional
+`prompt_tokens_details` and `completion_tokens_details` accept null or whitelisted
+nonnegative/null subcounts (cached/audio and reasoning/audio/prediction counts,
+respectively). These observations are preserved but never added to inclusive
+prompt/completion totals. Unknown fields fail closed.
+`observed_model: nil` records an unknown model, never the requested name.
 Missing usage remains unknown. Nothing refunds the reservation, including
 failures, missing usage or smaller actual counts. A differing response model name
-is recorded exactly and conservatively halts admission with
+is recorded exactly. The expected `gpt-6-luna` response alias is permitted without
+halting; it remains `model_identity: unattested`, not independent identity proof.
+Other differing names conservatively halt admission with
 `token_budget_model_name_mismatch_not_attestation`: aliases may differ, so this is uncertainty,
 not proof of a route violation or independent actual-model identity. Either
 reported count exceeding its allowance is durably recorded, then raises; future

@@ -50,8 +50,7 @@ module AgentRuntime
       # Trusted reporter only. nil usage remains unknown and retains the entire
       # reservation. Even known smaller usage never refunds admission capacity.
       def settle(request_id:, observed_model:, usage:, reporter:)
-        valid_usage = usage.nil? || (usage.is_a?(Hash) && usage.keys.sort == %w[completion_tokens prompt_tokens] &&
-          usage.values.all? { |v| v.is_a?(Integer) && v >= 0 })
+        valid_usage = valid_usage?(usage)
         valid_model = observed_model.nil? || (observed_model.is_a?(String) && observed_model.bytesize <= 1024)
         unless reporter.is_a?(String) && !reporter.empty? && reporter.bytesize <= 1024 && valid_model &&
             valid_usage
@@ -61,13 +60,15 @@ module AgentRuntime
           reservation = events.find { |e| e["type"] == "reserve" && e["request_id"] == request_id }
           raise ArgumentError, "token_budget_request_unknown" unless reservation
           raise ArgumentError, "token_budget_already_settled" if events.any? { |e| e["type"] == "settle" && e["request_id"] == request_id }
-          violation = if observed_model && observed_model != @plan["model"]
+          violation = if observed_model && ![@plan["model"], "gpt-6-luna"].include?(observed_model)
             "token_budget_model_name_mismatch_not_attestation"
           elsif usage && (usage["prompt_tokens"] > reservation["input_tokens"] || usage["completion_tokens"] > reservation["completion_tokens"])
             "token_budget_usage_exceeds_reservation"
           end
           event = {"type" => "settle", "request_id" => request_id, "observed_model" => observed_model,
-                   "usage" => usage, "reporter" => reporter, "violation" => violation}
+                   "usage" => usage, "reporter" => reporter, "violation" => violation,
+                   "model_identity" => observed_model.nil? ? "unknown" : "unattested",
+                   "model_name_matches_request" => observed_model.nil? ? nil : observed_model == @plan["model"]}
           events << event
           event.dup
         end
@@ -85,7 +86,7 @@ module AgentRuntime
           {"total_tokens" => @plan["total_tokens"],
            "reserved_tokens" => reservations.sum { |e| e["reserved_tokens"] },
            "request_count" => reservations.length,
-           "known_usage_tokens" => known.sum { |usage| usage.values.sum },
+           "known_usage_tokens" => known.sum { |usage| usage.fetch("prompt_tokens") + usage.fetch("completion_tokens") },
            "unknown_usage_count" => reservations.length - known.length,
            "unknown_model_count" => reservations.length - settlements.count { |e| e["observed_model"] },
            "halted" => events.any? { |e| e["violation"] }}
@@ -93,6 +94,27 @@ module AgentRuntime
       end
 
       private
+
+      def valid_usage?(usage)
+        return true if usage.nil?
+        return false unless usage.is_a?(Hash)
+        allowed = %w[prompt_tokens completion_tokens total_tokens prompt_tokens_details completion_tokens_details]
+        return false unless (usage.keys - allowed).empty?
+        return false unless %w[prompt_tokens completion_tokens].all? { |key| nonnegative_integer?(usage[key]) }
+        total = usage["prompt_tokens"] + usage["completion_tokens"]
+        return false unless usage["total_tokens"].nil? || usage["total_tokens"] == total
+        details = {"prompt_tokens_details" => %w[cached_tokens audio_tokens],
+                   "completion_tokens_details" => %w[reasoning_tokens audio_tokens accepted_prediction_tokens rejected_prediction_tokens]}
+        details.all? do |key, fields|
+          value = usage[key]
+          value.nil? || (value.is_a?(Hash) && (value.keys - fields).empty? &&
+            value.values.all? { |count| count.nil? || nonnegative_integer?(count) })
+        end
+      end
+
+      def nonnegative_integer?(value)
+        value.is_a?(Integer) && value >= 0
+      end
 
       # One append-only inode is both lock and log. Torn writes fail closed on
       # restart. Exclusive creation prevents silently resetting an existing log.
