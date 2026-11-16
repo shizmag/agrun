@@ -17,14 +17,16 @@ test('durable subprocess ledger halts on wrong-then-right streamed model', () =>
     fs.writeFileSync(config, JSON.stringify({cell_id: 'test-cell', attempt_id: 'test-attempt',
       ledger: {path: path.join(root, 'ledger.jsonl'), intent_digest: 'a'.repeat(64), total_tokens: 10000000}}));
     let snapshot;
+    const audits = [];
     const gate = admission({requestLimit: 4, ledger(message) {
       snapshot = JSON.parse(execFileSync('mise', ['exec', '--', 'bundle', 'exec', 'ruby',
         path.resolve(__dirname, '../scripts/local_token_ledger.rb'), config],
       {input: JSON.stringify(message), encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'], timeout: 30000}));
-    }, emit() {}});
+    }, emit(record) { audits.push(record); }});
     gate.authorizeRequest(Buffer.from('{}'), {}, 'first');
-    assert.throws(() => gate.audit({request_id: 'first', response_models: ['wrong-model', 'cx/gpt-6-luna-low'],
-      response_model: 'cx/gpt-6-luna-low', usage: {prompt_tokens: 1, completion_tokens: 1}}), /model_name_mismatch/);
+    gate.audit({request_id: 'first', response_models: ['wrong-model', 'cx/gpt-6-luna-low'],
+      response_model: 'cx/gpt-6-luna-low', usage: {prompt_tokens: 1, completion_tokens: 1}});
+    assert.equal(audits[0].ledger_error, 'settlement_failed');
     snapshot = JSON.parse(execFileSync('mise', ['exec', '--', 'bundle', 'exec', 'ruby', '-r', path.resolve(__dirname, '../lib/agent_runtime/execution/token_budget_ledger.rb'), '-e', 'c=JSON.parse(File.read(ARGV[0])); puts JSON.generate(AgentRuntime::Execution::TokenBudgetLedger.new(**c.fetch("ledger").transform_keys(&:to_sym)).snapshot)', config], {encoding: 'utf8', timeout: 30000}));
     assert.equal(snapshot.halted, true);
     assert.equal(snapshot.request_count, 1);

@@ -78,8 +78,8 @@ async function main() {
       });
       return request;
     }});
-    gateway = await launchBridge({server, timeoutMs: config.timeoutMs, image: privateConfig.image});
-  } else gateway = await launch({config, image: privateConfig.image, authorizeRequest, audit});
+    gateway = await launchBridge({server, timeoutMs: config.timeoutMs, stageTimeoutMs: privateConfig.stageTimeoutMs, image: privateConfig.image});
+  } else gateway = await launch({config, stageTimeoutMs: privateConfig.stageTimeoutMs, image: privateConfig.image, authorizeRequest, audit});
   process.stdout.write(JSON.stringify({ready: true, relay_volume: gateway.relayVolume}) + '\n');
   const close = () => { gateway.close(); process.exit(0); };
   for (const signal of ['SIGTERM', 'SIGINT']) process.on(signal, close);

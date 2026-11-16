@@ -1,0 +1,20 @@
+/Users/vladimirkasterin/ruby/agru/lib/agent_runtime/execution/local_token_provider.rb:15: warning: already initialized constant AgentRuntime::Execution::LocalTokenProvider::IMAGE
+/Users/vladimirkasterin/ruby/agru/lib/agent_runtime/execution/local_token_provider.rb:15: warning: previous definition of IMAGE was here
+Run options: --seed 29568
+
+# Running:
+
+E
+
+Finished in 5.016507s, 0.1993 runs/s, 0.0000 assertions/s.
+
+  1) Error:
+LocalTokenProviderTest#test_stderr_flood_cannot_block_ready_and_is_never_persisted:
+Timeout::Error: execution expired
+    /Users/vladimirkasterin/.local/share/mise/installs/ruby/4.0.9/lib/ruby/4.0.0/timeout.rb:40:in 'Timeout::Error.handle_timeout'
+    /Users/vladimirkasterin/.local/share/mise/installs/ruby/4.0.9/lib/ruby/4.0.0/timeout.rb:306:in 'Timeout.timeout'
+    test/local_token_provider_test.rb:18:in 'block in LocalTokenProviderTest#test_stderr_flood_cannot_block_ready_and_is_never_persisted'
+    /Users/vladimirkasterin/.local/share/mise/installs/ruby/4.0.9/lib/ruby/4.0.0/tmpdir.rb:105:in 'Dir.mktmpdir'
+    test/local_token_provider_test.rb:6:in 'LocalTokenProviderTest#test_stderr_flood_cannot_block_ready_and_is_never_persisted'
+
+1 runs, 0 assertions, 0 failures, 1 errors, 0 skips

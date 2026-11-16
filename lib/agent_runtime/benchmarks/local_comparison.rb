@@ -115,12 +115,13 @@ module AgentRuntime
           request.timeout = [request.timeout || remaining, remaining].min
           provider = @factory.call
           relay = provider.start(attempt_id: "#{request.run_id}:#{request.step_id}:#{request.attempt}",
-            cell_id: cell_id, model_profile: @profile)
+            cell_id: cell_id, model_profile: @profile, **stage_options)
           helper = File.expand_path("../execution/local_token_bridge.cjs", __dir__)
           policy = Execution::SandboxRunner::MockRelayPolicy.new(volume: relay.fetch("volume"), helper: helper,
             helper_sha256: Digest::SHA256.file(helper).hexdigest)
           sandbox = Execution::SandboxRunner.new(image: SimulatedComparison::IMAGE,
             limits: {"cpus" => 1, "memory_bytes" => 1073741824, "pids" => 128, "tmpfs_bytes" => 134217728}, network_policy: policy)
+          stage_options = provider.is_a?(Execution::LocalTokenProvider) ? {timeout: request.timeout} : {}
           launch = Execution::SandboxOpenCodeLaunch.new(executable: "/usr/local/bin/opencode",
             executable_sha256: SimulatedComparison::EXECUTABLE_DIGEST, endpoint: "http://127.0.0.1:18080/v1",
             model: "omniroute/cx/gpt-6-luna-low", provider: "omniroute", wire_model: "cx/gpt-6-luna-low",

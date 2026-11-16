@@ -13,17 +13,19 @@ module AgentRuntime
     # A fresh single-connection bridge is created for each inference stage.
     class LocalTokenProvider
       IMAGE = "node@sha256:d6aa754f16b3197301076f047b5def2f02ea1dbbc2ca920407d46d7ec7f87b20".freeze
+      attr_reader :process_diagnostics
       def initialize(root:, ledger:, credential:, audit_path:, offline: false)
         @root, @ledger, @credential, @audit_path = root, ledger, credential, audit_path
         @stage = 0
         @offline = offline
       end
 
-      def start(attempt_id:, cell_id:, model_profile:)
+      def start(attempt_id:, cell_id:, model_profile:, timeout: 110)
+        raise ArgumentError, "token provider stage timeout invalid" unless timeout.is_a?(Numeric) && timeout.finite? && timeout.positive?
         raise ArgumentError, "token provider model mismatch" unless model_profile.fetch("model") == TokenBudgetLedger::MODEL
         @stage += 1
         @directory = Dir.mktmpdir("agru-token-provider-")
-        config = {"offline" => @offline, "ruby" => RbConfig.ruby, "ledger" => @ledger, "cell_id" => cell_id,
+        config = {"stageTimeoutMs" => [(timeout * 1000).ceil, 1].max, "offline" => @offline, "ruby" => RbConfig.ruby, "ledger" => @ledger, "cell_id" => cell_id,
                   "attempt_id" => "#{attempt_id}:#{@stage}", "request_limit" => 12,
                   "cell_counter" => File.join(File.dirname(@audit_path), "cell-#{Digest::SHA256.hexdigest(cell_id)}.requests"), "image" => IMAGE,
                   "gateway" => {"attempt_id" => attempt_id, "cell_id" => cell_id,
@@ -36,6 +38,17 @@ module AgentRuntime
         path = File.join(@directory, "config.json")
         File.write(path, JSON.generate(config), perm: 0o600)
         @stdin, @stdout, @stderr, @wait = Open3.popen3("node", File.join(@root, "scripts/local_token_gateway.cjs"), path)
+        @process_diagnostics = {"stderr" => "absent", "exit" => "running"}
+        # Drain without retaining bytes: even trusted child diagnostics can contain
+        # credentials. A full stderr pipe must never block ready/audit delivery.
+        @stderr_reader = Thread.new do
+          loop do
+            @stderr.readpartial(16_384)
+            @process_diagnostics["stderr"] = "observed_redacted"
+          end
+        rescue EOFError, IOError
+          nil
+        end
         ready = Timeout.timeout(60) { JSON.parse(@stdout.gets || "{}") }
         raise Error, "local token provider did not start" unless ready["ready"]
         @relay_volume = ready.fetch("relay_volume")
@@ -61,6 +74,12 @@ module AgentRuntime
           end
         end
         @reader&.join(5)
+        @stderr_reader&.join(5)
+        if @wait && @process_diagnostics
+          status = @wait.value
+          @process_diagnostics["exit"] = status.success? ? "success" : status.signaled? ? "signal" : "failure"
+          File.open(@audit_path, "a", 0o600) { |file| file.puts(JSON.generate("type" => "gateway_process", "diagnostics" => @process_diagnostics)) }
+        end
         if @relay_volume
           failures = []
           [["docker", "rm", "-f", @relay_volume.delete_suffix("-relay")], ["docker", "volume", "rm", @relay_volume]].each do |argv|
@@ -70,7 +89,7 @@ module AgentRuntime
         end
         [@stdout, @stderr].compact.each { |io| io.close unless io.closed? }
         FileUtils.remove_entry(@directory) if @directory && File.directory?(@directory)
-        @stdin = @stdout = @stderr = @wait = @reader = @directory = nil
+        @stdin = @stdout = @stderr = @wait = @reader = @stderr_reader = @directory = nil
         @relay_volume = nil
         raise Error, "local token provider cleanup failed: #{failures.inspect}" if failures&.any?
       end

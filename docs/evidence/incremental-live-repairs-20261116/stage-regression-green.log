@@ -1,0 +1,16 @@
+✔ local transport is explicit, fixed and requires trusted admission (1.221792ms)
+✔ local relay audits bounded inference rejection reasons without forwarding or exposing values (17.96975ms)
+✔ durable subprocess ledger halts on wrong-then-right streamed model (742.46925ms)
+✔ offline gateway accepts tool call and tool result across sequential requests (9.156ms)
+✔ concurrent rejection cannot settle or steal another request reservation (1.042083ms)
+✔ failed admission never permits dispatch and oversized bodies never reserve (0.114292ms)
+✔ wrong then authorized streamed identity halts admission through ledger settlement (0.098959ms)
+✔ allowed alias changes are accepted but truncated identities are not (0.490916ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 832.246959
