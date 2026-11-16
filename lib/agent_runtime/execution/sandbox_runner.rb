@@ -33,7 +33,7 @@ module AgentRuntime
         attr_reader :volume, :helper, :helper_sha256
 
         def initialize(volume:, helper:, helper_sha256:)
-          unless volume.is_a?(String) && volume.match?(/\Aagru-(?:mock|simulated)-[a-f0-9]{16}-relay\z/) &&
+          unless volume.is_a?(String) && volume.match?(/\Aagru-(?:mock|simulated|local)-[a-f0-9]{16}-relay\z/) &&
               helper.is_a?(String) && helper.start_with?("/") && File.file?(helper) && !File.symlink?(helper) &&
               helper_sha256.is_a?(String) && helper_sha256.match?(/\A[a-f0-9]{64}\z/) && Digest::SHA256.file(helper).hexdigest == helper_sha256
             raise ArgumentError, "invalid reviewed mock relay policy"

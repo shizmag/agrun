@@ -25,6 +25,18 @@ module AgentRuntime
         when "regrade-freeze"
           require_relative "portable_regrade"
           PortableRegrade.new.run(bundle: argv.fetch(0), root: options.fetch(:root), assets: File.expand_path(options.fetch(:assets, ".agru/nl2repo")), destination: argv[1])
+        when "token-prepare", "token-run"
+          require_relative "local_comparison"
+          assets = File.expand_path(options.fetch(:assets, ".agru/nl2repo"))
+          if command == "token-prepare"
+            {"bindings" => LocalComparison.bindings(assets: assets), "expires_at" => Time.now.to_f + 3600,
+             "consent_notice" => "Review before token-run. Exact local OmniRoute model, token admission only; no monetary guarantee."}
+          else
+            LocalComparison.new(root: options.fetch(:root), assets: assets).run(
+              authorization_path: options.fetch(:authorization_path), credential_file: options.fetch(:credential_file),
+              allow_live: options[:allow_live] == true
+            )
+          end
         when "live-prepare", "live-run"
           require_relative "authorized_comparison"
           origin = JSON.parse(File.read(options.fetch(:origin_config))).fetch("reviewed_origin")
