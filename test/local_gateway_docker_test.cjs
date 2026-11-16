@@ -5,6 +5,24 @@ const http = require('node:http');
 const {spawn} = require('node:child_process');
 const {launchBridge} = require('../lib/agent_runtime/execution/local_gateway_launcher.cjs');
 const {startOfflineTransport} = require('../lib/agent_runtime/execution/provider_relay.cjs');
+test('private bridge preserves HTTP connection across an upstream idle-close window', async () => {
+  const server = http.createServer((req, res) => { req.resume(); req.on('end', () => res.end('ok')); });
+  server.cancelUpstream = () => {};
+  server.keepAliveTimeout = 20;
+  const bridge = await launchBridge({server, timeoutMs: 10000,
+    image: 'node@sha256:d6aa754f16b3197301076f047b5def2f02ea1dbbc2ca920407d46d7ec7f87b20'});
+  try {
+    const result = await new Promise((resolve, reject) => {
+      const script = `const http=require('http');const agent=new http.Agent({keepAlive:true,maxSockets:1});
+        const send=()=>new Promise((resolve,reject)=>{http.get({socketPath:'/relay/relay.sock',agent},r=>{r.resume();r.on('end',resolve)}).on('error',reject)});
+        (async()=>{await send();await new Promise(r=>setTimeout(r,200));await send();agent.destroy()})().catch(()=>process.exit(1));`;
+      const child = spawn('docker', ['run', '--rm', '--network', 'none', '--user', '65534:65534',
+        '-v', `${bridge.relayVolume}:/relay`, 'node@sha256:d6aa754f16b3197301076f047b5def2f02ea1dbbc2ca920407d46d7ec7f87b20', 'node', '-e', script]);
+      child.stdout.resume(); child.stderr.resume(); child.on('error', reject); child.on('exit', resolve);
+    });
+    assert.equal(result, 0);
+  } finally { bridge.close(); }
+});
 test('real Docker private-volume stdio carries streaming HTTP without container network', async () => {
   const server = http.createServer((req, res) => {
     res.writeHead(200, {'content-type': 'text/event-stream'});
