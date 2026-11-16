@@ -110,6 +110,25 @@ test('offline HTTPS enforces TLS, rejects redirects and parses CR-framed SSE', a
     assert.equal(hits, 2, 'invalid tools never reach upstream');
     assert.equal((await exchange(true, {tools: [tool], tool_choice: 'auto'}, true)).status, 200);
     assert.equal(hits, 3);
+    const conversation = [
+      {role: 'system', content: 'system'},
+      {role: 'user', content: [{type: 'text', text: 'read it'}]},
+      {role: 'assistant', content: null, tool_calls: [{id: 'call_1', type: 'function', function: {name: 'read_file', arguments: '{"path":"a"}'}}]},
+      {role: 'tool', tool_call_id: 'call_1', content: 'file contents'},
+      {role: 'assistant', content: 'done'}
+    ];
+    for (const messages of [
+      [{role: 'user', content: 'x', extra: true}],
+      [{role: 'user', content: [{type: 'image_url', image_url: {url: 'https://example.invalid'}}]}],
+      [{role: 'user', content: [{type: 'text', text: 'x', extra: true}]}],
+      [{role: 'assistant', content: null, tool_calls: [{id: '1', type: 'function', function: {name: 'read_file', arguments: '{}', extra: 1}}]}],
+      [{role: 'tool', tool_call_id: '1', content: 'x', extra: 1}]
+    ]) assert.equal((await exchange(true, {messages}, true)).status, 403);
+    assert.equal(hits, 3, 'invalid messages never reach upstream');
+    assert.equal((await exchange(true, {messages: conversation, tools: [tool], tool_choice: 'auto'}, true)).status, 200);
+    assert.equal(hits, 4);
+    assert.equal((await exchange(true, {messages: conversation}, false)).status, 403);
+    assert.equal(hits, 4);
   } finally {
     await new Promise(resolve => upstream.close(resolve));
     fs.rmSync(root, {recursive: true, force: true});
