@@ -92,6 +92,18 @@ there is no claim that the earlier combined invocation passed.
 
 ## Final review update
 
+Release-candidate revalidation supersedes the earlier aggregate below:
+`regression-final-revalidated.log` records **951 runs / 5670 assertions / zero
+failures/errors / 75 skips**. The additional skip is
+`AuthorizedComparisonTest#test_complete_nine_cell_injected_execution_and_actual_audited_regrade`,
+gated by `AGRU_AUTHORIZED_OFFLINE_E2E`; its separately enabled run passed
+**7 tests / 34 assertions / zero skips** in
+`authorized-scheduler-offline-e2e.log`. It injects solver execution, not the
+audited Docker grader, and performs no provider requests. Earlier stale-process
+failure is retained in `regression-release-candidate-revalidated.log`; its
+`relay.cancel is not a function` failure was corrected with `cancelUpstream()`
+and a parent-side bounded ProcessRunner before the passing full rerun.
+
 Full regression supplied by parent: `regression-final.log` in the evidence
 directory records **934 runs, 5596 assertions, 0 failures/errors, 74 skips**.
 Parent also reports final smoke passed (`smoke-final.log`) and

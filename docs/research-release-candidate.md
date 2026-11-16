@@ -47,6 +47,17 @@ See `docs/comparative-experiment.md` and
 
 ## Security and validity boundaries
 
+Final regression: **951 runs, 5670 assertions, zero failures/errors, 75 skips**
+(`docs/evidence/research-security-2026-11-16/regression-final-revalidated.log`).
+The prior interrupted/stale-test failure is preserved separately, not counted as
+a pass. Lint, smoke, benchmark demo, conformance (16/16), acceptance (20/20) and
+benchmark contract checks passed. The 75th default skip is the new authorized
+offline injected nine-cell scheduler E2E; it was explicitly enabled separately
+and passed 7 tests / 34 assertions with actual audited Docker grading and no
+provider requests (`authorized-scheduler-offline-e2e.log`). Historical 72 gated
+tests and the two added Docker gates are classified in the security inventory;
+offline controls were enabled separately. Network provenance remains unrun.
+
 `docs/research-security-verification.md` maps actual controls, partial assurance
 and skips to retained logs. Container separation is not proof against kernel or
 Docker-daemon compromise. Trusted-host quota state is not tamper-proof against

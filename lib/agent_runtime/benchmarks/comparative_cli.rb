@@ -55,7 +55,7 @@ module AgentRuntime
           ComparativeExperiment.new(store: store).freeze(experiment_id: argv.fetch(0), destination: argv.fetch(1),
             verification: JSON.parse(File.read(options.fetch(:verification))))
         else
-          raise ArgumentError, "expected comparative freeze EXPERIMENT DIRECTORY or verify DIRECTORY"
+          raise ArgumentError, "expected comparative plan, readiness, run, freeze, verify, regrade-freeze, live-prepare or live-run"
         end
         puts JSON.pretty_generate(result)
         0
