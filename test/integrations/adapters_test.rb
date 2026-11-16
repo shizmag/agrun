@@ -228,11 +228,13 @@ class AdaptersIntegrationTest < Minitest::Test
     end
   end
 
-  def test_invalid_utf8_is_sanitized
+  def test_invalid_utf8_fails_with_lossless_evidence
     in_tmp do |dir|
       result = runner.call(argv: [RbConfig.ruby, "-e", 'STDOUT.write([255].pack("C"))'], cwd: dir, timeout: 2)
       assert result["stdout"].valid_encoding?
-      assert_equal "success", result["status"]
+      assert_equal "failure", result["status"]
+      assert_equal "invalid_utf8_output", result["encoding_error"]
+      assert_equal [255], result.fetch("binary_output_base64").fetch("stdout").unpack1("m0").bytes
     end
   end
 

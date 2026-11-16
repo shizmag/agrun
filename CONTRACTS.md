@@ -252,3 +252,12 @@ tested. This API does not make trusted Ruby code or directory separation a sandb
 Before Docker creation, sandbox input provisioning accepts at most 1,024 regular
 files and 1,024 directories (including the workspace root). These bounds apply to
 input provisioning, independently of the existing 10,000-entry output export cap.
+# Captured process text encoding
+
+Process and sandbox stdout/stderr are decoded as UTF-8 only after capture, so
+multibyte characters split across reads remain intact. Valid UTF-8 bytes are
+preserved without normalization. Invalid UTF-8 is an execution failure classified
+as `invalid_utf8_output`, not successful replacement-character text. The affected
+text field is empty and its exact bytes are retained in `binary_output_base64`
+under the stream name. Evidence consumers must not interpret empty text in that
+case as absence of output. Capture truncation remains separately recorded.

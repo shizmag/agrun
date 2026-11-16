@@ -123,12 +123,14 @@ class M12aProcessRunnerLifecycleTest < Minitest::Test
     end
   end
 
-  def test_invalid_utf8_is_sanitized_for_json_evidence
+  def test_invalid_utf8_fails_with_lossless_json_evidence
     in_tmp do |dir|
       result = runner.call(argv: [RbConfig.ruby, "-e", "STDOUT.binmode.write([255, 97].pack('C*')); STDERR.binmode.write([254].pack('C*'))"], cwd: dir, timeout: 5)
-      assert_equal "success", result.fetch("status")
-      assert_equal "\uFFFDa", result.fetch("stdout"), "captured bytes must become valid UTF-8 evidence"
-      assert_equal "\uFFFD", result.fetch("stderr")
+      assert_equal "failure", result.fetch("status")
+      assert_equal "invalid_utf8_output", result.fetch("encoding_error")
+      assert_equal "", result.fetch("stdout")
+      assert_equal [255, 97], result.fetch("binary_output_base64").fetch("stdout").unpack1("m0").bytes
+      assert_equal [254], result.fetch("binary_output_base64").fetch("stderr").unpack1("m0").bytes
       assert_equal result, JSON.parse(JSON.generate(result))
     end
   end

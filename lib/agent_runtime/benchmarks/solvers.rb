@@ -184,6 +184,7 @@ module AgentRuntime
           end
           observed_models = report.fetch("steps", {}).values.flat_map { |step| step.fetch("attempts", []).map { |attempt| attempt["model"] } }.compact.uniq
           result = {"status" => report.fetch("status"), "repository" => artifact && @store.value(artifact),
+                    "error" => report.fetch("steps", {}).values.flat_map { |step| step.fetch("attempts", []) }.rfind { |attempt| attempt["error"] }&.fetch("error"),
                     "partial_repository_artifact" => (artifact unless report["status"] == "success"),
                     "model" => ((observed_models.size == 1) ? observed_models.first : nil), "observed_models" => observed_models, "requested_model" => model, "runtime_run_id" => report["run_id"],
                     "ir_digest" => report["ir_digest"], "usage" => nil, "cost" => nil}

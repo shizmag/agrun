@@ -70,6 +70,7 @@ module AgentRuntime
           @store.save_report(report)
           summary = Execution::Summary.from_run(store: @store, run_id: run_id)
           {"status" => report["status"], "repository" => @store.value(artifact), "partial_repository_artifact" => (artifact unless report["status"] == "success"),
+           "error" => report.fetch("steps").values.flat_map { |step| step.fetch("attempts", []) }.rfind { |attempt| attempt["error"] }&.fetch("error"),
            "requested_model" => model, "model" => nil, "execution" => {"schema_version" => 1, "run_id" => run_id,
                                                                        "summary_digest" => summary["digest"], "status" => summary["status"], "execution_count" => summary["execution_count"], "requested_model" => model, "served_model" => nil}}
         end

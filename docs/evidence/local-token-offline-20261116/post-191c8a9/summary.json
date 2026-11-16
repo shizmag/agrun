@@ -1,0 +1,70 @@
+{
+  "execution_id": "research-omniroute-token-operational-v1-87dc24f34c255183",
+  "verification": "/Users/vladimirkasterin/ruby/agru/.agru/local-offline-validation-post191c8a9/local-token-comparison/research-omniroute-token-operational-v1-87dc24f34c255183/verification.json",
+  "token_ledger": {
+    "total_tokens": 1000000000,
+    "reserved_tokens": 87384192,
+    "request_count": 42,
+    "known_usage_tokens": 630,
+    "unknown_usage_count": 0,
+    "unknown_model_count": 0,
+    "unresolved_violations": [],
+    "halted": false
+  },
+  "bundle": {
+    "sha256": "a175f0520de2c9df16b96a0a20717e3aa187e776599060982043f739cb3d32ee",
+    "verified": true
+  },
+  "cells": [
+    {
+      "execution_status": "success",
+      "grading_attempts": 2,
+      "submission_persisted": true
+    },
+    {
+      "execution_status": "success",
+      "grading_attempts": 2,
+      "submission_persisted": true
+    },
+    {
+      "execution_status": "success",
+      "grading_attempts": 2,
+      "submission_persisted": true
+    },
+    {
+      "execution_status": "success",
+      "grading_attempts": 2,
+      "submission_persisted": true
+    },
+    {
+      "execution_status": "success",
+      "grading_attempts": 2,
+      "submission_persisted": true
+    },
+    {
+      "execution_status": "success",
+      "grading_attempts": 2,
+      "submission_persisted": true
+    },
+    {
+      "execution_status": "success",
+      "grading_attempts": 2,
+      "submission_persisted": true
+    },
+    {
+      "execution_status": "success",
+      "grading_attempts": 2,
+      "submission_persisted": true
+    },
+    {
+      "execution_status": "success",
+      "grading_attempts": 2,
+      "submission_persisted": true
+    }
+  ],
+  "portable_regrade": {
+    "verified": true,
+    "semantics": "same-implementation evaluator reproduction; not independent evaluator semantics",
+    "cell_count": 9
+  }
+}
