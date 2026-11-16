@@ -1,5 +1,32 @@
 # AGRU comparative research release candidate
 
+**Disposition: `NOT_READY` against the full mission acceptance gate.** The
+offline nine-cell platform and regression evidence below are complete. The
+remaining high-priority acceptance gap is authoritative validation of the
+real-provider token/pricing contract on which hard live budget admission relies.
+Synthetic tests establish enforcement of supplied bounds, not correctness of
+those bounds. No paid call is requested or authorized to resolve this here;
+provider documentation and an independent review are required first. The
+implementation must not be promoted as fully research-ready solely from the
+simulator evidence.
+
+Remaining issues, prioritized:
+
+1. **High, live acceptance:** obtain and review actual provider framing,
+   reasoning/cache charge and pricing evidence; bind it in the required reviewed
+   contract before authorization. Real reachability/served-model identity and
+   billing reconciliation remain unverified, not simulator-proven.
+2. **Medium, measurement:** tool/retry/provider-error and some token observations
+   remain incomplete; unknowns and client-only measurements are explicitly
+   retained rather than fabricated. This limits compute comparison precision.
+3. **Low, operational:** SQLite inherited-connection warnings remain in execution
+   logs. All cells, regrades and the full final suite completed, but the warnings
+   merit follow-up before larger-scale parallel experiments.
+
+No unresolved critical/high defect is knowingly concealed as a passing control.
+The live acceptance gap is deliberately not waived. S3 and prior experiments
+were preserved; no push, merge or paid provider execution occurred.
+
 ## Evidence and interpretation
 
 The installed OpenCode controlled-HTTPS nine-cell experiment is complete:
