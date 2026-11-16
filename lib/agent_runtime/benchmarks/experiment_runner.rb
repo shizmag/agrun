@@ -258,6 +258,8 @@ module AgentRuntime
         attempt["raw"] = raw
         normalized = raw.dup
         status = raw["execution_status"] || raw.fetch("status")
+        # Successful evaluator execution is not an available evaluation verdict.
+        status = raw["status"] if %w[unavailable error timeout cancelled].include?(raw["status"])
         status = "error" unless %w[success timeout cancelled unavailable error].include?(status)
         normalized["execution_status"] = status
         normalized["score"] = (status == "success") ? adapter.normalize_score(raw.fetch("score")) : nil
