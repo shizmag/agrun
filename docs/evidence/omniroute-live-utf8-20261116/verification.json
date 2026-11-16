@@ -1,0 +1,70 @@
+{
+  "schema": "agru-comparative-freeze-v1",
+  "experiment_id": "research-omniroute-token-operational-v1-50a3db2c5c7aebcf",
+  "evidence_kind": "live_provider",
+  "report_digest": "1ea68d9f2afc539e4df3b262de22438df6c2610a6581dc2a94c34afdb2865d55",
+  "provider_evidence": true,
+  "checks": [
+    {
+      "cell_id": "c2c4d1b0cfdea2d77504c7294783b2113617fd947cafbef8ae5081e51ea7d1b4",
+      "status": "verified",
+      "submission_unchanged": true,
+      "new_grading_attempt": true,
+      "outcome_agrees": true,
+      "grading_binding_valid": true,
+      "original_grading_attempt_id": "72aeee4c-2ae3-4d5b-a367-c998fab2c90f",
+      "regrade_attempt_id": "c528088d-a499-4b82-80fc-6bff9d7a9c24"
+    },
+    {
+      "cell_id": "12e73e2e30cd42cd52c158de2540c345873ed908cb2db5048bd2ad33bf7c171e",
+      "status": "unavailable",
+      "reason": "no persisted submission"
+    },
+    {
+      "cell_id": "d353fb2f6f1623d73f6e8c58d2292094594e4ec764a7ca60d66b4e02e3d37a1c",
+      "status": "unavailable",
+      "reason": "no persisted submission"
+    },
+    {
+      "cell_id": "4f8090c19abd91508f3059dcdaefc65057fe344c48db11fedb59a8322e62f808",
+      "status": "unavailable",
+      "reason": "no persisted submission"
+    },
+    {
+      "cell_id": "7669e9b16fb38fd6190e82649372d8a99b2e1ab9b0815c933e8d13a3b6922f8c",
+      "status": "unavailable",
+      "reason": "no persisted submission"
+    },
+    {
+      "cell_id": "96987c79d7be8a72a12b81ed3f2aa64671a1d340768fee23c05e205c70b17295",
+      "status": "verified",
+      "submission_unchanged": true,
+      "new_grading_attempt": true,
+      "outcome_agrees": true,
+      "grading_binding_valid": true,
+      "original_grading_attempt_id": "0915031e-2b5e-4518-b314-bafdbe8b6668",
+      "regrade_attempt_id": "e76b3bae-81a6-4e6a-aaa2-70034961f613"
+    },
+    {
+      "cell_id": "0cfdcff1912cf723219eb0b866d018ea7ab4cdd881913668491f36c0c94e97e3",
+      "status": "unavailable",
+      "reason": "no persisted submission"
+    },
+    {
+      "cell_id": "2a5d0fba603b48225c0b8c5b18b6be754cfd9da84f35f2813edb4ef9fd825d28",
+      "status": "mismatch",
+      "submission_unchanged": true,
+      "new_grading_attempt": true,
+      "outcome_agrees": true,
+      "grading_binding_valid": false,
+      "original_grading_attempt_id": "8b1fc39f-8f8a-44b8-8112-c8d578247dd9",
+      "regrade_attempt_id": "e3684093-f218-43a8-a3c7-16bd4ca61793"
+    },
+    {
+      "cell_id": "bce3642714c78802d31814c26cc2a9aad642dc971bdf5aef4c1188b5ba7ed1c9",
+      "status": "unavailable",
+      "reason": "no persisted submission"
+    }
+  ],
+  "verified": false
+}

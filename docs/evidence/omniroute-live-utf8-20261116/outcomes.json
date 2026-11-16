@@ -1,0 +1,92 @@
+[
+  {
+    "id": "c2c4d1b0cfdea2d77504c7294783b2113617fd947cafbef8ae5081e51ea7d1b4",
+    "solver_id": "single-agent",
+    "execution_status": "success",
+    "score": 0.6086956521739131,
+    "error": null,
+    "submission_persisted": true
+  },
+  {
+    "id": "12e73e2e30cd42cd52c158de2540c345873ed908cb2db5048bd2ad33bf7c171e",
+    "solver_id": "fixed-workflow",
+    "execution_status": "error",
+    "score": null,
+    "error": {
+      "type": "sandbox",
+      "message": "provider_http_403"
+    },
+    "submission_persisted": false
+  },
+  {
+    "id": "d353fb2f6f1623d73f6e8c58d2292094594e4ec764a7ca60d66b4e02e3d37a1c",
+    "solver_id": "dsl",
+    "execution_status": "error",
+    "score": null,
+    "error": {
+      "type": "sandbox",
+      "message": "provider_http_502"
+    },
+    "submission_persisted": false
+  },
+  {
+    "id": "4f8090c19abd91508f3059dcdaefc65057fe344c48db11fedb59a8322e62f808",
+    "solver_id": "fixed-workflow",
+    "execution_status": "error",
+    "score": null,
+    "error": {
+      "type": "sandbox",
+      "message": "provider_http_502"
+    },
+    "submission_persisted": false
+  },
+  {
+    "id": "7669e9b16fb38fd6190e82649372d8a99b2e1ab9b0815c933e8d13a3b6922f8c",
+    "solver_id": "dsl",
+    "execution_status": "error",
+    "score": null,
+    "error": {
+      "type": "sandbox",
+      "message": "provider_http_502"
+    },
+    "submission_persisted": false
+  },
+  {
+    "id": "96987c79d7be8a72a12b81ed3f2aa64671a1d340768fee23c05e205c70b17295",
+    "solver_id": "single-agent",
+    "execution_status": "success",
+    "score": 0.7391304347826086,
+    "error": null,
+    "submission_persisted": true
+  },
+  {
+    "id": "0cfdcff1912cf723219eb0b866d018ea7ab4cdd881913668491f36c0c94e97e3",
+    "solver_id": "dsl",
+    "execution_status": "error",
+    "score": null,
+    "error": {
+      "type": "sandbox",
+      "message": "provider_http_403"
+    },
+    "submission_persisted": false
+  },
+  {
+    "id": "2a5d0fba603b48225c0b8c5b18b6be754cfd9da84f35f2813edb4ef9fd825d28",
+    "solver_id": "single-agent",
+    "execution_status": "error",
+    "score": null,
+    "error": "AgentRuntime::Error: successful grading requires a finite score in [0,1]",
+    "submission_persisted": true
+  },
+  {
+    "id": "bce3642714c78802d31814c26cc2a9aad642dc971bdf5aef4c1188b5ba7ed1c9",
+    "solver_id": "fixed-workflow",
+    "execution_status": "error",
+    "score": null,
+    "error": {
+      "type": "sandbox",
+      "message": "provider_http_502"
+    },
+    "submission_persisted": false
+  }
+]

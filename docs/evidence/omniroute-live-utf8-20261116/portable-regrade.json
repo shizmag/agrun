@@ -1,0 +1,491 @@
+{
+  "schema": "agru-portable-regrade-v1",
+  "source_freeze": {
+    "integrity_verified": true,
+    "experiment_id": "research-omniroute-token-operational-v1-50a3db2c5c7aebcf",
+    "regrades_verified": false,
+    "evidence_kind": "live_provider",
+    "sha256": "c88516c57916728d5f21694710045a3f4141a55af6beef08c3be2d9d892620c1"
+  },
+  "semantics": "same-implementation evaluator reproduction; not independent evaluator semantics",
+  "cells": [
+    {
+      "cell_id": "c2c4d1b0cfdea2d77504c7294783b2113617fd947cafbef8ae5081e51ea7d1b4",
+      "submission_digest": "76e1b9e2c0beb8a99f32fd5a8c64805f983003da3d1e3213acd2ba553ee63b10",
+      "request": {
+        "benchmark": {
+          "name": "nl2repo",
+          "revision": "781a1da1ee41fb8edb0bed22f586d69111610edf",
+          "manifest_digest": "f34f959b3de0d44f390799d22c82d415bf330aa56e540ad13df96c07e6cca5bc",
+          "official_score": "blocked"
+        },
+        "task_id": "retrying",
+        "specification_digest": "cd41306283b97f81d9cb8ec14985b47acf973dea92f492b53a4e1aaa796a4168",
+        "submission_id": "807fa484-2f5e-4393-a3c7-01d4ac8eecd4",
+        "submission_digest": "76e1b9e2c0beb8a99f32fd5a8c64805f983003da3d1e3213acd2ba553ee63b10",
+        "limits": {
+          "max_attempts": 1,
+          "max_concurrent_sessions": 1,
+          "max_parallelism": 1,
+          "timeout": 600
+        },
+        "protocol_status": "nl2repo-audited-v2",
+        "expected_nodeids": [
+          "test_retrying.py::TestStopConditions::test_legacy_explicit_stop_type",
+          "test_retrying.py::TestStopConditions::test_never_stop",
+          "test_retrying.py::TestStopConditions::test_stop_after_attempt",
+          "test_retrying.py::TestStopConditions::test_stop_after_delay",
+          "test_retrying.py::TestStopConditions::test_stop_func",
+          "test_retrying.py::TestWaitConditions::test_exponential",
+          "test_retrying.py::TestWaitConditions::test_exponential_with_max_wait",
+          "test_retrying.py::TestWaitConditions::test_exponential_with_max_wait_and_multiplier",
+          "test_retrying.py::TestWaitConditions::test_fixed_sleep",
+          "test_retrying.py::TestWaitConditions::test_incrementing_sleep",
+          "test_retrying.py::TestWaitConditions::test_legacy_explicit_wait_type",
+          "test_retrying.py::TestWaitConditions::test_no_sleep",
+          "test_retrying.py::TestWaitConditions::test_random_sleep",
+          "test_retrying.py::TestWaitConditions::test_random_sleep_without_min",
+          "test_retrying.py::TestWaitConditions::test_wait_func",
+          "test_retrying.py::TestDecoratorWrapper::test_defaults",
+          "test_retrying.py::TestDecoratorWrapper::test_retry_if_exception_of_type",
+          "test_retrying.py::TestDecoratorWrapper::test_with_stop_on_exception",
+          "test_retrying.py::TestDecoratorWrapper::test_with_stop_on_return_value",
+          "test_retrying.py::TestDecoratorWrapper::test_with_wait",
+          "test_retrying.py::TestDecoratorWrapper::test_wrapped_exception",
+          "test_retrying.py::TestBeforeAfterAttempts::test_after_attempts",
+          "test_retrying.py::TestBeforeAfterAttempts::test_before_attempts"
+        ],
+        "audited_binding": {
+          "protocol": "nl2repo-audited-v2",
+          "task_id": "retrying",
+          "submission_digest": "76e1b9e2c0beb8a99f32fd5a8c64805f983003da3d1e3213acd2ba553ee63b10",
+          "specification_digest": "cd41306283b97f81d9cb8ec14985b47acf973dea92f492b53a4e1aaa796a4168",
+          "benchmark_revision": "781a1da1ee41fb8edb0bed22f586d69111610edf",
+          "manifest_digest": "f34f959b3de0d44f390799d22c82d415bf330aa56e540ad13df96c07e6cca5bc",
+          "test_manifest_digest": "3861f33b79c0b6d8f1c4a81ab382b7fe6f4ddbb9d865e3d96e5fdf0f0bb9bcc8",
+          "test_source_sha256": "6d6286fc485273ba8b434afbf3f754f3f69321281bd94fd1f08b88a9171e056f",
+          "collector_digest": "61583393c7f44da8e6b67b5144f2adafa8bb927f3680c3e52edba88f08587a34",
+          "procedure_digest": "73fdbce9d36f87d688b8b48c0a1d062eb5d62a5aee5424cff98f9971b19f9c18",
+          "environment_digest": "3436208c0ba0e7c33b14659418c729ecb18417551ef63d0b22b9c86bc7713c63",
+          "image": "ghcr.io/multimodal-art-projection/nl2repobench/retrying@sha256:1302235420db9d34955c42273ebaf23df8bbee31ceeaf3c336347f54b64146fe"
+        },
+        "request_digest": "3f98262d638151bd77597f3e08a18d5e7ade42672d0ced86af76b53187a04833"
+      },
+      "result": {
+        "status": "success",
+        "execution_status": "success",
+        "verdict": "fail",
+        "trust": "audited",
+        "trust_scope": "benign_ordinary_submissions",
+        "protocol": "nl2repo-audited-v2",
+        "quality_basis": "validated_quality_result",
+        "score": 0.6086956521739131,
+        "passed": 14,
+        "total": 23,
+        "expected": 23,
+        "collected": 23,
+        "executed": 23,
+        "failed": 9,
+        "skipped": 0,
+        "artifacts": {
+          "candidate_evidence": {
+            "report_artifact": {
+              "id": "5929145a-1a13-4e7e-827b-b34432b156fe",
+              "digest": "d56d03fb217ccea158bae18e6e3b408cb7b41b1fbb3bfd8cfa9336d173e4d611",
+              "type": "text",
+              "path": "/Users/vladimirkasterin/ruby/agru/.agru/luna-utf8-portable-regrade/objects/d56d03fb217ccea158bae18e6e3b408cb7b41b1fbb3bfd8cfa9336d173e4d611",
+              "run_id": "aafd323c-66aa-4e32-a4e7-266e06b74412",
+              "step_id": "candidate-structured-report",
+              "attempt": 1,
+              "inputs": [],
+              "created_at": "2026-11-16T11:47:24.543743Z",
+              "metadata": {}
+            },
+            "process_artifact": {
+              "id": "07ca08a1-6530-4a94-bce4-05531fb96338",
+              "digest": "07bf9d6073c0d6ee9a8df320be3910b159a8180c3b04875ccd23337188d96bc7",
+              "type": "json",
+              "path": "/Users/vladimirkasterin/ruby/agru/.agru/luna-utf8-portable-regrade/objects/07bf9d6073c0d6ee9a8df320be3910b159a8180c3b04875ccd23337188d96bc7",
+              "run_id": "aafd323c-66aa-4e32-a4e7-266e06b74412",
+              "step_id": "candidate-process-evidence",
+              "attempt": 1,
+              "inputs": [],
+              "created_at": "2026-11-16T11:47:24.543995Z",
+              "metadata": {}
+            },
+            "report_sha256": "d56d03fb217ccea158bae18e6e3b408cb7b41b1fbb3bfd8cfa9336d173e4d611",
+            "process": {
+              "status": "failure",
+              "stdout": "/workspace/test_retrying.py: OK\n============================= test session starts ==============================\nplatform linux -- Python 3.10.11, pytest-8.4.1, pluggy-1.6.0\nrootdir: /tmp/private\nconfigfile: ../../dev/null\ncollected 23 items\n\n../private/test_retrying.py .....FFF.......FF.FFFF.                      [100%]\n\n=================================== FAILURES ===================================\n_____________________ TestWaitConditions.test_exponential ______________________\n\nself = <test_retrying.TestWaitConditions testMethod=test_exponential>\n\n    def test_exponential(self):\n        r = Retrying(wait_exponential_max=100000)\n>       self.assertEqual(r.wait(1, 0), 2)\nE       AssertionError: 1 != 2\n\n../private/test_retrying.py:95: AssertionError\n______________ TestWaitConditions.test_exponential_with_max_wait _______________\n\nself = <test_retrying.TestWaitConditions testMethod=test_exponential_with_max_wait>\n\n    def test_exponential_with_max_wait(self):\n        r = Retrying(wait_exponential_max=40)\n>       self.assertEqual(r.wait(1, 0), 2)\nE       AssertionError: 1 != 2\n\n../private/test_retrying.py:104: AssertionError\n_______ TestWaitConditions.test_exponential_with_max_wait_and_multiplier _______\n\nself = <test_retrying.TestWaitConditions testMethod=test_exponential_with_max_wait_and_multiplier>\n\n    def test_exponential_with_max_wait_and_multiplier(self):\n        r = Retrying(wait_exponential_max=50000, wait_exponential_multiplier=1000)\n>       self.assertEqual(r.wait(1, 0), 2000)\nE       AssertionError: 1000 != 2000\n\n../private/test_retrying.py:115: AssertionError\n______________________ TestDecoratorWrapper.test_defaults ______________________\n\nself = <test_retrying.TestDecoratorWrapper testMethod=test_defaults>\n\n    def test_defaults(self):\n>       self.assertTrue(_retryable_default(NoNameErrorAfterCount(5)))\n\n../private/test_retrying.py:430: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nretrying.py:181: in wrapped\n    return policy.call(fn, *args, **kwargs)\nretrying.py:159: in call\n    return attempt.get(self._wrap_exception)\nretrying.py:39: in get\n    raise exception.with_traceback(self.value[2])\nretrying.py:150: in call\n    attempt = Attempt(fn(*args, **kwargs), attempt_number, False)\n../private/test_retrying.py:280: in _retryable_default\n    return thing.go()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <test_retrying.NoNameErrorAfterCount object at 0x7ffffe24e020>\n\n    def go(self):\n        \"\"\"\n        Raise a NameError until after count threshold has been crossed, then return True.\n        \"\"\"\n        if self.counter < self.count:\n            self.counter += 1\n>           raise NameError(\"Hi there, I'm a NameError\")\nE           NameError: Hi there, I'm a NameError\n\n../private/test_retrying.py:187: NameError\n_____________ TestDecoratorWrapper.test_retry_if_exception_of_type _____________\n\nself = <test_retrying.TestDecoratorWrapper testMethod=test_retry_if_exception_of_type>\n\n    def test_retry_if_exception_of_type(self):\n>       self.assertTrue(_retryable_test_with_exception_type_io(NoIOErrorAfterCount(5)))\n\n../private/test_retrying.py:341: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nretrying.py:181: in wrapped\n    return policy.call(fn, *args, **kwargs)\nretrying.py:159: in call\n    return attempt.get(self._wrap_exception)\nretrying.py:39: in get\n    raise exception.with_traceback(self.value[2])\nretrying.py:150: in call\n    attempt = Attempt(fn(*args, **kwargs), attempt_number, False)\n../private/test_retrying.py:255: in _retryable_test_with_exception_type_io\n    return thing.go()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <test_retrying.NoIOErrorAfterCount object at 0x7ffffe049ab0>\n\n    def go(self):\n        \"\"\"\n        Raise an IOError until after count threshold has been crossed, then return True.\n        \"\"\"\n        if self.counter < self.count:\n            self.counter += 1\n>           raise IOError(\"Hi there, I'm an IOError\")\nE           OSError: Hi there, I'm an IOError\n\n../private/test_retrying.py:168: OSError\n_____________ TestDecoratorWrapper.test_with_stop_on_return_value ______________\n\nself = <test_retrying.TestDecoratorWrapper testMethod=test_with_stop_on_return_value>\n\n    def test_with_stop_on_return_value(self):\n        try:\n            _retryable_test_with_stop(NoneReturnUntilAfterCount(5))\n>           self.fail(\"Expected RetryError after 3 attempts\")\nE           AssertionError: Expected RetryError after 3 attempts\n\n../private/test_retrying.py:325: AssertionError\n_____________________ TestDecoratorWrapper.test_with_wait ______________________\n\nself = <test_retrying.TestDecoratorWrapper testMethod=test_with_wait>\n\n    def test_with_wait(self):\n        start = current_time_ms()\n        result = _retryable_test_with_wait(NoneReturnUntilAfterCount(5))\n        t = current_time_ms() - start\n>       self.assertTrue(t >= 250)\nE       AssertionError: False is not true\n\n../private/test_retrying.py:319: AssertionError\n_________________ TestDecoratorWrapper.test_wrapped_exception __________________\n\nself = <test_retrying.TestDecoratorWrapper testMethod=test_wrapped_exception>\n\n    def test_wrapped_exception(self):\n    \n        # base exception cases\n>       self.assertTrue(_retryable_test_with_exception_type_io_wrap(NoIOErrorAfterCount(5)))\n\n../private/test_retrying.py:384: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nretrying.py:181: in wrapped\n    return policy.call(fn, *args, **kwargs)\nretrying.py:159: in call\n    return attempt.get(self._wrap_exception)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = Attempts: 5, Error:\n  File \"/tmp/candidate/retrying.py\", line 150, in call\n    attempt = Attempt(fn(*args, **kwargs), ...eturn thing.go()\n  File \"/tmp/private/test_retrying.py\", line 168, in go\n    raise IOError(\"Hi there, I'm an IOError\")\n\nwrap_exception = True\n\n    def get(self, wrap_exception=False):\n        if self.has_exception:\n            exception = self.value[1]\n            if wrap_exception:\n>               raise RetryError(self)\nE               retrying.RetryError: RetryError[Attempts: 5, Error:\nE                 File \"/tmp/candidate/retrying.py\", line 150, in call\nE                   attempt = Attempt(fn(*args, **kwargs), attempt_number, False)\nE                 File \"/tmp/private/test_retrying.py\", line 260, in _retryable_test_with_exception_type_io_wrap\nE                   return thing.go()\nE                 File \"/tmp/private/test_retrying.py\", line 168, in go\nE                   raise IOError(\"Hi there, I'm an IOError\")\nE               ]\n\nretrying.py:38: RetryError\n----------------------------- Captured stdout call -----------------------------\nDetected Exception of type: <class 'OSError'>\nDetected Exception of type: <class 'OSError'>\nDetected Exception of type: <class 'OSError'>\nDetected Exception of type: <class 'OSError'>\nDetected Exception of type: <class 'OSError'>\n_________________ TestBeforeAfterAttempts.test_after_attempts __________________\n\nself = <test_retrying.TestBeforeAfterAttempts testMethod=test_after_attempts>\n\n    def test_after_attempts(self):\n        TestBeforeAfterAttempts._attempt_number = 0\n    \n        def _after(attempt_number):\n            TestBeforeAfterAttempts._attempt_number = attempt_number\n    \n        @retry(wait_fixed = 100, stop_max_attempt_number = 3, after_attempts = _after)\n        def _test_after():\n            if TestBeforeAfterAttempts._attempt_number < 2:\n                raise Exception(\"testing after_attempts handler\")\n            else:\n                pass\n    \n        _test_after()\n    \n>       self.assertTrue(TestBeforeAfterAttempts._attempt_number is 2)\nE       AssertionError: False is not true\n\n../private/test_retrying.py:467: AssertionError\n=============================== warnings summary ===============================\n../private/test_retrying.py:450\n  /tmp/private/test_retrying.py:450: SyntaxWarning: \"is\" with a literal. Did you mean \"==\"?\n    self.assertTrue(TestBeforeAfterAttempts._attempt_number is 1)\n\n../private/test_retrying.py:467\n  /tmp/private/test_retrying.py:467: SyntaxWarning: \"is\" with a literal. Did you mean \"==\"?\n    self.assertTrue(TestBeforeAfterAttempts._attempt_number is 2)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED ../private/test_retrying.py::TestWaitConditions::test_exponential - As...\nFAILED ../private/test_retrying.py::TestWaitConditions::test_exponential_with_max_wait\nFAILED ../private/test_retrying.py::TestWaitConditions::test_exponential_with_max_wait_and_multiplier\nFAILED ../private/test_retrying.py::TestDecoratorWrapper::test_defaults - Nam...\nFAILED ../private/test_retrying.py::TestDecoratorWrapper::test_retry_if_exception_of_type\nFAILED ../private/test_retrying.py::TestDecoratorWrapper::test_with_stop_on_return_value\nFAILED ../private/test_retrying.py::TestDecoratorWrapper::test_with_wait - As...\nFAILED ../private/test_retrying.py::TestDecoratorWrapper::test_wrapped_exception\nFAILED ../private/test_retrying.py::TestBeforeAfterAttempts::test_after_attempts\n=================== 9 failed, 14 passed, 2 warnings in 0.56s ===================\n",
+              "stderr": "",
+              "encoding_error": null,
+              "binary_output_base64": {},
+              "exit_code": 1,
+              "truncated": false,
+              "stdout_truncated": false,
+              "stderr_truncated": false,
+              "duration": 1.2900330000557005,
+              "cleanup": {
+                "errors": [],
+                "reaped": true
+              }
+            },
+            "cleanup": {
+              "status": "success",
+              "stdout": "agru-audited-06c2a660af05441c0d095378\n",
+              "stderr": "",
+              "encoding_error": null,
+              "binary_output_base64": {},
+              "exit_code": 0,
+              "truncated": false,
+              "stdout_truncated": false,
+              "stderr_truncated": false,
+              "duration": 0.04224199987947941,
+              "cleanup": {
+                "errors": [],
+                "reaped": true
+              }
+            }
+          },
+          "reference_evidence": {
+            "report_artifact": {
+              "id": "3d877152-d4c7-4cb2-a2a1-7c059cbc0b97",
+              "digest": "962953c0d5b94cde447158075147fe694924f9d634c5c7034f46b3e776f6cb09",
+              "type": "text",
+              "path": "/Users/vladimirkasterin/ruby/agru/.agru/luna-utf8-portable-regrade/objects/962953c0d5b94cde447158075147fe694924f9d634c5c7034f46b3e776f6cb09",
+              "run_id": "aafd323c-66aa-4e32-a4e7-266e06b74412",
+              "step_id": "reference-structured-report",
+              "attempt": 1,
+              "inputs": [],
+              "created_at": "2026-11-16T11:47:23.176929Z",
+              "metadata": {}
+            },
+            "process_artifact": {
+              "id": "e52e6296-06cf-4465-89b6-f767b55c2efd",
+              "digest": "42e1cbef8c075735cd05c0aa35ad49a822b7d683db3d4a09d50b62c917d64ee1",
+              "type": "json",
+              "path": "/Users/vladimirkasterin/ruby/agru/.agru/luna-utf8-portable-regrade/objects/42e1cbef8c075735cd05c0aa35ad49a822b7d683db3d4a09d50b62c917d64ee1",
+              "run_id": "aafd323c-66aa-4e32-a4e7-266e06b74412",
+              "step_id": "reference-process-evidence",
+              "attempt": 1,
+              "inputs": [],
+              "created_at": "2026-11-16T11:47:23.177141Z",
+              "metadata": {}
+            },
+            "report_sha256": "962953c0d5b94cde447158075147fe694924f9d634c5c7034f46b3e776f6cb09",
+            "process": {
+              "status": "success",
+              "stdout": "/workspace/test_retrying.py: OK\n============================= test session starts ==============================\nplatform linux -- Python 3.10.11, pytest-8.4.1, pluggy-1.6.0\nrootdir: /tmp/private\nconfigfile: ../../dev/null\ncollected 23 items\n\n../private/test_retrying.py .......................                      [100%]\n\n=============================== warnings summary ===============================\n../private/test_retrying.py:450\n  /tmp/private/test_retrying.py:450: SyntaxWarning: \"is\" with a literal. Did you mean \"==\"?\n    self.assertTrue(TestBeforeAfterAttempts._attempt_number is 1)\n\n../private/test_retrying.py:467\n  /tmp/private/test_retrying.py:467: SyntaxWarning: \"is\" with a literal. Did you mean \"==\"?\n    self.assertTrue(TestBeforeAfterAttempts._attempt_number is 2)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n======================== 23 passed, 2 warnings in 0.49s ========================\n",
+              "stderr": "",
+              "encoding_error": null,
+              "binary_output_base64": {},
+              "exit_code": 0,
+              "truncated": false,
+              "stdout_truncated": false,
+              "stderr_truncated": false,
+              "duration": 1.5253510000184178,
+              "cleanup": {
+                "errors": [],
+                "reaped": true
+              }
+            },
+            "cleanup": {
+              "status": "success",
+              "stdout": "agru-audited-5d659df2cf383189c03b6845\n",
+              "stderr": "",
+              "encoding_error": null,
+              "binary_output_base64": {},
+              "exit_code": 0,
+              "truncated": false,
+              "stdout_truncated": false,
+              "stderr_truncated": false,
+              "duration": 0.044043000089004636,
+              "cleanup": {
+                "errors": [],
+                "reaped": true
+              }
+            }
+          }
+        }
+      },
+      "matches_original": true
+    },
+    {
+      "cell_id": "96987c79d7be8a72a12b81ed3f2aa64671a1d340768fee23c05e205c70b17295",
+      "submission_digest": "d8c2e14d68ea7a9f5a78098fb5ce9f4c2841cc26ab1c0594e79a024b251ed7ef",
+      "request": {
+        "benchmark": {
+          "name": "nl2repo",
+          "revision": "781a1da1ee41fb8edb0bed22f586d69111610edf",
+          "manifest_digest": "f34f959b3de0d44f390799d22c82d415bf330aa56e540ad13df96c07e6cca5bc",
+          "official_score": "blocked"
+        },
+        "task_id": "retrying",
+        "specification_digest": "cd41306283b97f81d9cb8ec14985b47acf973dea92f492b53a4e1aaa796a4168",
+        "submission_id": "38bc6ffb-e038-447f-a118-b1d6dd874506",
+        "submission_digest": "d8c2e14d68ea7a9f5a78098fb5ce9f4c2841cc26ab1c0594e79a024b251ed7ef",
+        "limits": {
+          "max_attempts": 1,
+          "max_concurrent_sessions": 1,
+          "max_parallelism": 1,
+          "timeout": 600
+        },
+        "protocol_status": "nl2repo-audited-v2",
+        "expected_nodeids": [
+          "test_retrying.py::TestStopConditions::test_legacy_explicit_stop_type",
+          "test_retrying.py::TestStopConditions::test_never_stop",
+          "test_retrying.py::TestStopConditions::test_stop_after_attempt",
+          "test_retrying.py::TestStopConditions::test_stop_after_delay",
+          "test_retrying.py::TestStopConditions::test_stop_func",
+          "test_retrying.py::TestWaitConditions::test_exponential",
+          "test_retrying.py::TestWaitConditions::test_exponential_with_max_wait",
+          "test_retrying.py::TestWaitConditions::test_exponential_with_max_wait_and_multiplier",
+          "test_retrying.py::TestWaitConditions::test_fixed_sleep",
+          "test_retrying.py::TestWaitConditions::test_incrementing_sleep",
+          "test_retrying.py::TestWaitConditions::test_legacy_explicit_wait_type",
+          "test_retrying.py::TestWaitConditions::test_no_sleep",
+          "test_retrying.py::TestWaitConditions::test_random_sleep",
+          "test_retrying.py::TestWaitConditions::test_random_sleep_without_min",
+          "test_retrying.py::TestWaitConditions::test_wait_func",
+          "test_retrying.py::TestDecoratorWrapper::test_defaults",
+          "test_retrying.py::TestDecoratorWrapper::test_retry_if_exception_of_type",
+          "test_retrying.py::TestDecoratorWrapper::test_with_stop_on_exception",
+          "test_retrying.py::TestDecoratorWrapper::test_with_stop_on_return_value",
+          "test_retrying.py::TestDecoratorWrapper::test_with_wait",
+          "test_retrying.py::TestDecoratorWrapper::test_wrapped_exception",
+          "test_retrying.py::TestBeforeAfterAttempts::test_after_attempts",
+          "test_retrying.py::TestBeforeAfterAttempts::test_before_attempts"
+        ],
+        "audited_binding": {
+          "protocol": "nl2repo-audited-v2",
+          "task_id": "retrying",
+          "submission_digest": "d8c2e14d68ea7a9f5a78098fb5ce9f4c2841cc26ab1c0594e79a024b251ed7ef",
+          "specification_digest": "cd41306283b97f81d9cb8ec14985b47acf973dea92f492b53a4e1aaa796a4168",
+          "benchmark_revision": "781a1da1ee41fb8edb0bed22f586d69111610edf",
+          "manifest_digest": "f34f959b3de0d44f390799d22c82d415bf330aa56e540ad13df96c07e6cca5bc",
+          "test_manifest_digest": "3861f33b79c0b6d8f1c4a81ab382b7fe6f4ddbb9d865e3d96e5fdf0f0bb9bcc8",
+          "test_source_sha256": "6d6286fc485273ba8b434afbf3f754f3f69321281bd94fd1f08b88a9171e056f",
+          "collector_digest": "61583393c7f44da8e6b67b5144f2adafa8bb927f3680c3e52edba88f08587a34",
+          "procedure_digest": "73fdbce9d36f87d688b8b48c0a1d062eb5d62a5aee5424cff98f9971b19f9c18",
+          "environment_digest": "3436208c0ba0e7c33b14659418c729ecb18417551ef63d0b22b9c86bc7713c63",
+          "image": "ghcr.io/multimodal-art-projection/nl2repobench/retrying@sha256:1302235420db9d34955c42273ebaf23df8bbee31ceeaf3c336347f54b64146fe"
+        },
+        "request_digest": "8af8209b42cedf01319c6174b0880e66a6dbee5f2c3858a59b30c0a23d9689b6"
+      },
+      "result": {
+        "status": "success",
+        "execution_status": "success",
+        "verdict": "fail",
+        "trust": "audited",
+        "trust_scope": "benign_ordinary_submissions",
+        "protocol": "nl2repo-audited-v2",
+        "quality_basis": "validated_quality_result",
+        "score": 0.7391304347826086,
+        "passed": 17,
+        "total": 23,
+        "expected": 23,
+        "collected": 23,
+        "executed": 23,
+        "failed": 6,
+        "skipped": 0,
+        "artifacts": {
+          "candidate_evidence": {
+            "report_artifact": {
+              "id": "90a22900-1175-437d-94b3-a5e8880f5422",
+              "digest": "84a3c51f44d8a624792c98553e8260385f3999e728817f31058bcdc698956c3e",
+              "type": "text",
+              "path": "/Users/vladimirkasterin/ruby/agru/.agru/luna-utf8-portable-regrade/objects/84a3c51f44d8a624792c98553e8260385f3999e728817f31058bcdc698956c3e",
+              "run_id": "6b4c6b2a-6cd5-4320-9c03-f9121b8409c7",
+              "step_id": "candidate-structured-report",
+              "attempt": 1,
+              "inputs": [],
+              "created_at": "2026-11-16T11:47:27.664487Z",
+              "metadata": {}
+            },
+            "process_artifact": {
+              "id": "e261c482-7989-4af4-8ed7-9eac2d32c3d8",
+              "digest": "b581f6c8a3a562941ed6f32ffce79fb75e2d07f2ac0ba1b67fb917c8968d6e46",
+              "type": "json",
+              "path": "/Users/vladimirkasterin/ruby/agru/.agru/luna-utf8-portable-regrade/objects/b581f6c8a3a562941ed6f32ffce79fb75e2d07f2ac0ba1b67fb917c8968d6e46",
+              "run_id": "6b4c6b2a-6cd5-4320-9c03-f9121b8409c7",
+              "step_id": "candidate-process-evidence",
+              "attempt": 1,
+              "inputs": [],
+              "created_at": "2026-11-16T11:47:27.664880Z",
+              "metadata": {}
+            },
+            "report_sha256": "84a3c51f44d8a624792c98553e8260385f3999e728817f31058bcdc698956c3e",
+            "process": {
+              "status": "failure",
+              "stdout": "/workspace/test_retrying.py: OK\n============================= test session starts ==============================\nplatform linux -- Python 3.10.11, pytest-8.4.1, pluggy-1.6.0\nrootdir: /tmp/private\nconfigfile: ../../dev/null\ncollected 23 items\n\n../private/test_retrying.py .....FFF..........F.FF.                      [100%]\n\n=================================== FAILURES ===================================\n_____________________ TestWaitConditions.test_exponential ______________________\n\nself = <test_retrying.TestWaitConditions testMethod=test_exponential>\n\n    def test_exponential(self):\n        r = Retrying(wait_exponential_max=100000)\n>       self.assertEqual(r.wait(1, 0), 2)\nE       AssertionError: 1 != 2\n\n../private/test_retrying.py:95: AssertionError\n______________ TestWaitConditions.test_exponential_with_max_wait _______________\n\nself = <test_retrying.TestWaitConditions testMethod=test_exponential_with_max_wait>\n\n    def test_exponential_with_max_wait(self):\n        r = Retrying(wait_exponential_max=40)\n>       self.assertEqual(r.wait(1, 0), 2)\nE       AssertionError: 1 != 2\n\n../private/test_retrying.py:104: AssertionError\n_______ TestWaitConditions.test_exponential_with_max_wait_and_multiplier _______\n\nself = <test_retrying.TestWaitConditions testMethod=test_exponential_with_max_wait_and_multiplier>\n\n    def test_exponential_with_max_wait_and_multiplier(self):\n        r = Retrying(wait_exponential_max=50000, wait_exponential_multiplier=1000)\n>       self.assertEqual(r.wait(1, 0), 2000)\nE       AssertionError: 1000 != 2000\n\n../private/test_retrying.py:115: AssertionError\n_____________ TestDecoratorWrapper.test_with_stop_on_return_value ______________\n\nself = <test_retrying.TestDecoratorWrapper testMethod=test_with_stop_on_return_value>\n\n    def test_with_stop_on_return_value(self):\n        try:\n            _retryable_test_with_stop(NoneReturnUntilAfterCount(5))\n>           self.fail(\"Expected RetryError after 3 attempts\")\nE           AssertionError: Expected RetryError after 3 attempts\n\n../private/test_retrying.py:325: AssertionError\n_________________ TestDecoratorWrapper.test_wrapped_exception __________________\n\nself = <test_retrying.TestDecoratorWrapper testMethod=test_wrapped_exception>\n\n    def test_wrapped_exception(self):\n    \n        # base exception cases\n        self.assertTrue(_retryable_test_with_exception_type_io_wrap(NoIOErrorAfterCount(5)))\n    \n        try:\n>           _retryable_test_with_exception_type_io_wrap(NoNameErrorAfterCount(5))\n\n../private/test_retrying.py:387: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nretrying.py:192: in wrapped\n    return retrying.call(fn, *args, **kwargs)\nretrying.py:166: in call\n    return attempt.get()\nretrying.py:41: in get\n    raise exc.with_traceback(self.value[2])\nretrying.py:159: in call\n    attempt = Attempt(fn(*args, **kwargs), attempt_number, False)\n../private/test_retrying.py:260: in _retryable_test_with_exception_type_io_wrap\n    return thing.go()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <test_retrying.NoNameErrorAfterCount object at 0x7ffffe27b700>\n\n    def go(self):\n        \"\"\"\n        Raise a NameError until after count threshold has been crossed, then return True.\n        \"\"\"\n        if self.counter < self.count:\n            self.counter += 1\n>           raise NameError(\"Hi there, I'm a NameError\")\nE           NameError: Hi there, I'm a NameError\n\n../private/test_retrying.py:187: NameError\n----------------------------- Captured stdout call -----------------------------\nDetected Exception of type: <class 'OSError'>\nDetected Exception of type: <class 'OSError'>\nDetected Exception of type: <class 'OSError'>\nDetected Exception of type: <class 'OSError'>\nDetected Exception of type: <class 'OSError'>\nDetected Exception of type: <class 'NameError'>\n_________________ TestBeforeAfterAttempts.test_after_attempts __________________\n\nself = <test_retrying.TestBeforeAfterAttempts testMethod=test_after_attempts>\n\n    def test_after_attempts(self):\n        TestBeforeAfterAttempts._attempt_number = 0\n    \n        def _after(attempt_number):\n            TestBeforeAfterAttempts._attempt_number = attempt_number\n    \n        @retry(wait_fixed = 100, stop_max_attempt_number = 3, after_attempts = _after)\n        def _test_after():\n            if TestBeforeAfterAttempts._attempt_number < 2:\n                raise Exception(\"testing after_attempts handler\")\n            else:\n                pass\n    \n        _test_after()\n    \n>       self.assertTrue(TestBeforeAfterAttempts._attempt_number is 2)\nE       AssertionError: False is not true\n\n../private/test_retrying.py:467: AssertionError\n=============================== warnings summary ===============================\n../private/test_retrying.py:450\n  /tmp/private/test_retrying.py:450: SyntaxWarning: \"is\" with a literal. Did you mean \"==\"?\n    self.assertTrue(TestBeforeAfterAttempts._attempt_number is 1)\n\n../private/test_retrying.py:467\n  /tmp/private/test_retrying.py:467: SyntaxWarning: \"is\" with a literal. Did you mean \"==\"?\n    self.assertTrue(TestBeforeAfterAttempts._attempt_number is 2)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED ../private/test_retrying.py::TestWaitConditions::test_exponential - As...\nFAILED ../private/test_retrying.py::TestWaitConditions::test_exponential_with_max_wait\nFAILED ../private/test_retrying.py::TestWaitConditions::test_exponential_with_max_wait_and_multiplier\nFAILED ../private/test_retrying.py::TestDecoratorWrapper::test_with_stop_on_return_value\nFAILED ../private/test_retrying.py::TestDecoratorWrapper::test_wrapped_exception\nFAILED ../private/test_retrying.py::TestBeforeAfterAttempts::test_after_attempts\n=================== 6 failed, 17 passed, 2 warnings in 0.65s ===================\n",
+              "stderr": "",
+              "encoding_error": null,
+              "binary_output_base64": {},
+              "exit_code": 1,
+              "truncated": false,
+              "stdout_truncated": false,
+              "stderr_truncated": false,
+              "duration": 1.549125999910757,
+              "cleanup": {
+                "errors": [],
+                "reaped": true
+              }
+            },
+            "cleanup": {
+              "status": "success",
+              "stdout": "agru-audited-162c6e50e89718493daf4ea1\n",
+              "stderr": "",
+              "encoding_error": null,
+              "binary_output_base64": {},
+              "exit_code": 0,
+              "truncated": false,
+              "stdout_truncated": false,
+              "stderr_truncated": false,
+              "duration": 0.04135000007227063,
+              "cleanup": {
+                "errors": [],
+                "reaped": true
+              }
+            }
+          },
+          "reference_evidence": {
+            "report_artifact": {
+              "id": "e5e17b8a-3b2c-4c3f-bd52-470c34384ae0",
+              "digest": "e8d10b364fb81e5b4d5394dcb12f99b2c421513b241a17cc2c6523d2c41ff0b7",
+              "type": "text",
+              "path": "/Users/vladimirkasterin/ruby/agru/.agru/luna-utf8-portable-regrade/objects/e8d10b364fb81e5b4d5394dcb12f99b2c421513b241a17cc2c6523d2c41ff0b7",
+              "run_id": "6b4c6b2a-6cd5-4320-9c03-f9121b8409c7",
+              "step_id": "reference-structured-report",
+              "attempt": 1,
+              "inputs": [],
+              "created_at": "2026-11-16T11:47:26.021096Z",
+              "metadata": {}
+            },
+            "process_artifact": {
+              "id": "09f083cc-8240-4471-8690-fdda3076f3c5",
+              "digest": "1fd2962cc6707663180da7a534eec15e0df470292080038b769a4158dfdc97bb",
+              "type": "json",
+              "path": "/Users/vladimirkasterin/ruby/agru/.agru/luna-utf8-portable-regrade/objects/1fd2962cc6707663180da7a534eec15e0df470292080038b769a4158dfdc97bb",
+              "run_id": "6b4c6b2a-6cd5-4320-9c03-f9121b8409c7",
+              "step_id": "reference-process-evidence",
+              "attempt": 1,
+              "inputs": [],
+              "created_at": "2026-11-16T11:47:26.021430Z",
+              "metadata": {}
+            },
+            "report_sha256": "e8d10b364fb81e5b4d5394dcb12f99b2c421513b241a17cc2c6523d2c41ff0b7",
+            "process": {
+              "status": "success",
+              "stdout": "/workspace/test_retrying.py: OK\n============================= test session starts ==============================\nplatform linux -- Python 3.10.11, pytest-8.4.1, pluggy-1.6.0\nrootdir: /tmp/private\nconfigfile: ../../dev/null\ncollected 23 items\n\n../private/test_retrying.py .......................                      [100%]\n\n=============================== warnings summary ===============================\n../private/test_retrying.py:450\n  /tmp/private/test_retrying.py:450: SyntaxWarning: \"is\" with a literal. Did you mean \"==\"?\n    self.assertTrue(TestBeforeAfterAttempts._attempt_number is 1)\n\n../private/test_retrying.py:467\n  /tmp/private/test_retrying.py:467: SyntaxWarning: \"is\" with a literal. Did you mean \"==\"?\n    self.assertTrue(TestBeforeAfterAttempts._attempt_number is 2)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n======================== 23 passed, 2 warnings in 0.53s ========================\n",
+              "stderr": "",
+              "encoding_error": null,
+              "binary_output_base64": {},
+              "exit_code": 0,
+              "truncated": false,
+              "stdout_truncated": false,
+              "stderr_truncated": false,
+              "duration": 1.2792110000737011,
+              "cleanup": {
+                "errors": [],
+                "reaped": true
+              }
+            },
+            "cleanup": {
+              "status": "success",
+              "stdout": "agru-audited-0b12f917befa18e0c0de9c81\n",
+              "stderr": "",
+              "encoding_error": null,
+              "binary_output_base64": {},
+              "exit_code": 0,
+              "truncated": false,
+              "stdout_truncated": false,
+              "stderr_truncated": false,
+              "duration": 0.05479999980889261,
+              "cleanup": {
+                "errors": [],
+                "reaped": true
+              }
+            }
+          }
+        }
+      },
+      "matches_original": true
+    },
+    {
+      "cell_id": "2a5d0fba603b48225c0b8c5b18b6be754cfd9da84f35f2813edb4ef9fd825d28",
+      "submission_digest": "7ddace216081670ee52477e5d0d2fd000aefaa46464e289d4ed41a029a63ed4a",
+      "request": {
+        "benchmark": {
+          "name": "nl2repo",
+          "revision": "781a1da1ee41fb8edb0bed22f586d69111610edf",
+          "manifest_digest": "f34f959b3de0d44f390799d22c82d415bf330aa56e540ad13df96c07e6cca5bc",
+          "official_score": "blocked"
+        },
+        "task_id": "retrying",
+        "specification_digest": "cd41306283b97f81d9cb8ec14985b47acf973dea92f492b53a4e1aaa796a4168",
+        "submission_id": "5a98f64a-b7fa-4468-9616-ca81eb7bcdad",
+        "submission_digest": "7ddace216081670ee52477e5d0d2fd000aefaa46464e289d4ed41a029a63ed4a",
+        "limits": {
+          "max_attempts": 1,
+          "max_concurrent_sessions": 1,
+          "max_parallelism": 1,
+          "timeout": 600
+        },
+        "protocol_status": "nl2repo-audited-v2",
+        "expected_nodeids": [
+          "test_retrying.py::TestStopConditions::test_legacy_explicit_stop_type",
+          "test_retrying.py::TestStopConditions::test_never_stop",
+          "test_retrying.py::TestStopConditions::test_stop_after_attempt",
+          "test_retrying.py::TestStopConditions::test_stop_after_delay",
+          "test_retrying.py::TestStopConditions::test_stop_func",
+          "test_retrying.py::TestWaitConditions::test_exponential",
+          "test_retrying.py::TestWaitConditions::test_exponential_with_max_wait",
+          "test_retrying.py::TestWaitConditions::test_exponential_with_max_wait_and_multiplier",
+          "test_retrying.py::TestWaitConditions::test_fixed_sleep",
+          "test_retrying.py::TestWaitConditions::test_incrementing_sleep",
+          "test_retrying.py::TestWaitConditions::test_legacy_explicit_wait_type",
+          "test_retrying.py::TestWaitConditions::test_no_sleep",
+          "test_retrying.py::TestWaitConditions::test_random_sleep",
+          "test_retrying.py::TestWaitConditions::test_random_sleep_without_min",
+          "test_retrying.py::TestWaitConditions::test_wait_func",
+          "test_retrying.py::TestDecoratorWrapper::test_defaults",
+          "test_retrying.py::TestDecoratorWrapper::test_retry_if_exception_of_type",
+          "test_retrying.py::TestDecoratorWrapper::test_with_stop_on_exception",
+          "test_retrying.py::TestDecoratorWrapper::test_with_stop_on_return_value",
+          "test_retrying.py::TestDecoratorWrapper::test_with_wait",
+          "test_retrying.py::TestDecoratorWrapper::test_wrapped_exception",
+          "test_retrying.py::TestBeforeAfterAttempts::test_after_attempts",
+          "test_retrying.py::TestBeforeAfterAttempts::test_before_attempts"
+        ],
+        "audited_binding": {
+          "protocol": "nl2repo-audited-v2",
+          "task_id": "retrying",
+          "submission_digest": "7ddace216081670ee52477e5d0d2fd000aefaa46464e289d4ed41a029a63ed4a",
+          "specification_digest": "cd41306283b97f81d9cb8ec14985b47acf973dea92f492b53a4e1aaa796a4168",
+          "benchmark_revision": "781a1da1ee41fb8edb0bed22f586d69111610edf",
+          "manifest_digest": "f34f959b3de0d44f390799d22c82d415bf330aa56e540ad13df96c07e6cca5bc",
+          "test_manifest_digest": "3861f33b79c0b6d8f1c4a81ab382b7fe6f4ddbb9d865e3d96e5fdf0f0bb9bcc8",
+          "test_source_sha256": "6d6286fc485273ba8b434afbf3f754f3f69321281bd94fd1f08b88a9171e056f",
+          "collector_digest": "61583393c7f44da8e6b67b5144f2adafa8bb927f3680c3e52edba88f08587a34",
+          "procedure_digest": "73fdbce9d36f87d688b8b48c0a1d062eb5d62a5aee5424cff98f9971b19f9c18",
+          "environment_digest": "3436208c0ba0e7c33b14659418c729ecb18417551ef63d0b22b9c86bc7713c63",
+          "image": "ghcr.io/multimodal-art-projection/nl2repobench/retrying@sha256:1302235420db9d34955c42273ebaf23df8bbee31ceeaf3c336347f54b64146fe"
+        },
+        "request_digest": "691c9bc4e82355d78dc250f608fe3b5b9077bc7971682ae6bbacee4d17a1ac35"
+      },
+      "result": {
+        "status": "unavailable",
+        "execution_status": "success",
+        "protocol": "nl2repo-audited-v2",
+        "failure_category": "unavailable",
+        "quality_basis": null,
+        "verdict": "untrusted",
+        "trust": "untrusted",
+        "score": null,
+        "reason": "incomplete or ambiguously attributed candidate results"
+      },
+      "matches_original": false
+    }
+  ],
+  "verified": false
+}

@@ -1,0 +1,1349 @@
+[
+  {
+    "request_id": "19cefdad-4597-4928-b06f-c5998a86de9e",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 6789,
+      "completion_tokens": 9,
+      "total_tokens": 6798
+    },
+    "trusted_cell_id": "c2c4d1b0cfdea2d77504c7294783b2113617fd947cafbef8ae5081e51ea7d1b4",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "b957f7e0-17e7-4e31-ab15-7bff2e47ddbf",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10583,
+      "completion_tokens": 18,
+      "total_tokens": 10601
+    },
+    "trusted_cell_id": "c2c4d1b0cfdea2d77504c7294783b2113617fd947cafbef8ae5081e51ea7d1b4",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "0a2dc386-e634-4ac7-9464-4feaebd67903",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10629,
+      "completion_tokens": 21,
+      "total_tokens": 10650
+    },
+    "trusted_cell_id": "c2c4d1b0cfdea2d77504c7294783b2113617fd947cafbef8ae5081e51ea7d1b4",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "ab1c8d38-4596-4544-a984-14d6dbae80cf",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10712,
+      "completion_tokens": 3040,
+      "total_tokens": 13752,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "c2c4d1b0cfdea2d77504c7294783b2113617fd947cafbef8ae5081e51ea7d1b4",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "c8343d07-b11b-4d56-ae79-382c82c7a58d",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 13788,
+      "completion_tokens": 19,
+      "total_tokens": 13807,
+      "prompt_tokens_details": {
+        "cached_tokens": 10624
+      }
+    },
+    "trusted_cell_id": "c2c4d1b0cfdea2d77504c7294783b2113617fd947cafbef8ae5081e51ea7d1b4",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "1d5582ad-8b28-4333-9f83-cd55f49d96a6",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 13836,
+      "completion_tokens": 22,
+      "total_tokens": 13858,
+      "prompt_tokens_details": {
+        "cached_tokens": 13696
+      }
+    },
+    "trusted_cell_id": "c2c4d1b0cfdea2d77504c7294783b2113617fd947cafbef8ae5081e51ea7d1b4",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "c461923f-a96c-446b-9f08-2c36f99d301b",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 13887,
+      "completion_tokens": 116,
+      "total_tokens": 14003,
+      "prompt_tokens_details": {
+        "cached_tokens": 13696
+      }
+    },
+    "trusted_cell_id": "c2c4d1b0cfdea2d77504c7294783b2113617fd947cafbef8ae5081e51ea7d1b4",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "b2c32574-cb98-491c-aa46-d3d50178c22c",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 6812,
+      "completion_tokens": 10,
+      "total_tokens": 6822
+    },
+    "trusted_cell_id": "12e73e2e30cd42cd52c158de2540c345873ed908cb2db5048bd2ad33bf7c171e",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "60ca67ec-d72a-4183-9dce-5f18dda2760a",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10607,
+      "completion_tokens": 34,
+      "total_tokens": 10641,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 10
+      }
+    },
+    "trusted_cell_id": "12e73e2e30cd42cd52c158de2540c345873ed908cb2db5048bd2ad33bf7c171e",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "4ff5e3c5-c191-4871-8158-767f90131cec",
+    "status": 403,
+    "error": "inference_policy",
+    "response_models": [],
+    "usage": null,
+    "trusted_cell_id": "12e73e2e30cd42cd52c158de2540c345873ed908cb2db5048bd2ad33bf7c171e",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "6f2f44db-6123-4df5-9f97-37dd9345f625",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 6812,
+      "completion_tokens": 9,
+      "total_tokens": 6821
+    },
+    "trusted_cell_id": "d353fb2f6f1623d73f6e8c58d2292094594e4ec764a7ca60d66b4e02e3d37a1c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "e1876ff3-9f1c-4d63-ab1f-45915ea90987",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10607,
+      "completion_tokens": 27,
+      "total_tokens": 10634
+    },
+    "trusted_cell_id": "d353fb2f6f1623d73f6e8c58d2292094594e4ec764a7ca60d66b4e02e3d37a1c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "907fe2bf-fcc5-4647-9cc0-c0c399c19fec",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10662,
+      "completion_tokens": 22,
+      "total_tokens": 10684,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "d353fb2f6f1623d73f6e8c58d2292094594e4ec764a7ca60d66b4e02e3d37a1c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "8d3169e8-e232-49c2-978b-e4f371ec8f3f",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10702,
+      "completion_tokens": 505,
+      "total_tokens": 11207,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "d353fb2f6f1623d73f6e8c58d2292094594e4ec764a7ca60d66b4e02e3d37a1c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "7467d85a-ffaf-431c-9686-47c762b0a1dd",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 6845,
+      "completion_tokens": 8,
+      "total_tokens": 6853,
+      "prompt_tokens_details": {
+        "cached_tokens": 6656
+      }
+    },
+    "trusted_cell_id": "d353fb2f6f1623d73f6e8c58d2292094594e4ec764a7ca60d66b4e02e3d37a1c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "4f38d968-310e-4f45-89cd-182a312f2abe",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10640,
+      "completion_tokens": 22,
+      "total_tokens": 10662,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "d353fb2f6f1623d73f6e8c58d2292094594e4ec764a7ca60d66b4e02e3d37a1c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "9fbe87e9-973e-4a6b-a35d-4d17a9fc337f",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10690,
+      "completion_tokens": 21,
+      "total_tokens": 10711,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "d353fb2f6f1623d73f6e8c58d2292094594e4ec764a7ca60d66b4e02e3d37a1c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "c84ed321-6566-42d3-a578-500c706fa062",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10773,
+      "completion_tokens": 2306,
+      "total_tokens": 13079,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "d353fb2f6f1623d73f6e8c58d2292094594e4ec764a7ca60d66b4e02e3d37a1c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "a3c8250d-bba9-475b-b835-43504922d57c",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 13100,
+      "completion_tokens": 1398,
+      "total_tokens": 14498
+    },
+    "trusted_cell_id": "d353fb2f6f1623d73f6e8c58d2292094594e4ec764a7ca60d66b4e02e3d37a1c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "90d69559-caf7-4225-b835-0621063294d0",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 14561,
+      "completion_tokens": 36,
+      "total_tokens": 14597,
+      "prompt_tokens_details": {
+        "cached_tokens": 10624
+      }
+    },
+    "trusted_cell_id": "d353fb2f6f1623d73f6e8c58d2292094594e4ec764a7ca60d66b4e02e3d37a1c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "e63a482b-2bf2-40d1-a45e-e98e8a6dbe12",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 14626,
+      "completion_tokens": 39,
+      "total_tokens": 14665,
+      "prompt_tokens_details": {
+        "cached_tokens": 14464
+      }
+    },
+    "trusted_cell_id": "d353fb2f6f1623d73f6e8c58d2292094594e4ec764a7ca60d66b4e02e3d37a1c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "6001ae1e-959d-4539-a011-667a5fcde327",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 14694,
+      "completion_tokens": 86,
+      "total_tokens": 14780,
+      "prompt_tokens_details": {
+        "cached_tokens": 12928
+      }
+    },
+    "trusted_cell_id": "d353fb2f6f1623d73f6e8c58d2292094594e4ec764a7ca60d66b4e02e3d37a1c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "ae91b496-26aa-45ec-8b74-1c7c538a9bdc",
+    "status": 429,
+    "error": "cell_request_limit",
+    "response_models": [],
+    "usage": null,
+    "trusted_cell_id": "d353fb2f6f1623d73f6e8c58d2292094594e4ec764a7ca60d66b4e02e3d37a1c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "4a1fe5de-192f-4b4f-8e2b-0c7d063ab644",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 6812,
+      "completion_tokens": 9,
+      "total_tokens": 6821,
+      "prompt_tokens_details": {
+        "cached_tokens": 6656
+      }
+    },
+    "trusted_cell_id": "4f8090c19abd91508f3059dcdaefc65057fe344c48db11fedb59a8322e62f808",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "8241460f-e92d-48b3-897f-53bd5d95ab1f",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10607,
+      "completion_tokens": 23,
+      "total_tokens": 10630,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "4f8090c19abd91508f3059dcdaefc65057fe344c48db11fedb59a8322e62f808",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "85988914-03f4-4fa5-941c-7d3a1727d6df",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10648,
+      "completion_tokens": 634,
+      "total_tokens": 11282,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "4f8090c19abd91508f3059dcdaefc65057fe344c48db11fedb59a8322e62f808",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "9fc6e51c-7487-4459-8a6a-a13182ff102e",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 6807,
+      "completion_tokens": 8,
+      "total_tokens": 6815,
+      "prompt_tokens_details": {
+        "cached_tokens": 6656
+      }
+    },
+    "trusted_cell_id": "4f8090c19abd91508f3059dcdaefc65057fe344c48db11fedb59a8322e62f808",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "d15192b9-78fe-4234-940c-ef160a84fea2",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10602,
+      "completion_tokens": 27,
+      "total_tokens": 10629,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "4f8090c19abd91508f3059dcdaefc65057fe344c48db11fedb59a8322e62f808",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "71bf9b61-8367-41ad-af47-19ba793459cd",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10657,
+      "completion_tokens": 21,
+      "total_tokens": 10678,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "4f8090c19abd91508f3059dcdaefc65057fe344c48db11fedb59a8322e62f808",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "6a201604-0565-479e-b486-c835dcccc48c",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10740,
+      "completion_tokens": 3000,
+      "total_tokens": 13740,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "4f8090c19abd91508f3059dcdaefc65057fe344c48db11fedb59a8322e62f808",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "ced0540a-b887-42d6-8315-f61e6c91fb36",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 13761,
+      "completion_tokens": 1100,
+      "total_tokens": 14861,
+      "prompt_tokens_details": {
+        "cached_tokens": 10624
+      }
+    },
+    "trusted_cell_id": "4f8090c19abd91508f3059dcdaefc65057fe344c48db11fedb59a8322e62f808",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "d18d3f05-31f8-42e3-8b5f-25b82ceb3f69",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 14887,
+      "completion_tokens": 27,
+      "total_tokens": 14914,
+      "prompt_tokens_details": {
+        "cached_tokens": 13568
+      }
+    },
+    "trusted_cell_id": "4f8090c19abd91508f3059dcdaefc65057fe344c48db11fedb59a8322e62f808",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "20f58bbc-48cf-4eff-a9f1-5cfa55f9f60d",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 14943,
+      "completion_tokens": 28,
+      "total_tokens": 14971,
+      "prompt_tokens_details": {
+        "cached_tokens": 14720
+      }
+    },
+    "trusted_cell_id": "4f8090c19abd91508f3059dcdaefc65057fe344c48db11fedb59a8322e62f808",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "a0a4919f-fbcb-4885-bb94-5dc6d0465d21",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 14996,
+      "completion_tokens": 23,
+      "total_tokens": 15019,
+      "prompt_tokens_details": {
+        "cached_tokens": 14848
+      }
+    },
+    "trusted_cell_id": "4f8090c19abd91508f3059dcdaefc65057fe344c48db11fedb59a8322e62f808",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "a8fb6f1a-b2ef-41a3-91e9-8654d72a6d17",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 15144,
+      "completion_tokens": 102,
+      "total_tokens": 15246,
+      "prompt_tokens_details": {
+        "cached_tokens": 14848
+      }
+    },
+    "trusted_cell_id": "4f8090c19abd91508f3059dcdaefc65057fe344c48db11fedb59a8322e62f808",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "c7b66a5f-af3b-4c90-a093-9e89aa14ffa3",
+    "status": 429,
+    "error": "cell_request_limit",
+    "response_models": [],
+    "usage": null,
+    "trusted_cell_id": "4f8090c19abd91508f3059dcdaefc65057fe344c48db11fedb59a8322e62f808",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "387aa603-16cb-43ac-9c42-5c2e72428068",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 6812,
+      "completion_tokens": 9,
+      "total_tokens": 6821,
+      "prompt_tokens_details": {
+        "cached_tokens": 6656
+      }
+    },
+    "trusted_cell_id": "7669e9b16fb38fd6190e82649372d8a99b2e1ab9b0815c933e8d13a3b6922f8c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "e93f2fe8-c397-474b-b26a-64432416fc64",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10607,
+      "completion_tokens": 55,
+      "total_tokens": 10662
+    },
+    "trusted_cell_id": "7669e9b16fb38fd6190e82649372d8a99b2e1ab9b0815c933e8d13a3b6922f8c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "eb5d839c-1d7b-4ff2-a0f8-33b879f68008",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10679,
+      "completion_tokens": 31,
+      "total_tokens": 10710,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "7669e9b16fb38fd6190e82649372d8a99b2e1ab9b0815c933e8d13a3b6922f8c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "fa28c126-4c73-42ea-a077-09a0ed6fd0ff",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10738,
+      "completion_tokens": 21,
+      "total_tokens": 10759,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "7669e9b16fb38fd6190e82649372d8a99b2e1ab9b0815c933e8d13a3b6922f8c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "cba58ac9-48bc-45f9-8889-d7ddf66f3d8a",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10821,
+      "completion_tokens": 1486,
+      "total_tokens": 12307,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "7669e9b16fb38fd6190e82649372d8a99b2e1ab9b0815c933e8d13a3b6922f8c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "34f03784-62f1-4749-bbd4-af92e6309001",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 12329,
+      "completion_tokens": 83,
+      "total_tokens": 12412,
+      "prompt_tokens_details": {
+        "cached_tokens": 10624
+      }
+    },
+    "trusted_cell_id": "7669e9b16fb38fd6190e82649372d8a99b2e1ab9b0815c933e8d13a3b6922f8c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "e76ecf76-ad24-4ac9-a550-ce9e5c3101e1",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 6845,
+      "completion_tokens": 8,
+      "total_tokens": 6853
+    },
+    "trusted_cell_id": "7669e9b16fb38fd6190e82649372d8a99b2e1ab9b0815c933e8d13a3b6922f8c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "db68773e-ca62-45a9-9482-d02244f8ca9b",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10640,
+      "completion_tokens": 18,
+      "total_tokens": 10658,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "7669e9b16fb38fd6190e82649372d8a99b2e1ab9b0815c933e8d13a3b6922f8c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "4f1ebc46-691f-42af-860f-9726d8416c59",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10686,
+      "completion_tokens": 21,
+      "total_tokens": 10707,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "7669e9b16fb38fd6190e82649372d8a99b2e1ab9b0815c933e8d13a3b6922f8c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "3f777e23-d57c-4c02-a99c-bbc15a2a966d",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10795,
+      "completion_tokens": 23,
+      "total_tokens": 10818,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "7669e9b16fb38fd6190e82649372d8a99b2e1ab9b0815c933e8d13a3b6922f8c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "ff6c33e6-e2d3-43d9-89ba-3ecd837f195e",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 12326,
+      "completion_tokens": 63,
+      "total_tokens": 12389,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "7669e9b16fb38fd6190e82649372d8a99b2e1ab9b0815c933e8d13a3b6922f8c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "a269fed5-08da-43c8-bedf-e88a25072b0d",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 12536,
+      "completion_tokens": 9,
+      "total_tokens": 12545,
+      "prompt_tokens_details": {
+        "cached_tokens": 6656
+      }
+    },
+    "trusted_cell_id": "7669e9b16fb38fd6190e82649372d8a99b2e1ab9b0815c933e8d13a3b6922f8c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "90594eca-2563-4bc1-ba40-690bcb43a29c",
+    "status": 429,
+    "error": "cell_request_limit",
+    "response_models": [],
+    "usage": null,
+    "trusted_cell_id": "7669e9b16fb38fd6190e82649372d8a99b2e1ab9b0815c933e8d13a3b6922f8c",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "1aa3d37c-1139-4441-90aa-dd4e5ed2d286",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 6789,
+      "completion_tokens": 8,
+      "total_tokens": 6797,
+      "prompt_tokens_details": {
+        "cached_tokens": 6656
+      }
+    },
+    "trusted_cell_id": "96987c79d7be8a72a12b81ed3f2aa64671a1d340768fee23c05e205c70b17295",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "0a225ca7-e418-4d2a-bd14-9e8e87a2cbd5",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10583,
+      "completion_tokens": 54,
+      "total_tokens": 10637,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "96987c79d7be8a72a12b81ed3f2aa64671a1d340768fee23c05e205c70b17295",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "717dde6a-8d01-45ad-bda5-ed29d9006b70",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10665,
+      "completion_tokens": 21,
+      "total_tokens": 10686,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "96987c79d7be8a72a12b81ed3f2aa64671a1d340768fee23c05e205c70b17295",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "9ba17bec-4f12-4ef2-9e34-0f3b6b99ff7e",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10748,
+      "completion_tokens": 3485,
+      "total_tokens": 14233,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "96987c79d7be8a72a12b81ed3f2aa64671a1d340768fee23c05e205c70b17295",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "d09ccf46-2379-481c-bd3c-04e34a271ff1",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 14282,
+      "completion_tokens": 29,
+      "total_tokens": 14311,
+      "prompt_tokens_details": {
+        "cached_tokens": 10624
+      }
+    },
+    "trusted_cell_id": "96987c79d7be8a72a12b81ed3f2aa64671a1d340768fee23c05e205c70b17295",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "3d14cfe8-3fd8-4d3c-9886-5f35d27144f6",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 14340,
+      "completion_tokens": 32,
+      "total_tokens": 14372,
+      "prompt_tokens_details": {
+        "cached_tokens": 14080
+      }
+    },
+    "trusted_cell_id": "96987c79d7be8a72a12b81ed3f2aa64671a1d340768fee23c05e205c70b17295",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "3a91c491-4155-4f33-b42b-115175dfa187",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 14401,
+      "completion_tokens": 39,
+      "total_tokens": 14440,
+      "prompt_tokens_details": {
+        "cached_tokens": 14208
+      }
+    },
+    "trusted_cell_id": "96987c79d7be8a72a12b81ed3f2aa64671a1d340768fee23c05e205c70b17295",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "ccb6a16d-475f-4734-a3b3-668d9f3e5fd2",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 14473,
+      "completion_tokens": 109,
+      "total_tokens": 14582,
+      "prompt_tokens_details": {
+        "cached_tokens": 14208
+      }
+    },
+    "trusted_cell_id": "96987c79d7be8a72a12b81ed3f2aa64671a1d340768fee23c05e205c70b17295",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "839afd4a-97bb-4ef2-9b9e-6ba8dc98d332",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 6812,
+      "completion_tokens": 9,
+      "total_tokens": 6821,
+      "prompt_tokens_details": {
+        "cached_tokens": 6656
+      }
+    },
+    "trusted_cell_id": "0cfdcff1912cf723219eb0b866d018ea7ab4cdd881913668491f36c0c94e97e3",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "3a9783ed-65df-4146-afa0-0b638c7f5674",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10607,
+      "completion_tokens": 35,
+      "total_tokens": 10642,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 10
+      }
+    },
+    "trusted_cell_id": "0cfdcff1912cf723219eb0b866d018ea7ab4cdd881913668491f36c0c94e97e3",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "6fdabdaa-d038-490e-9248-e6b1323bce1d",
+    "status": 403,
+    "error": "inference_policy",
+    "response_models": [],
+    "usage": null,
+    "trusted_cell_id": "0cfdcff1912cf723219eb0b866d018ea7ab4cdd881913668491f36c0c94e97e3",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "ab30eaee-9783-4543-b0d3-60a4671ce487",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 6789,
+      "completion_tokens": 9,
+      "total_tokens": 6798,
+      "prompt_tokens_details": {
+        "cached_tokens": 6656
+      }
+    },
+    "trusted_cell_id": "2a5d0fba603b48225c0b8c5b18b6be754cfd9da84f35f2813edb4ef9fd825d28",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "cf799679-2ddc-4ab3-b144-e648ad180666",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10583,
+      "completion_tokens": 30,
+      "total_tokens": 10613,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "2a5d0fba603b48225c0b8c5b18b6be754cfd9da84f35f2813edb4ef9fd825d28",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "aee362ef-c449-4e3d-9241-848ed630ef83",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10666,
+      "completion_tokens": 21,
+      "total_tokens": 10687,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "2a5d0fba603b48225c0b8c5b18b6be754cfd9da84f35f2813edb4ef9fd825d28",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "a37c5ad6-f39a-4bab-8bf4-709274ffc6d4",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10746,
+      "completion_tokens": 2020,
+      "total_tokens": 12766,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "2a5d0fba603b48225c0b8c5b18b6be754cfd9da84f35f2813edb4ef9fd825d28",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "f7eec6e6-046f-4b7c-8a00-328b41cbcd22",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 12779,
+      "completion_tokens": 186,
+      "total_tokens": 12965,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "2a5d0fba603b48225c0b8c5b18b6be754cfd9da84f35f2813edb4ef9fd825d28",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "ad22bbbc-cc10-4c24-9a19-b4faa489a33d",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 12994,
+      "completion_tokens": 150,
+      "total_tokens": 13144,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "2a5d0fba603b48225c0b8c5b18b6be754cfd9da84f35f2813edb4ef9fd825d28",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "c7b5ff51-7315-451e-a72e-752508b87400",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 6812,
+      "completion_tokens": 10,
+      "total_tokens": 6822,
+      "prompt_tokens_details": {
+        "cached_tokens": 6656
+      }
+    },
+    "trusted_cell_id": "bce3642714c78802d31814c26cc2a9aad642dc971bdf5aef4c1188b5ba7ed1c9",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "f8f49f1d-3597-4d6f-9171-ece8d4f0ac5c",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10607,
+      "completion_tokens": 113,
+      "total_tokens": 10720,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "bce3642714c78802d31814c26cc2a9aad642dc971bdf5aef4c1188b5ba7ed1c9",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "92c36b82-f3f6-439e-aeb3-2429f8d16b2d",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10775,
+      "completion_tokens": 21,
+      "total_tokens": 10796,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "bce3642714c78802d31814c26cc2a9aad642dc971bdf5aef4c1188b5ba7ed1c9",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "1c8dd5be-2a5a-4c05-99e8-ca190895e1b1",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10858,
+      "completion_tokens": 1746,
+      "total_tokens": 12604,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "bce3642714c78802d31814c26cc2a9aad642dc971bdf5aef4c1188b5ba7ed1c9",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "71ccfb57-afa3-4645-a7a3-b4a8f60a88f2",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 12626,
+      "completion_tokens": 62,
+      "total_tokens": 12688,
+      "prompt_tokens_details": {
+        "cached_tokens": 10752
+      }
+    },
+    "trusted_cell_id": "bce3642714c78802d31814c26cc2a9aad642dc971bdf5aef4c1188b5ba7ed1c9",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "bf0fa35f-0614-47f2-863e-8316542adcf0",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 6807,
+      "completion_tokens": 8,
+      "total_tokens": 6815,
+      "prompt_tokens_details": {
+        "cached_tokens": 6656
+      }
+    },
+    "trusted_cell_id": "bce3642714c78802d31814c26cc2a9aad642dc971bdf5aef4c1188b5ba7ed1c9",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "c7b83dcd-3bcf-4ce9-a804-00cd822a0335",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10602,
+      "completion_tokens": 27,
+      "total_tokens": 10629,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "bce3642714c78802d31814c26cc2a9aad642dc971bdf5aef4c1188b5ba7ed1c9",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "b5d6ba84-7436-4988-8538-c05d6cad2f5f",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10657,
+      "completion_tokens": 18,
+      "total_tokens": 10675,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "bce3642714c78802d31814c26cc2a9aad642dc971bdf5aef4c1188b5ba7ed1c9",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "1b29d185-e65a-4e53-a4c2-9d999589baff",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 10700,
+      "completion_tokens": 23,
+      "total_tokens": 10723,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "bce3642714c78802d31814c26cc2a9aad642dc971bdf5aef4c1188b5ba7ed1c9",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "95dc8261-1704-49dd-aa4c-6999419194b0",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 12454,
+      "completion_tokens": 2284,
+      "total_tokens": 14738,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "bce3642714c78802d31814c26cc2a9aad642dc971bdf5aef4c1188b5ba7ed1c9",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "2f2edd77-5cbe-4a23-bd27-0f9ebc290df6",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 13531,
+      "completion_tokens": 1216,
+      "total_tokens": 14747,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "trusted_cell_id": "bce3642714c78802d31814c26cc2a9aad642dc971bdf5aef4c1188b5ba7ed1c9",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "b75affe2-17fc-4dce-bf28-17f7c8bb43fb",
+    "status": 200,
+    "error": null,
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "usage": {
+      "prompt_tokens": 14811,
+      "completion_tokens": 28,
+      "total_tokens": 14839,
+      "prompt_tokens_details": {
+        "cached_tokens": 13440
+      }
+    },
+    "trusted_cell_id": "bce3642714c78802d31814c26cc2a9aad642dc971bdf5aef4c1188b5ba7ed1c9",
+    "trusted_stage": 1
+  },
+  {
+    "request_id": "a35dd8bb-389e-498e-9ebe-90a25d6f210f",
+    "status": 429,
+    "error": "cell_request_limit",
+    "response_models": [],
+    "usage": null,
+    "trusted_cell_id": "bce3642714c78802d31814c26cc2a9aad642dc971bdf5aef4c1188b5ba7ed1c9",
+    "trusted_stage": 1
+  }
+]
