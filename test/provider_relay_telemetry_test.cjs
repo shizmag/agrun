@@ -24,14 +24,17 @@ test('response model is reported identity, not requested route or served attesta
     {model: 'gpt-6.1'},
     {usage},
     {model: 'gpt-6.1', usage: {prompt_tokens: 12, private_text: 'must-not-log',
-      completion_tokens_details: {reasoning_tokens: 4, secret: 'must-not-log'}}}
+      completion_tokens_details: {reasoning_tokens: 4, secret: 'must-not-log'}}},
+    {model: 'gpt-6.1', usage, interim: true}
   ];
   let index = 0;
   const provider = https.createServer({key: fs.readFileSync(key), cert: fs.readFileSync(cert)}, (req, res) => {
     req.resume();
     req.on('end', () => {
       res.writeHead(200, {'content-type': 'text/event-stream'});
-      res.end(`data: ${JSON.stringify(fixtures[index++])}\n\ndata: [DONE]\n\n`);
+      const fixture = fixtures[index++];
+      const interim = fixture.interim ? 'data: {"usage":{"prompt_tokens":0,"completion_tokens":0,"total_tokens":0}}\n\n' : '';
+      res.end(`${interim}data: ${JSON.stringify(fixture)}\n\ndata: [DONE]\n\n`);
     });
   });
   await new Promise(resolve => provider.listen(0, 'localhost', resolve));
@@ -65,7 +68,7 @@ test('response model is reported identity, not requested route or served attesta
       assert.equal(record.response_model, fixture.model || null);
       assert.equal(record.served_model, null);
       assert.equal(record.run_id, 'trusted-run');
-      assert.deepEqual(record.usage, fixture.usage?.total_tokens !== undefined ? fixture.usage : null);
+      assert.deepEqual(record.usage, fixture.interim ? {prompt_tokens: 0, completion_tokens: 0, total_tokens: 0} : fixture.usage?.total_tokens !== undefined ? fixture.usage : null);
       assert.equal(record.accounting_complete, false);
       assert.ok(record.accounting_issues.includes('served_identity_unattested'));
     }
@@ -80,6 +83,11 @@ test('response model is reported identity, not requested route or served attesta
     assert.equal(records[3].observed_usage.completion_tokens_details.reasoning_tokens, 4);
     assert.equal(records[1].observed_usage, null);
     assert.ok(!JSON.stringify(records).includes('must-not-log'));
+    assert.deepEqual(records[3].stream_diagnostic.malformed_reasons, ['usage_invalid_counts']);
+    assert.deepEqual(records[4].stream_diagnostic.malformed_reasons, ['usage_conflict']);
+    assert.equal(records[4].stream_diagnostic.usage_observation_count, 2);
+    assert.deepEqual(records[4].stream_diagnostic.usage_totals_distinct, [0, 18]);
+    assert.equal(records[4].error, 'upstream_protocol');
   } finally {
     await new Promise(resolve => relay.close(resolve));
     await new Promise(resolve => provider.close(resolve));
