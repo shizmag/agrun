@@ -4,6 +4,7 @@ const assert = require('node:assert/strict');
 const http = require('node:http');
 const {spawn} = require('node:child_process');
 const {launchBridge} = require('../lib/agent_runtime/execution/local_gateway_launcher.cjs');
+const {startOfflineTransport} = require('../lib/agent_runtime/execution/provider_relay.cjs');
 test('real Docker private-volume stdio carries streaming HTTP without container network', async () => {
   const server = http.createServer((req, res) => {
     res.writeHead(200, {'content-type': 'text/event-stream'});
@@ -40,14 +41,27 @@ test('installed OpenCode completes offline through the same private stdio bridge
       res.end('data: {"id":"offline","object":"chat.completion.chunk","model":"cx/gpt-6-luna-low","choices":[{"index":0,"delta":{"role":"assistant","content":"OFFLINE_GATEWAY_OK"},"finish_reason":null}]}\n\ndata: {"id":"offline","object":"chat.completion.chunk","choices":[{"index":0,"delta":{},"finish_reason":"stop"}]}\n\ndata: [DONE]\n\n');
     });
   });
-  server.cancelUpstream = () => {};
-  const bridge = await launchBridge({server, timeoutMs: 30000,
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const fs = require('node:fs');
+  const directory = fs.mkdtempSync(require('node:path').join(require('node:os').tmpdir(), 'agru-offline-'));
+  const credentialFile = require('node:path').join(directory, 'credential');
+  fs.writeFileSync(credentialFile, 'offline-only');
+  const origin = 'https://offline.invalid';
+  const records = [];
+  const relay = startOfflineTransport({origin, approvedOrigins: [origin],
+    model: 'cx/gpt-6-luna-low', route: 'offline', timeoutMs: 30000, credentialFile,
+    inference: {max_completion_tokens: 128, stream: true, stream_options: {include_usage: true}},
+    allowTools: true, identity: {run_id: 'r', architecture: 'a', step_id: 's', attempt: 't'}},
+  r => records.push(r), () => {}, {request(url, options, callback) {
+    return http.request(`http://127.0.0.1:${server.address().port}/v1/chat/completions`, options, callback);
+  }});
+  const bridge = await launchBridge({server: relay, timeoutMs: 30000,
     image: 'node@sha256:d6aa754f16b3197301076f047b5def2f02ea1dbbc2ca920407d46d7ec7f87b20'});
   try {
-    const config = JSON.stringify({$schema: 'https://opencode.ai/config.json',
+    const config = JSON.stringify({$schema: 'https://opencode.ai/config.json', agent: {title: {disable: true}},
       provider: {mock: {npm: '@ai-sdk/openai-compatible', name: 'mock',
         options: {baseURL: 'http://127.0.0.1:18080/v1', apiKey: 'offline'},
-        models: {'cx/gpt-6-luna-low': {name: 'offline'}}}}});
+        models: {'cx/gpt-6-luna-low': {name: 'offline', options: {max_completion_tokens: 128}}}}}});
     const script = 'node /bridge.cjs bridge >/tmp/bridge.log & sleep 1; opencode run --format json --model mock/cx/gpt-6-luna-low "Reply OK"';
     const result = await new Promise((resolve, reject) => {
       const child = spawn('docker', ['run', '--rm', '--network', 'none', '--user', '65534:65534',
@@ -56,10 +70,11 @@ test('installed OpenCode completes offline through the same private stdio bridge
         '--entrypoint', 'sh', 'agru-agent-sandbox:m12cs1', '-c', script]);
       let output = ''; child.stdout.on('data', b => { output += b; });
       child.stderr.on('data', b => { output += b; }); child.on('error', reject);
-      child.on('exit', status => resolve({status, output}));
+      const timer = setTimeout(() => child.kill('SIGKILL'), 12000);
+      child.on('exit', status => { clearTimeout(timer); resolve({status, output}); });
     });
     assert.equal(result.status, 0, result.output);
     assert.match(result.output, /OFFLINE_GATEWAY_OK/);
-    assert.ok(requests >= 1); // installed client may also request a session title
-  } finally { bridge.close(); }
+    assert.equal(requests, 1);
+  } finally { bridge.close(); server.close(); fs.rmSync(directory, {recursive: true}); }
 });
