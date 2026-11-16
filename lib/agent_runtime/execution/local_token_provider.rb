@@ -32,7 +32,7 @@ module AgentRuntime
                                 "model" => TokenBudgetLedger::MODEL, "credentialFile" => File.join(@directory, "credential"),
                                 "origin" => "http://127.0.0.1:20128", "approvedOrigins" => ["http://127.0.0.1:20128"],
                                 "route" => "local-token", "identity" => {"run_id" => cell_id, "architecture" => "local-token", "step_id" => attempt_id, "attempt" => @stage},
-                                "timeoutMs" => 110000, "maxBodyBytes" => 1048576, "allowTools" => true,
+                                "timeoutMs" => 110000, "maxBodyBytes" => 1048576, "allowTools" => true, "allowNoTools" => true,
                                 "inference" => {"max_completion_tokens" => 32000, "stream" => true, "stream_options" => {"include_usage" => true}}}}
         File.write(File.join(@directory, "credential"), @credential, perm: 0o600)
         path = File.join(@directory, "config.json")
@@ -46,7 +46,7 @@ module AgentRuntime
             @stderr.readpartial(16_384)
             @process_diagnostics["stderr"] = "observed_redacted"
           end
-        rescue EOFError, IOError
+        rescue IOError
           nil
         end
         ready = Timeout.timeout(60) { JSON.parse(@stdout.gets || "{}") }
@@ -77,7 +77,13 @@ module AgentRuntime
         @stderr_reader&.join(5)
         if @wait && @process_diagnostics
           status = @wait.value
-          @process_diagnostics["exit"] = status.success? ? "success" : status.signaled? ? "signal" : "failure"
+          @process_diagnostics["exit"] = if status.success?
+            "success"
+          elsif status.signaled?
+            "signal"
+          else
+            "failure"
+          end
           File.open(@audit_path, "a", 0o600) { |file| file.puts(JSON.generate("type" => "gateway_process", "diagnostics" => @process_diagnostics)) }
         end
         if @relay_volume

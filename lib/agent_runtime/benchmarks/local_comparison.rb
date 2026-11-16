@@ -13,7 +13,9 @@ module AgentRuntime
 
       def self.manifest
         data = JSON.parse(JSON.generate(AuthorizedComparison.manifest.data))
-        data["experiment_id"] = "research-omniroute-token-operational-v1"
+        data["experiment_id"] = "research-omniroute-token-staged-v2"
+        data.fetch("limits").merge!("cell_inference_requests" => 12, "planner_inference_requests" => 3,
+          "coder_inference_requests" => 7, "reviewer_inference_requests" => 2)
         model = data.fetch("models").first
         model["model"] = Execution::TokenBudgetLedger::MODEL
         profile = model.fetch("model_profile")
@@ -36,7 +38,8 @@ module AgentRuntime
          "assets" => File.realpath(assets), "asset_inventory_digest" => Digest::SHA256.hexdigest(JSON.generate(inventory)), "ledger_path" => LEDGER,
          "intent_digest" => Digest::SHA256.file(INTENT).hexdigest,
          "model" => Execution::TokenBudgetLedger::MODEL, "total_tokens" => 1_000_000_000,
-         "limits" => {"requests_per_stage" => 4, "stages_per_cell" => 3, "completion_tokens" => 32000,
+         "limits" => {"cell_inference_requests" => 12, "planner_inference_requests" => 3,
+                      "coder_inference_requests" => 7, "reviewer_inference_requests" => 2, "completion_tokens" => 32000,
                       "input_allowance" => 2_048_576, "max_body_bytes" => 1_048_576},
          "financial_exposure" => "not_hard_bounded"}
       end
@@ -112,8 +115,13 @@ module AgentRuntime
           remaining = active.fetch("deadline") - Process.clock_gettime(Process::CLOCK_MONOTONIC)
           return AgentRuntime::Result.new(status: "timeout", outputs: {}, error: "local cell deadline exhausted") unless remaining.positive?
           request = request.dup
+          role = (request.config || {})["role"] || "solve"
+          steps = {"planner" => 3, "coder" => 7, "reviewer" => 2, "solve" => 12}.fetch(role)
+          request.config = request.config.merge("prompt" => request.config.fetch("prompt") +
+            "\n\nYou have at most #{steps} inference turns including your final response. Batch independent tools in one turn. Reserve the final turn for an honest handoff; do not claim tests or changes not actually completed.")
           request.timeout = [request.timeout || remaining, remaining].min
           provider = @factory.call
+          stage_options = provider.is_a?(Execution::LocalTokenProvider) ? {timeout: request.timeout} : {}
           relay = provider.start(attempt_id: "#{request.run_id}:#{request.step_id}:#{request.attempt}",
             cell_id: cell_id, model_profile: @profile, **stage_options)
           helper = File.expand_path("../execution/local_token_bridge.cjs", __dir__)
@@ -121,11 +129,10 @@ module AgentRuntime
             helper_sha256: Digest::SHA256.file(helper).hexdigest)
           sandbox = Execution::SandboxRunner.new(image: SimulatedComparison::IMAGE,
             limits: {"cpus" => 1, "memory_bytes" => 1073741824, "pids" => 128, "tmpfs_bytes" => 134217728}, network_policy: policy)
-          stage_options = provider.is_a?(Execution::LocalTokenProvider) ? {timeout: request.timeout} : {}
           launch = Execution::SandboxOpenCodeLaunch.new(executable: "/usr/local/bin/opencode",
             executable_sha256: SimulatedComparison::EXECUTABLE_DIGEST, endpoint: "http://127.0.0.1:18080/v1",
             model: "omniroute/cx/gpt-6-luna-low", provider: "omniroute", wire_model: "cx/gpt-6-luna-low",
-            mock_only: false, transport_mode: "provider_relay")
+            mock_only: false, transport_mode: "provider_relay", steps: steps)
           result = AgentRuntime::Adapters::SandboxOpenCodeCLI.new(runner: sandbox, launch: launch).execute(request)
           File.open(File.join(@directory, "sandbox-diagnostics.jsonl"), "a", 0o600) { |file| file.puts(JSON.generate("cell_id" => cell_id, "status" => result.status, "error" => result.error, "logs" => result.logs)) }
           result

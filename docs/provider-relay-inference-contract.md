@@ -26,7 +26,11 @@ characters, descriptions at most 32768 characters, object parameter schemas at
 most 131072 UTF-8 bytes each, and optional boolean `strict`. Unknown tool/function
 keys are denied. The global 1 MiB request limit applies as well. Tool choice is
 always automatic: omission uses the chat-completions automatic default; explicit
-`auto` requires nonempty tools. Named, `required`, and `none` choices are denied.
+`auto` requires nonempty tools. Named and `required` choices are denied.
+The trusted local staged launcher explicitly freezes `allowNoTools:true`: only
+that opt-in admits `none`, and only with absent or empty tools, for OpenCode's
+restrictive final response turn. Other launchers still deny `none`. This does
+not prove the request is temporally final or permit arbitrary choice values.
 Schema contents and message contents remain untrusted task data, not executable
 relay code. Programs/tool execution have the separate sandbox boundary.
 

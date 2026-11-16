@@ -6,6 +6,25 @@ const {spawn, spawnSync} = require('node:child_process');
 const {launchBridge} = require('../lib/agent_runtime/execution/local_gateway_launcher.cjs');
 const image = 'node@sha256:d6aa754f16b3197301076f047b5def2f02ea1dbbc2ca920407d46d7ec7f87b20';
 
+test('first request may arrive after the HTTP parser header deadline', async () => {
+  const server = http.createServer({headersTimeout: 100, requestTimeout: 200, connectionsCheckingInterval: 25}, (req, res) => {
+    req.resume(); req.on('end', () => res.end('ok'));
+  });
+  server.cancelUpstream = () => {};
+  const events = [];
+  const bridge = await launchBridge({server, timeoutMs: 500, stageTimeoutMs: 60000, image, lifecycle: record => events.push(record)});
+  try {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const result = await new Promise((resolve, reject) => {
+      const child = spawn('docker', ['exec', '--user', '65534:65534', bridge.relayVolume.replace(/-relay$/, ''), 'node', '-e',
+        `require('http').get({socketPath:'/relay/relay.sock'},r=>{r.resume();r.on('end',()=>process.exit(r.statusCode===200?0:2))}).on('error',()=>process.exit(3))`], {stdio: 'ignore', timeout: 5000});
+      child.on('error', reject); child.on('exit', resolve);
+    });
+    assert.equal(result, 0, 'first request must survive pre-request idle beyond parser timeout');
+  } finally { bridge.close(); }
+  assert.deepEqual(events, [{type: 'gateway_lifecycle', close_reason: 'caller_close'}]);
+});
+
 test('stage lifetime survives request timeout and deadline/cancellation remove Docker resources', async () => {
   for (const cancel of [false, true]) {
     let cancelled = 0;
@@ -16,7 +35,7 @@ test('stage lifetime survives request timeout and deadline/cancellation remove D
       const result = await new Promise((resolve, reject) => {
         const script = `const http=require('http');const agent=new http.Agent({keepAlive:true,maxSockets:1});
           const send=()=>new Promise((resolve,reject)=>{http.get({socketPath:'/relay/relay.sock',agent},r=>{r.resume();r.on('end',resolve)}).on('error',reject)});
-          (async()=>{await send();await new Promise(r=>setTimeout(r,1200));await send();console.log('SECOND_OK');agent.destroy()})().catch(()=>process.exit(1));`;
+          (async()=>{await send();await new Promise(r=>setTimeout(r,1200));await send();console.log('SECOND_OK');process.exit(0)})().catch(()=>process.exit(1));`;
         const child = spawn('docker', ['exec', '--user', '65534:65534',
           bridge.relayVolume.replace(/-relay$/, ''), 'node', '-e', script]);
         child.stdout.on('data', () => {

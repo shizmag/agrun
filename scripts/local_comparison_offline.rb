@@ -25,10 +25,12 @@ raise "offline nine-cell execution incomplete" unless report.fetch("report").fet
 raise "offline ledger did not settle" unless report.fetch("token_ledger").fetch("known_usage_tokens").positive?
 audit_path = File.join(File.dirname(report.fetch("bundle").fetch("path")), "gateway-audit.jsonl")
 audit = File.readlines(audit_path).map { |line| JSON.parse(line) }
+audit = audit.reject { |record| %w[gateway_process gateway_lifecycle].include?(record["type"]) }
 raise "offline transport rejected installed tool conversation" unless audit.all? { |record| record.fetch("status") == 200 }
 requests = audit.group_by { |record| record.fetch("trusted_cell_id") }
-raise "offline stage request coverage missing" unless requests.size == 9 && requests.values.map(&:size).sort == [4, 4, 4, 12, 12, 12, 12, 12, 12]
+raise "offline stage request coverage missing" unless requests.size == 9 && requests.values.map(&:size).sort == [4, 4, 4, 9, 9, 9, 9, 9, 9]
 requests.each_value do |records|
-  raise "offline stage tool turns incomplete" unless records.group_by { |record| record.fetch("step_id") }.values.all? { |stage| stage.size == 4 }
+  counts = records.group_by { |record| record.fetch("step_id") }.values.map(&:size).sort
+  raise "offline stage tool turns incomplete" unless counts == [4] || counts == [2, 3, 4]
 end
 puts JSON.pretty_generate(report)

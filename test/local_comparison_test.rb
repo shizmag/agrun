@@ -2,6 +2,13 @@ require_relative "test_helper"
 require_relative "../lib/agent_runtime/benchmarks/local_comparison"
 
 class LocalComparisonTest < Minitest::Test
+  def test_stage_allocations_are_frozen_and_reserve_terminal_handoffs
+    manifest = AgentRuntime::Benchmarks::LocalComparison.manifest
+    limits = manifest.data.fetch("limits")
+    assert_equal [3, 7, 2], %w[planner coder reviewer].map { |role| limits.fetch("#{role}_inference_requests") }
+    assert_equal 12, limits.fetch("cell_inference_requests")
+  end
+
   def test_exact_model_nine_cell_manifest_and_schedule
     comparison = AgentRuntime::Benchmarks::LocalComparison
     manifest = comparison.manifest

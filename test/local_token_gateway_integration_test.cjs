@@ -47,7 +47,7 @@ test('offline gateway accepts tool call and tool result across sequential reques
   const gate = admission({requestLimit: 2, ledger: e => events.push(e), emit: e => audits.push(e)});
   const model = 'cx/gpt-6-luna-low';
   const server = startOfflineTransport({origin: 'https://offline.invalid', approvedOrigins: ['https://offline.invalid'],
-    model, credentialFile, route: 'offline', timeoutMs: 2000, allowTools: true,
+    model, credentialFile, route: 'offline', timeoutMs: 2000, allowTools: true, allowNoTools: true,
     inference: {max_completion_tokens: 32000, stream: true, stream_options: {include_usage: true}},
     identity: {run_id: 'test', architecture: 'test', step_id: 'tools', attempt: 'one'}}, gate.audit, gate.authorizeRequest,
   {request(url, options, callback) {
@@ -63,16 +63,16 @@ test('offline gateway accepts tool call and tool result across sequential reques
   }});
   const socketPath = path.join(root, 'gateway.sock');
   await new Promise(resolve => server.listen(socketPath, resolve));
-  const send = messages => new Promise((resolve, reject) => {
+   const send = (messages, terminal = false) => new Promise((resolve, reject) => {
     const request = http.request({socketPath, method: 'POST', path: '/v1/chat/completions', headers: {'content-type': 'application/json'}}, response => {
       let body = ''; response.on('data', data => { body += data; }); response.on('end', () => resolve({status: response.statusCode, body}));
     }); request.on('error', reject);
-    request.end(JSON.stringify({model, messages, tools: [{type: 'function', function: {name: 'read_file', parameters: {type: 'object', properties: {path: {type: 'string'}}}}}], max_completion_tokens: 32000, stream: true, stream_options: {include_usage: true}}));
+    request.end(JSON.stringify({model, messages, ...(terminal ? {tool_choice: 'none'} : {}), tools: [{type: 'function', function: {name: 'read_file', parameters: {type: 'object', properties: {path: {type: 'string'}}}}}], max_completion_tokens: 32000, stream: true, stream_options: {include_usage: true}}));
   });
   try {
     const first = await send([{role: 'user', content: 'read README'}]);
     assert.equal(first.status, 200); assert.match(first.body, /tool_calls/);
-    const second = await send([{role: 'assistant', content: null, tool_calls: [{id: 'call_1', type: 'function', function: {name: 'read_file', arguments: '{"path":"README.md"}'}}]}, {role: 'tool', tool_call_id: 'call_1', content: 'offline file'}]);
+    const second = await send([{role: 'assistant', content: null, tool_calls: [{id: 'call_1', type: 'function', function: {name: 'read_file', arguments: '{"path":"README.md"}'}}]}, {role: 'tool', tool_call_id: 'call_1', content: 'offline file'}], true);
     assert.equal(second.status, 200); assert.match(second.body, /done/);
     assert.equal(received[1].messages[1].tool_call_id, 'call_1');
     assert.deepEqual(events.map(e => e.action), ['reserve', 'settle', 'reserve', 'settle']);

@@ -6,7 +6,10 @@ module AgentRuntime
     class SandboxOpenCodeLaunch
       attr_reader :executable, :executable_sha256, :model
 
-      def initialize(executable:, executable_sha256:, endpoint:, model:, mock_only:, provider:, wire_model:, transport_mode: nil)
+      def initialize(executable:, executable_sha256:, endpoint:, model:, mock_only:, provider:, wire_model:, transport_mode: nil, steps: nil)
+        valid_steps = steps.nil? || (steps.is_a?(Integer) && steps.between?(1, 12))
+        raise ArgumentError, "invalid inference steps" unless valid_steps
+        @steps = steps
         transport_valid = (mock_only == true && transport_mode.nil?) ||
           (mock_only == false && transport_mode == "provider_relay" && wire_model == "cx/gpt-6-luna-low")
         unless transport_valid && executable == "/usr/local/bin/opencode" &&
@@ -60,7 +63,7 @@ module AgentRuntime
 
       def configuration
         {"model" => model, "smallModel" => model, "plugins" => [], "mcp" => {}, "lsp" => false,
-         "agents" => {"title" => {"disabled" => true}},
+         "agents" => {"title" => {"disabled" => true}, **(@steps ? {"build" => {"steps" => @steps}} : {})},
          "providers" => {@provider => {"package" => "@opencode/ai/providers/openai-compatible", "settings" => {"transport" => "http", "baseURL" => @endpoint, "apiKey" => "mock-only"},
                                        "models" => {@wire_model => {"name" => "Mock only"}}}},
          "policies" => [

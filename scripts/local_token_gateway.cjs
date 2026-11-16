@@ -68,17 +68,18 @@ async function main() {
         const body = JSON.parse(Buffer.concat(chunks));
         const tools = body.messages.filter(message => message.role === 'tool');
         const read = (body.tools || []).find(tool => tool.function.name === 'read');
-        if (!read) throw Error('offline_fixture_requires_installed_read_tool');
-        const delta = tools.length < 3 ? {role: 'assistant', tool_calls: [{index: 0, id: `offline-read-${tools.length}`,
+        if (!read && body.tool_choice !== 'none') throw Error('offline_fixture_requires_installed_read_tool');
+        const continueTools = !!read && tools.length < 3;
+        const delta = continueTools ? {role: 'assistant', tool_calls: [{index: 0, id: `offline-read-${tools.length}`,
           type: 'function', function: {name: 'read', arguments: JSON.stringify({filePath: '/etc/os-release'})}}]} :
           {role: 'assistant', content: 'OFFLINE_ONLY'};
         response.end('data: ' + JSON.stringify({id: 'offline-only', object: 'chat.completion.chunk', model: config.model,
-          choices: [{index: 0, delta, finish_reason: tools.length < 3 ? 'tool_calls' : 'stop'}],
+          choices: [{index: 0, delta, finish_reason: continueTools ? 'tool_calls' : 'stop'}],
           usage: {prompt_tokens: 12, completion_tokens: 3, total_tokens: 15}}) + '\n\ndata: [DONE]\n\n');
       });
       return request;
     }});
-    gateway = await launchBridge({server, timeoutMs: config.timeoutMs, stageTimeoutMs: privateConfig.stageTimeoutMs, image: privateConfig.image});
+    gateway = await launchBridge({server, timeoutMs: config.timeoutMs, stageTimeoutMs: privateConfig.stageTimeoutMs, image: privateConfig.image, lifecycle: audit});
   } else gateway = await launch({config, stageTimeoutMs: privateConfig.stageTimeoutMs, image: privateConfig.image, authorizeRequest, audit});
   process.stdout.write(JSON.stringify({ready: true, relay_volume: gateway.relayVolume}) + '\n');
   const close = () => { gateway.close(); process.exit(0); };

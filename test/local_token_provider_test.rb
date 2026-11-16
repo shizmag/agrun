@@ -1,5 +1,5 @@
 require_relative "test_helper"
-require "agent_runtime/execution/local_token_provider"
+require_relative "../lib/agent_runtime/execution/local_token_provider"
 
 class LocalTokenProviderTest < Minitest::Test
   def test_stderr_flood_cannot_block_ready_and_is_never_persisted
