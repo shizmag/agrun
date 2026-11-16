@@ -1,5 +1,6 @@
 require_relative "authorized_comparison"
 require_relative "../execution/local_token_provider"
+require_relative "scientific_report"
 
 module AgentRuntime
   module Benchmarks
@@ -40,9 +41,11 @@ module AgentRuntime
          "financial_exposure" => "not_hard_bounded"}
       end
 
-      def initialize(root:, assets:, provider_factory: nil)
+      def initialize(root:, assets:, provider_factory: nil, test_ledger_path: nil)
         @root, @assets = File.expand_path(root), File.expand_path(assets)
         @provider_factory = provider_factory
+        raise ArgumentError, "test ledger requires injected provider" if test_ledger_path && !provider_factory
+        @test_ledger_path = test_ledger_path
       end
 
       def run(authorization_path:, credential_file:, allow_live: false)
@@ -54,9 +57,14 @@ module AgentRuntime
         raise ArgumentError, "credential must be private regular nonsymlink" unless stat.file? && !File.symlink?(credential_file) && (stat.mode & 0o077).zero?
         credential = File.read(credential_file).strip
         raise ArgumentError, "invalid credential" if credential.empty? || credential.match?(/[\r\n]/)
-        ledger_options = {"path" => LEDGER, "intent_digest" => Digest::SHA256.file(INTENT).hexdigest, "total_tokens" => 1_000_000_000}
+        ledger_options = {"path" => @test_ledger_path || LEDGER, "intent_digest" => Digest::SHA256.file(INTENT).hexdigest, "total_tokens" => 1_000_000_000}
         ledger = Execution::TokenBudgetLedger.new(**ledger_options.transform_keys(&:to_sym))
         manifest = self.class.manifest
+        if @provider_factory
+          data = JSON.parse(JSON.generate(manifest.data))
+          data["subset_role"] = "local-transport-simulation-no-provider-calls"
+          manifest = ExperimentManifest.new(data)
+        end
         execution_id = "#{manifest.data.fetch("experiment_id")}-#{SecureRandom.hex(8)}"
         directory = File.join(@root, "local-token-comparison", execution_id)
         FileUtils.mkdir_p(directory, mode: 0o700)
@@ -65,7 +73,7 @@ module AgentRuntime
         adapter = Adapters::NL2Repo.new(store: store, root: @assets, audited_grader: grader)
         registry = Registry.new
         registry.register("nl2repo", adapter)
-        factory = @provider_factory || -> {
+        factory = @provider_factory ? -> { @provider_factory.call(ledger_options, directory) } : -> {
           Execution::LocalTokenProvider.new(root: ROOT, ledger: ledger_options,
             credential: credential, audit_path: File.join(directory, "provider-audit.jsonl"))
         }
@@ -80,13 +88,15 @@ module AgentRuntime
           [arm, solver]
         end
         runner = Runner.new(token_solvers: solvers, token_manifest: manifest, store: store,
-          root: File.join(directory, "work"), registry: registry)
+          root: File.join(directory, "work"), registry: registry, simulated: !!@provider_factory)
         coordinator = ComparativeExperiment.new(store: store, runner: runner)
-        verification = coordinator.run(manifest: manifest, evidence_kind: "live_provider", execution_id: execution_id)
+        verification = coordinator.run(manifest: manifest, evidence_kind: @provider_factory ? "local_transport_simulation" : "live_provider", execution_id: execution_id)
         path = File.join(directory, "verification.json")
         File.write(path, JSON.pretty_generate(verification) + "\n")
         bundle = coordinator.freeze(experiment_id: execution_id, destination: File.join(directory, "frozen"), verification: verification)
-        report = ComparativeExperiment.report(bundle: bundle)
+        ComparativeExperiment.verify_freeze(bundle.fetch("path"))
+        report = store.report(execution_id)
+        File.write(File.join(directory, "report.md"), ScientificReport.new(store: store).render(experiment_id: execution_id, evidence_kind: @provider_factory ? "local_transport_simulation" : "live_provider"))
         File.write(File.join(directory, "report.json"), JSON.pretty_generate(report) + "\n")
         {"execution_id" => execution_id, "verification" => path, "bundle" => bundle, "report" => report, "token_ledger" => ledger.snapshot}
       end
@@ -98,6 +108,11 @@ module AgentRuntime
 
         def execute(request)
           cell_id = JSON.parse(File.read(File.join(@directory, "active-cell.json"))).fetch("cell_id")
+          active = JSON.parse(File.read(File.join(@directory, "active-cell.json")))
+          remaining = active.fetch("deadline") - Process.clock_gettime(Process::CLOCK_MONOTONIC)
+          return AgentRuntime::Result.new(status: "timeout", outputs: {}, error: "local cell deadline exhausted") unless remaining.positive?
+          request = request.dup
+          request.timeout = [request.timeout || remaining, remaining].min
           provider = @factory.call
           relay = provider.start(attempt_id: "#{request.run_id}:#{request.step_id}:#{request.attempt}",
             cell_id: cell_id, model_profile: @profile)
@@ -110,27 +125,31 @@ module AgentRuntime
             executable_sha256: SimulatedComparison::EXECUTABLE_DIGEST, endpoint: "http://127.0.0.1:18080/v1",
             model: "omniroute/cx/gpt-6-luna-low", provider: "omniroute", wire_model: "cx/gpt-6-luna-low",
             mock_only: false, transport_mode: "provider_relay")
-          Adapters::SandboxOpenCodeCLI.new(runner: sandbox, launch: launch).execute(request)
+          result = AgentRuntime::Adapters::SandboxOpenCodeCLI.new(runner: sandbox, launch: launch).execute(request)
+          File.open(File.join(@directory, "sandbox-diagnostics.jsonl"), "a", 0o600) { |file| file.puts(JSON.generate("cell_id" => cell_id, "status" => result.status, "error" => result.error, "logs" => result.logs)) }
+          result
         ensure
           provider&.close
         end
       end
 
       class Runner < ExperimentRunner
-        def initialize(token_solvers:, token_manifest:, **options)
+        def initialize(token_solvers:, token_manifest:, simulated: false, **options)
           @token_manifest = token_manifest
+          @simulated = simulated
           super(**options, solvers: token_solvers)
         end
 
         private
 
         def execute_cell(report, cell, adapter)
-          File.write(File.join(File.dirname(@root), "active-cell.json"), JSON.generate("cell_id" => cell.fetch("id")))
+          File.write(File.join(File.dirname(@root), "active-cell.json"), JSON.generate("cell_id" => cell.fetch("id"), "deadline" => Process.clock_gettime(Process::CLOCK_MONOTONIC) + @token_manifest.data.fetch("limits").fetch("timeout")))
           super
         end
 
         def validate_live!(manifest, adapter, _authorization)
-          raise ArgumentError, "local token manifest mismatch" unless manifest.digest == @token_manifest.digest
+          normalized = manifest.data.merge("experiment_id" => @token_manifest.data.fetch("experiment_id"))
+          raise ArgumentError, "local token manifest mismatch" unless ExperimentManifest.new(normalized).digest == @token_manifest.digest
           raise ArgumentError, "local token requires audited adapter" unless adapter.instance_of?(Adapters::NL2Repo) && adapter.audited_scoring?
         end
 
@@ -138,6 +157,7 @@ module AgentRuntime
 
         def execution_metadata(manifest, cells)
           {"execution_release_identity" => ReleaseIdentity.capture(root: ROOT),
+           "offline_injected_provider" => @simulated, "live_provider" => !@simulated,
            "transport" => "local-token-gateway", "requested_model" => Execution::TokenBudgetLedger::MODEL,
            "pricing" => "not-used", "solver_configurations" => @solvers.transform_values(&:configuration),
            "planned_schedule" => cells.map { |cell| cell.fetch("id") }}

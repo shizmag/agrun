@@ -207,6 +207,10 @@ module AgentRuntime
 
       def validate_manifest_evidence!(manifest, kind)
         validate_evidence_kind!(kind)
+        if kind == "local_transport_simulation"
+          raise ArgumentError, "local simulation marker required" unless manifest["subset_role"] == "local-transport-simulation-no-provider-calls" && manifest["execution_mode"] == "live"
+          return
+        end
         allowed = case manifest["execution_mode"]
         when "offline" then "offline_fixture"
         when "live" then "live_provider"
@@ -215,6 +219,9 @@ module AgentRuntime
       end
 
       def validate_report_evidence!(report, kind)
+        if kind == "local_transport_simulation" && !(report["offline_injected_provider"] == true && report["live_provider"] == false)
+          raise ArgumentError, "local simulation provenance required"
+        end
         if kind == "simulated_relay"
           simulation = report.fetch("simulation", {})
           valid = report.fetch("manifest")["execution_mode"] == "offline" &&
@@ -238,7 +245,7 @@ module AgentRuntime
       private
 
       def validate_evidence_kind!(kind)
-        raise ArgumentError, "unknown evidence kind" unless %w[offline_fixture simulated_relay live_provider].include?(kind)
+        raise ArgumentError, "unknown evidence kind" unless %w[offline_fixture simulated_relay live_provider local_transport_simulation].include?(kind)
       end
     end
   end

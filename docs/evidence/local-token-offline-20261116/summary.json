@@ -1,0 +1,73 @@
+{
+  "execution_id": "research-omniroute-token-operational-v1-82af078313c12808",
+  "verification": "/Users/vladimirkasterin/ruby/agru/.agru/local-offline-validation-v3/local-token-comparison/research-omniroute-token-operational-v1-82af078313c12808/verification.json",
+  "token_ledger": {
+    "total_tokens": 1000000000,
+    "reserved_tokens": 87384192,
+    "request_count": 42,
+    "known_usage_tokens": 630,
+    "unknown_usage_count": 0,
+    "unknown_model_count": 0,
+    "unresolved_violations": [],
+    "halted": false
+  },
+  "evidence_kind": "local_transport_simulation",
+  "live_api_calls": 0,
+  "bundle": {
+    "sha256": "2a008580c1ba5872fe34771d860aaad1f40e81ba9da3b87499c9bd6baeddbf43",
+    "verified": true
+  },
+  "cells": [
+    {
+      "ordinal": 1,
+      "execution_status": "success",
+      "grading_attempts": 2
+    },
+    {
+      "ordinal": 2,
+      "execution_status": "success",
+      "grading_attempts": 2
+    },
+    {
+      "ordinal": 3,
+      "execution_status": "success",
+      "grading_attempts": 2
+    },
+    {
+      "ordinal": 4,
+      "execution_status": "success",
+      "grading_attempts": 2
+    },
+    {
+      "ordinal": 5,
+      "execution_status": "success",
+      "grading_attempts": 2
+    },
+    {
+      "ordinal": 6,
+      "execution_status": "success",
+      "grading_attempts": 2
+    },
+    {
+      "ordinal": 7,
+      "execution_status": "success",
+      "grading_attempts": 2
+    },
+    {
+      "ordinal": 8,
+      "execution_status": "success",
+      "grading_attempts": 2
+    },
+    {
+      "ordinal": 9,
+      "execution_status": "success",
+      "grading_attempts": 2
+    }
+  ],
+  "portable_regrade": {
+    "verified": true,
+    "semantics": "same-implementation evaluator reproduction; not independent evaluator semantics",
+    "cell_count": 9,
+    "all_match_original": true
+  }
+}

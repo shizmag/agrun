@@ -17,4 +17,10 @@ class LocalComparisonTest < Minitest::Test
     comparison = AgentRuntime::Benchmarks::LocalComparison.new(root: ".agru", assets: ".agru/nl2repo")
     assert_raises(ArgumentError) { comparison.run(authorization_path: "absent", credential_file: "absent") }
   end
+
+  def test_temporary_ledger_requires_injected_provider
+    assert_raises(ArgumentError) do
+      AgentRuntime::Benchmarks::LocalComparison.new(root: ".agru", assets: ".agru/nl2repo", test_ledger_path: "temporary")
+    end
+  end
 end
