@@ -20,15 +20,19 @@ module AgentRuntime
         end
         repetitions = report.fetch("manifest").fetch("repetitions")
         models = report.fetch("manifest").fetch("models", []).to_h { |model| [model.fetch("id"), model] }
-        arms = cells.group_by { |cell| [cell.fetch("solver_id"), cell["model"], cell["protocol"], cell["quality_basis"]] }.map do |(solver, model, protocol, quality_basis), rows|
+        arms = cells.group_by { |cell| [cell.fetch("solver_id"), cell["model"]] }.map do |(solver, model), rows|
           tasks = rows.group_by { |row| row.fetch("task_id") }
+          planned_tasks = report.dig("manifest", "benchmark", "task_ids") || tasks.keys
+          planned_tasks.each { |task| tasks[task] ||= [] }
+          provenance = rows.select { |row| valid?(row) }.map { |row| row.values_at("protocol", "quality_basis") }.uniq
+          protocol, quality_basis = (provenance.size == 1) ? provenance.first : [nil, nil]
           included, excluded = tasks.partition do |_, task_rows|
-            task_rows.size == repetitions && task_rows.map { |row| row["repetition"] }.uniq.size == repetitions && task_rows.all? { |row| valid?(row) }
+            provenance.size <= 1 && task_rows.size == repetitions && task_rows.map { |row| row["repetition"] }.sort == (1..repetitions).to_a && task_rows.all? { |row| valid?(row) }
           end.map(&:to_h)
           means = included.values.map { |task_rows| mean(task_rows.map { |row| row.fetch("score") }) }
           costs = rows.filter_map { |row| row["cost"] if row["cost"].is_a?(Numeric) }
           counts = rows.select { |row| valid?(row) && row["passed"].is_a?(Numeric) && row["total"].is_a?(Numeric) }
-          {"solver_id" => solver, "model" => model, "protocol" => protocol, "quality_basis" => quality_basis, "macro_score" => mean(means),
+          {"solver_id" => solver, "model" => model, "protocol" => protocol, "quality_basis" => quality_basis, "mixed_quality_provenance" => provenance.size > 1, "planned_cells" => planned_tasks.size * repetitions, "observed_cells" => rows.size, "macro_score" => mean(means),
            "full_solve_fraction" => mean(included.values.map { |task_rows| (task_rows.all? { |row| row["score"] == 1 }) ? 1.0 : 0.0 }),
            "included_tasks" => included.keys, "excluded_tasks" => excluded.keys,
            "exclusion_reasons" => excluded.transform_values { |task_rows| task_rows.map { |row| {"repetition" => row["repetition"], "execution_status" => row["execution_status"], "error" => row["error"]} } },

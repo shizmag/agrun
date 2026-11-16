@@ -17,6 +17,22 @@ class ScientificReportTest < Minitest::Test
       assert_includes text, "| opencode | 2 | 1/2 | 1/2 | 0.0 | unknown | 2/2 |"
       assert_includes text, "timeout"
       assert_includes text, "not statistically generalizable superiority"
+      arm = AgentRuntime::Benchmarks::Reports.new(store: store).summary(experiment_id: "pilot").fetch("arms").first
+      assert_equal 2, arm.fetch("planned_cells")
+      assert_equal 0, arm.fetch("conditional_denominator")
+      assert_equal ["retrying"], arm.fetch("excluded_tasks")
+    end
+  end
+
+  def test_missing_task_remains_in_planned_denominator
+    in_tmp do |root|
+      store = AgentRuntime::Store.new(root)
+      store.save_report({"run_id" => "missing", "manifest" => {"repetitions" => 1, "benchmark" => {"task_ids" => %w[present absent]}},
+        "cells" => [{"id" => "one", "solver_id" => "opencode", "task_id" => "present", "repetition" => 1, "status" => "timeout"}]})
+      arm = AgentRuntime::Benchmarks::Reports.new(store: store).summary(experiment_id: "missing").fetch("arms").first
+      assert_equal 2, arm.fetch("total_tasks")
+      assert_equal 2, arm.fetch("planned_cells")
+      assert_includes arm.fetch("excluded_tasks"), "absent"
     end
   end
 end
