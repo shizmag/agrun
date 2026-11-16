@@ -62,6 +62,7 @@ module AgentRuntime
         raise ArgumentError, "invalid credential" if credential.empty? || credential.match?(/[\r\n]/)
         ledger_options = {"path" => @test_ledger_path || LEDGER, "intent_digest" => Digest::SHA256.file(INTENT).hexdigest, "total_tokens" => 1_000_000_000}
         ledger = Execution::TokenBudgetLedger.new(**ledger_options.transform_keys(&:to_sym))
+        raise ArgumentError, "token_budget_halted: resolve saved identity evidence before starting an experiment" if ledger.snapshot.fetch("halted")
         manifest = self.class.manifest
         if @provider_factory
           data = JSON.parse(JSON.generate(manifest.data))
