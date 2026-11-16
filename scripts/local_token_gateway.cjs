@@ -15,7 +15,11 @@ function admission({requestLimit, ledger, emit}) {
     },
     audit(record) {
       if (pending.has(record.request_id)) {
-        ledger({action: 'settle', request_id: record.request_id, observed_model: record.response_model || null, usage: record.usage || null});
+        const models = [...(Array.isArray(record.response_models) ? record.response_models : []), record.response_model].filter(x => x != null);
+        const invalid = (record.accounting_issues || []).some(x => ['response_model_invalid', 'response_models_truncated'].includes(x));
+        const unexpected = models.find(x => !['cx/gpt-6-luna-low', 'gpt-6-luna'].includes(x));
+        const observed = invalid ? 'untrusted-response-model-observation' : unexpected || models[0] || null;
+        ledger({action: 'settle', request_id: record.request_id, observed_model: observed, usage: record.usage || null});
         pending.delete(record.request_id);
       }
       emit(record);

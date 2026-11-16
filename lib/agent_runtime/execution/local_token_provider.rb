@@ -5,6 +5,7 @@ require "open3"
 require "rbconfig"
 require "fileutils"
 require_relative "token_budget_ledger"
+require_relative "../adapters/process_runner"
 
 module AgentRuntime
   module Execution
@@ -60,13 +61,17 @@ module AgentRuntime
         end
         @reader&.join(5)
         if @relay_volume
-          Open3.capture3("docker", "rm", "-f", @relay_volume.delete_suffix("-relay"))
-          Open3.capture3("docker", "volume", "rm", @relay_volume)
+          failures = []
+          [["docker", "rm", "-f", @relay_volume.delete_suffix("-relay")], ["docker", "volume", "rm", @relay_volume]].each do |argv|
+            result = Adapters::ProcessRunner.new.call(argv: argv, cwd: @root, timeout: 10)
+            failures << result unless result["status"] == "success" || result["stderr"].to_s.match?(/No such (container|volume)/i)
+          end
         end
         [@stdout, @stderr].compact.each { |io| io.close unless io.closed? }
         FileUtils.remove_entry(@directory) if @directory && File.directory?(@directory)
         @stdin = @stdout = @stderr = @wait = @reader = @directory = nil
         @relay_volume = nil
+        raise Error, "local token provider cleanup failed: #{failures.inspect}" if failures&.any?
       end
     end
   end
