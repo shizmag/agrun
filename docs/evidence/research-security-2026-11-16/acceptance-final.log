@@ -1,0 +1,10 @@
+[acceptance] $ bundle exec ruby -Itest test/m01_acceptance_test.rb
+Run options: --seed 59932
+
+# Running:
+
+....................
+
+Finished in 2.045508s, 9.7775 runs/s, 9.7775 assertions/s.
+
+20 runs, 20 assertions, 0 failures, 0 errors, 0 skips

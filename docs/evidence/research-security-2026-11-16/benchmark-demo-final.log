@@ -1,0 +1,48 @@
+[benchmark-demo] $ bundle exec ruby bin/agru benchmark --suite demo --solver all --repetitions 2 --offline
+{
+  "mock": true,
+  "runs": [
+    {
+      "run_id": "benchmark-b038d44f-eb15-4df9-a3c2-8f768552cf42",
+      "solver": "fake-good",
+      "repetition": 1,
+      "status": "success",
+      "verdict": "pass"
+    },
+    {
+      "run_id": "benchmark-526c87d2-48a7-4444-8521-88e9feba1b80",
+      "solver": "fake-good",
+      "repetition": 2,
+      "status": "success",
+      "verdict": "pass"
+    },
+    {
+      "run_id": "benchmark-ea55962a-82b9-4943-b6cf-f7b39474a6f1",
+      "solver": "fake-bad",
+      "repetition": 1,
+      "status": "success",
+      "verdict": "fail"
+    },
+    {
+      "run_id": "benchmark-825eede3-52f9-4a86-8c20-928b266e56da",
+      "solver": "fake-bad",
+      "repetition": 2,
+      "status": "success",
+      "verdict": "fail"
+    },
+    {
+      "run_id": "benchmark-b92db6e2-6386-470b-82f2-15a67cac2884",
+      "solver": "dsl",
+      "repetition": 1,
+      "status": "success",
+      "verdict": "pass"
+    },
+    {
+      "run_id": "benchmark-d1a43e2b-fa36-4cde-b575-11048866b3c0",
+      "solver": "dsl",
+      "repetition": 2,
+      "status": "success",
+      "verdict": "pass"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+[conformance] $ bundle exec ruby -Itest script/m01_conformance.rb
+MATCH HC01.valid-pass
+MATCH HC02.valid-fail
+MATCH HC03.absent-marker
+MATCH HC04.malformed-marker
+MATCH HC05.exit-zero-fail
+MATCH HC05.exit-one-pass
+MATCH HC06.abnormal-exit
+MATCH HC07.operational-timeout
+MATCH HC08.operational-cancel
+MATCH HC09.inferred-dataflow
+MATCH HC10.explicit-dependency
+MATCH HC10.failed-dependency
+MATCH HC11.retry-accounting
+MATCH HC11.exhausted-retry
+MATCH HC11.unknown-no-retry
+MATCH HC12.isolation-and-persistence
+16/16 match; 0 mismatched; 0 errored
+Evidence: /var/folders/bq/f_1r5c892ljfbjx7nln4k0dw0000gn/T/agru-m01-conformance-20261116-46928-a499w3/conformance.json

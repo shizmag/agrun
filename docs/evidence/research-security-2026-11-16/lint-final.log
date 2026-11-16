@@ -1,0 +1,7 @@
+[lint] $ bundle exec standardrb
+standard: Use Ruby Standard Style (https://github.com/standardrb/standard)
+  lib/agent_runtime/benchmarks/comparative_experiment.rb:154:10: Layout/IndentationConsistency: Inconsistent indentation detected.
+  lib/agent_runtime/benchmarks/comparative_experiment.rb:155:10: Layout/HashAlignment: Align the keys of a hash literal if they span more than one line.
+  lib/agent_runtime/benchmarks/comparative_experiment.rb:158:10: Layout/HashAlignment: Align the keys of a hash literal if they span more than one line.
+standard: Run `standardrb --fix` to fix up to 3 problems.
+[lint] ERROR task failed

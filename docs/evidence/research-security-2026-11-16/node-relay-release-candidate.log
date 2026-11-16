@@ -1,0 +1,14 @@
+authorized provider aggregate reservation tests passed (offline)
+✔ test/authorized_provider_relay_test.cjs (58.165542ms)
+✔ unfinished uploads have bounded admission, deadlines and reusable slots (635.042209ms)
+✔ offline HTTPS enforces TLS, rejects redirects and parses CR-framed SSE (49.53025ms)
+✔ cancellation interrupts an unfinished upload and closes admission (1.522083ms)
+✔ configuration fails closed and rejected requests are attributable without credentials (14.379042ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 763.521459

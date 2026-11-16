@@ -46,7 +46,7 @@ Evidence kinds are explicit: `offline_fixture`, `simulated_relay`, or
 `live_provider`. The caller is responsible for selecting the truthful kind;
 this label is not served-model attestation. Simulated relay success must never
 be represented as live-provider quality evidence.
-# Installed OpenCode, isolated simulated relay
+## Installed OpenCode, isolated simulated relay
 
 `bin/agru bench comparative plan` prints the nine-cell (three architectures ×
 three repetitions) retrying manifest without starting a provider or Docker.
@@ -67,3 +67,17 @@ labels this `simulated_relay`, binds relay-log SHA256 values and image digest, a
 records `paid_provider_calls: false`. Regrades operate on captured submissions;
 the freeze includes grading histories. This is infrastructure evidence, not
 model-quality evidence, and must not be presented as a live-provider result.
+
+The completed nine-cell pilot is preserved at
+`docs/evidence/research-pilot-2026-11-16/v2`. Verify it without the original run
+store:
+
+```sh
+mise exec -- bundle exec ruby bin/agru bench comparative verify docs/evidence/research-pilot-2026-11-16/v2 --root /nonexistent/agru-review-store
+```
+
+`docs/evidence/research-pilot-2026-11-16/independent-verification.log` records
+separate-process verification and checksum-recomputed negative controls.
+The `v3` directory is a byte-identical independently checked copy, not another
+execution. The execution-start release identity deliberately differs from later
+verifier and launcher revisions; historical results are not relabeled as new runs.
