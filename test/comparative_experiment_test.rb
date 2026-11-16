@@ -5,6 +5,22 @@ require_relative "../lib/agent_runtime/benchmarks/registry"
 require_relative "../lib/agent_runtime/benchmarks/comparative_cli"
 
 class ComparativeExperimentTest < Minitest::Test
+  def test_contract_tracks_image_and_schedule_but_not_execution_identity
+    report = {"manifest" => {"experiment_id" => "first"}, "cells" => [],
+              "simulation" => {"image" => "sha256:first", "attempts" => []},
+              "schedule" => {"seed" => 1, "cell_order" => []}}
+    contract = AgentRuntime::Benchmarks::ComparativeExperiment
+    original = AgentRuntime::IR.digest(contract.frozen_contract(report))
+    report["manifest"]["experiment_id"] = "second"
+    report["run_id"] = "another-execution"
+    assert_equal original, AgentRuntime::IR.digest(contract.frozen_contract(report))
+    report["simulation"]["image"] = "sha256:second"
+    refute_equal original, AgentRuntime::IR.digest(contract.frozen_contract(report))
+    report["simulation"]["image"] = "sha256:first"
+    report["schedule"]["seed"] = 2
+    refute_equal original, AgentRuntime::IR.digest(contract.frozen_contract(report))
+  end
+
   def test_regrades_and_freeze_integrity
     in_tmp do |root|
       store = AgentRuntime::Store.new(File.join(root, "store"))

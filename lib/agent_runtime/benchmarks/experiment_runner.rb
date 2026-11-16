@@ -58,7 +58,12 @@ module AgentRuntime
         report.merge!(execution_metadata(manifest, report.fetch("cells")))
         @store.save_report(report)
         report.fetch("cells").each do |cell|
-          break if cancellation&.cancelled?
+          if cancellation&.cancelled?
+            cell["status"] = cell["execution_status"] = "cancelled"
+            cell["transitions"] << {"status" => "cancelled", "timestamp" => Time.now.utc.iso8601(6)}
+            @store.save_report(report)
+            next
+          end
           execute_cell(report, cell, adapter)
         end
         @store.report(report.fetch("run_id"))

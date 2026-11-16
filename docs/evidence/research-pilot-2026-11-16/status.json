@@ -1,0 +1,27 @@
+{
+  "experiment_id": "https-bound-nine-20261116",
+  "evidence_kind": "simulated_relay",
+  "cells": 9,
+  "status_counts": {
+    "completed": 9
+  },
+  "execution_status_counts": {
+    "success": 9
+  },
+  "grading_attempts": 18,
+  "regrades_verified": true,
+  "inference_attempts": 21,
+  "outer_cell_binding_verified": true,
+  "scores": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "paid_provider_calls": false
+}

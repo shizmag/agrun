@@ -80,6 +80,9 @@ module AgentRuntime
                    "limitations" => ["Digest verification establishes integrity, not authenticity.",
                      "Simulated relay evidence is not evidence of live provider quality.",
                      "Independent regrade means a separate grading attempt, not a separate grader implementation."]}
+        payload["release_identity"] = report.fetch("execution_release_identity", payload.fetch("release_identity"))
+        payload["frozen_contract"] = self.class.frozen_contract(report)
+        payload["frozen_experiment_digest"] = IR.digest(payload.fetch("frozen_contract"))
         bytes = JSON.pretty_generate(payload) + "\n"
         destination = File.expand_path(destination)
         Dir.mkdir(destination)
@@ -97,6 +100,9 @@ module AgentRuntime
         raise ArgumentError, "unsupported freeze schema" unless payload.fetch("schema") == SCHEMA
         verification = payload.fetch("verification")
         report = payload.fetch("report")
+        if payload.key?("frozen_contract")
+          raise ArgumentError, "frozen contract mismatch" unless payload["frozen_contract"] == frozen_contract(report) && payload["frozen_experiment_digest"] == IR.digest(payload["frozen_contract"])
+        end
         raise ArgumentError, "freeze verification binding mismatch" unless verification.fetch("experiment_id") == report.fetch("run_id") && verification.fetch("report_digest") == IR.digest(report)
         validate_verification!(report, verification)
         submissions = payload.fetch("submissions")
@@ -113,13 +119,32 @@ module AgentRuntime
             path = entry.fetch("path")
             raise ArgumentError, "invalid portable submission entry" unless entry.keys.sort == %w[content executable path] && [true, false].include?(entry["executable"])
             raise ArgumentError, "unsafe portable submission path" unless path.is_a?(String) && !path.empty? && !path.include?("\0") && !path.start_with?("/") && path.split("/", -1).none? { |part| ["", ".", "..", ".git"].include?(part) }
-            raise ArgumentError, "invalid portable submission encoding" unless entry.fetch("content").unpack1("m0").unpack1("H*").is_a?(String)
+            entry.fetch("content").unpack1("m0")
           end
           raise ArgumentError, "portable submission digest mismatch" unless IR.digest(manifest) == submission.fetch("submission_digest")
         end
         {"integrity_verified" => true, "experiment_id" => payload.fetch("report").fetch("run_id"),
          "regrades_verified" => payload.fetch("verification").fetch("verified"),
          "evidence_kind" => payload.fetch("verification").fetch("evidence_kind"), "sha256" => actual}
+      end
+
+      def self.frozen_contract(report)
+        cells = report.fetch("cells")
+        order = report.fetch("schedule", {}).fetch("cell_order", []).map do |id|
+          cell = cells.find { |candidate| candidate["id"] == id }
+          cell&.slice("task_id", "solver_id", "model", "repetition")
+        end
+        bindings = cells.flat_map do |cell|
+          cell.fetch("grading_attempts", []).map do |attempt|
+            request = attempt.fetch("request")
+            request.slice("task_id", "benchmark", "specification_digest", "limits", "audited_binding").merge("implementation_fingerprint" => attempt["implementation_fingerprint"])
+          end
+        end.uniq.sort_by { |binding| IR.digest(binding) }
+         {"schema" => "agru-frozen-contract-v1", "manifest" => report.fetch("manifest").except("experiment_id"),
+         "execution_release_identity" => report.fetch("execution_release_identity", {}).slice("content_digest", "files"),
+          "schedule" => report.fetch("schedule", {}).except("cell_order").merge("ordered_cells" => order),
+          "simulation" => report.fetch("simulation", {}).except("attempts"),
+         "solver_configurations" => report.fetch("solver_configurations", {}), "grading_bindings" => bindings}
       end
 
       BINDINGS = %w[task_id benchmark specification_digest submission_id submission_digest procedure_digest environment_digest limits].freeze
@@ -129,6 +154,8 @@ module AgentRuntime
         return false unless first["attempt_id"].is_a?(String) && second["attempt_id"].is_a?(String) && first["attempt_id"] != second["attempt_id"]
         a, b = first["request"], second["request"]
         return false unless a.is_a?(Hash) && b.is_a?(Hash)
+        a = a.merge(a.fetch("audited_binding", {}).slice("procedure_digest", "environment_digest"))
+        b = b.merge(b.fetch("audited_binding", {}).slice("procedure_digest", "environment_digest"))
         return false unless BINDINGS.all? { |key| a.key?(key) && !a[key].nil? && a[key] == b[key] }
         return false unless a["task_id"] == cell["task_id"] && a["submission_id"] == cell.dig("submission", "id") && a["submission_digest"] == cell.dig("submission", "digest")
         fingerprint = first["implementation_fingerprint"]
@@ -183,7 +210,7 @@ module AgentRuntime
             report["evidence_kind"] == kind && simulation["transport"] == "controlled_https" &&
             simulation["paid_provider_calls"] == false &&
             simulation["image"].to_s.match?(/\Asha256:[a-f0-9]{64}\z/) &&
-            simulation["attempts"].is_a?(Array) && !simulation["attempts"].empty? && simulation["attempts"].all? { |attempt| Digest::SHA256.hexdigest(attempt.fetch("relay_log")) == attempt["relay_log_sha256"] && attempt["relay_log"].include?(attempt.fetch("attempt_id")) } &&
+            simulation["attempts"].is_a?(Array) && !simulation["attempts"].empty? && simulation["attempts"].all? { |attempt| Digest::SHA256.hexdigest(attempt.fetch("relay_log")) == attempt["relay_log_sha256"] && attempt["relay_log"].include?(attempt.fetch("attempt_id")) && attempt["relay_log"].include?('"status":200') } &&
             report.fetch("solver_configurations").values.all? { |config| config["live"] == true }
           raise ArgumentError, "evidence kind unsupported by simulator provenance" unless valid
           return

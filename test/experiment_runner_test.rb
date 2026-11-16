@@ -48,7 +48,8 @@ class ExperimentRunnerTest < Minitest::Test
       def cancellation.cancelled? = true
       result = runner.run(manifest: manifest, cancellation: cancellation)
       assert_equal 6, result.fetch("cells").size
-      assert result.fetch("cells").all? { |cell| cell["execution_status"] == "not_started" }
+      assert result.fetch("cells").all? { |cell| cell["execution_status"] == "cancelled" && cell["status"] == "cancelled" }
+      assert result.fetch("cells").all? { |cell| cell.fetch("transitions").last.fetch("timestamp").is_a?(String) }
     end
   end
 
