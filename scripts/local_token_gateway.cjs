@@ -7,7 +7,9 @@ function admission({requestLimit, ledger, emit}) {
   const pending = new Set();
   return {
     authorizeRequest(bytes, body, id) {
-      if (pending.size || count >= requestLimit || bytes.length > 1048576) throw Error('token_gateway_request_limit');
+      if (pending.size) throw Error('token_gateway_request_limit');
+      if (count >= requestLimit) { const error = Error('perstage_request_limit'); error.admissionReason = 'perstage_request_limit'; throw error; }
+      if (bytes.length > 1048576) throw Error('token_gateway_request_limit');
       ledger({action: 'reserve', request_id: id});
       count++;
       pending.add(id);
@@ -31,9 +33,13 @@ async function main() {
   const privateConfig = JSON.parse(fs.readFileSync(file, 'utf8'));
   const config = privateConfig.gateway;
   if (config.model !== 'cx/gpt-6-luna-low' || config.inference.max_completion_tokens !== 32000) throw Error('token_gateway_scope_invalid');
-  const ledger = message => execFileSync(privateConfig.ruby, [require('node:path').join(__dirname, 'local_token_ledger.rb'), file], {
+  const ledger = message => { try { return execFileSync(privateConfig.ruby, [require('node:path').join(__dirname, 'local_token_ledger.rb'), file], {
     input: JSON.stringify(message), timeout: 30000, stdio: ['pipe', 'pipe', 'pipe']
-  });
+  }); } catch (error) {
+    const detail = String(error.stderr || '');
+    error.admissionReason = detail.includes('cell_request_limit') ? 'cell_request_limit' : 'global_ledger_admission_failed';
+    throw error;
+  } };
   const {authorizeRequest, audit} = admission({requestLimit: privateConfig.request_limit, ledger,
     emit: record => process.stdout.write(JSON.stringify({audit: record}) + '\n')});
   let gateway;

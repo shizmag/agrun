@@ -24,7 +24,8 @@ module AgentRuntime
         @stage += 1
         @directory = Dir.mktmpdir("agru-token-provider-")
         config = {"offline" => @offline, "ruby" => RbConfig.ruby, "ledger" => @ledger, "cell_id" => cell_id,
-                  "attempt_id" => "#{attempt_id}:#{@stage}", "request_limit" => 4, "image" => IMAGE,
+                  "attempt_id" => "#{attempt_id}:#{@stage}", "request_limit" => 12,
+                  "cell_counter" => File.join(File.dirname(@audit_path), "cell-#{Digest::SHA256.hexdigest(cell_id)}.requests"), "image" => IMAGE,
                   "gateway" => {"attempt_id" => attempt_id, "cell_id" => cell_id,
                                 "model" => TokenBudgetLedger::MODEL, "credentialFile" => File.join(@directory, "credential"),
                                 "origin" => "http://127.0.0.1:20128", "approvedOrigins" => ["http://127.0.0.1:20128"],
