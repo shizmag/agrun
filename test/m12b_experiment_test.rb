@@ -23,7 +23,7 @@ class M12bExperimentTest < Minitest::Test
   end
 
   def test_live_manifest_rejects_implicit_models_and_multistrategy_expansion
-    variants = [manifest.merge("solver_ids" => ["fixed-workflow"]),
+    variants = [manifest.merge("solver_ids" => ["unreviewed-workflow"]),
       manifest.merge("solver_ids" => ["single-agent", "compositional-dsl"]),
       manifest.merge("benchmark" => manifest["benchmark"].merge("task_ids" => ["retrying", "another"])),
       manifest.merge("models" => [{"id" => "default"}])]

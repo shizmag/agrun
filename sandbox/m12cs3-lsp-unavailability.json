@@ -1,0 +1,20 @@
+{
+  "classification": "N/A",
+  "cases": ["LSP01", "LSP02", "LSP03", "LSP04", "LSP05"],
+  "reason": "Native LSP runtime deferred in version-correlated source; inherited configuration cannot activate a missing runtime. Silence does not establish disablement or containment.",
+  "version": "2.3.0",
+  "image": "sha256:cbc8bd81c7ede30f09de318df230452f4d3a05e1e8aa9f08a4d46b7f24f437f1",
+  "binary": "/usr/local/bin/opencode",
+  "binary_sha256": "5c7d89bc2d5fa5d83cc7768b813ca671368e70b8b9eda9d1ca9e6ec6b66d8ce0",
+  "source_commit": "a6b15d33daf6ab7d35569f6d711fdb630b9f04e7",
+  "source_binding": "Public v2.3.0 tag; version-correlated, not a reproducible-build attestation",
+  "source": [
+    {"path": "packages/core/src/tool/plugin/edit.ts", "line": 254, "sha256": "b1241277f62c6bfdb251fe4713f192fa2474caddf6c35fdadfd8a39aabdf221e", "excerpt": "// TODO: Add LSP notification and diagnostics after LSP runtime exists."},
+    {"path": "packages/core/src/tool/plugin/write.ts", "line": 30, "sha256": "eaf15fc85430c8885d877451398c82514d320f18fd305635982d859a40f9e0d1", "excerpt": "// TODO: Add LSP notification and diagnostics after LSP runtime exists."},
+    {"path": "packages/core/src/file-mutation.ts", "line": 138, "sha256": "201e3817aaee8e7d1f30967b4b9edd43583574536d0da77a20fb17511e8c47e7", "excerpt": "// TODO: Notify LSP and collect diagnostics after LSP runtime exists."},
+    {"path": "packages/schema/src/config/lsp.ts", "line": 10, "sha256": "7a8945f6ff088f80ff50f3e0d7b78307059c52fb25c79d94643b2e4b09db3386", "excerpt": "export class Server extends Schema.Class<Server>(\"Config.LSP.Server\")({"}
+  ],
+  "source_url_template": "https://raw.githubusercontent.com/anomalyco/opencode/{source_commit}/{path}",
+  "original_failed_run": {"runs": 1, "assertions": 6, "failures": 1, "errors": 0, "skips": 0, "failure": "enabled positive control never initialized; disabled silence is not a PASS. Expected [] to include \"initialize\"."},
+  "containment_credit": false
+}

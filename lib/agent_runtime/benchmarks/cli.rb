@@ -22,6 +22,7 @@ module AgentRuntime
           parser.on("--task ID") { |value| options[:task] = value }
           parser.on("--format FORMAT") { |value| options[:format] = value }
           parser.on("--repository PATH") { |value| options[:repository] = value }
+          parser.on("--model-catalog PATH") { |value| options[:model_catalog] = value }
           parser.on("--diagnostics") { options[:diagnostics] = true }
           parser.on("--audited-scoring") { options[:audited_scoring] = true }
         end.parse!(argv)
@@ -30,7 +31,7 @@ module AgentRuntime
           emit({"offline_default" => true, "official_validation" => "blocked", "ruby" => RUBY_DESCRIPTION,
                 "limitations" => LIMITATIONS, "store" => File.expand_path(options[:root])})
         when "plan"
-          manifest = read_manifest(argv.fetch(0))
+          manifest = read_manifest(argv.fetch(0), catalog_path: options[:model_catalog])
           nl2repo_adapter(Store.new(File.expand_path(options[:root])), options) if options[:audited_scoring]
           emit({"manifest" => manifest.data, "manifest_digest" => manifest.digest, "cells" => manifest.cells,
                 "audited_scoring" => audited_metadata(options)})
@@ -76,7 +77,7 @@ module AgentRuntime
               solvers: live_regrade ? {} : FixtureSolvers::CATEGORIES.to_h { |id| [id, FixtureSolvers.build(id)] }.merge("repository-submission" => RepositorySolver.new(repository: options[:repository])))
             case command
             when "run"
-              result = runner.run(manifest: read_manifest(argv.fetch(0)))
+              result = runner.run(manifest: read_manifest(argv.fetch(0), catalog_path: options[:model_catalog]))
               emit(result.merge("id" => result.fetch("run_id")))
             when "regrade"
               validate_regrade_selection!(store, argv.fetch(0), argv.fetch(1), options)
@@ -122,8 +123,10 @@ module AgentRuntime
         end
       end
 
-      def read_manifest(path)
-        ExperimentManifest.new(JSON.parse(File.read(path)))
+      def read_manifest(path, catalog_path: nil)
+        require_relative "../execution/model_catalog"
+        catalog = Execution::ModelCatalog.new(JSON.parse(File.read(catalog_path))) if catalog_path
+        ExperimentManifest.new(JSON.parse(File.read(path)), catalog: catalog)
       end
 
       def emit(value)

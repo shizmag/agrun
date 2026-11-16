@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "image_id": "sha256:cbc8bd81c7ede30f09de318df230452f4d3a05e1e8aa9f08a4d46b7f24f437f1",
+  "base_image": "node@sha256:d6aa754f16b3197301076f047b5def2f02ea1dbbc2ca920407d46d7ec7f87b20",
+  "os": "linux",
+  "architecture": "arm64",
+  "user": "65534:65534",
+  "opencode_archive_sha256": "3207fb5cdec448d479242c0f1a14f4f7bdfcad3a79209b5eb8f9003725e93711",
+  "opencode_executable_sha256": "5c7d89bc2d5fa5d83cc7768b813ca671368e70b8b9eda9d1ca9e6ec6b66d8ce0",
+  "packages_manifest_sha256": "01121bdfdd855515a71d367cb59e3a56becdc181a6b794c8cfebcdd00e12a272",
+  "tool_versions": {
+    "opencode": "2.3.0",
+    "node": "24.21.0",
+    "python": "3.11.2",
+    "git": "2.39.5",
+    "gcc": "12.2.0"
+  },
+  "evidence_scope": "offline image capability smoke; not whole-agent provider/tool integration proof",
+  "evaluation_state": "mock-tested/unfrozen; not comparative eligible",
+  "paid_provider_calls": false,
+  "reproducibility": "Base and executable pinned; apt repositories not snapshot-pinned. Local image ID identifies this build only."
+}

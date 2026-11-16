@@ -3,6 +3,7 @@ require "optparse"
 require "fileutils"
 require_relative "../execution/live_authorization"
 require_relative "../execution/opencode_launch"
+require_relative "../execution/model_catalog"
 require_relative "experiment_manifest"
 require_relative "experiment_runner"
 require_relative "nl2repo_audited_grader"
@@ -17,10 +18,12 @@ module AgentRuntime
         OptionParser.new do |parser|
           parser.on("--root PATH") { |value| options[:root] = value }
           parser.on("--authorization PATH") { |value| options[:authorization] = value }
+          parser.on("--model-catalog PATH") { |value| options[:model_catalog] = value }
         end.parse!(argv)
         root = File.expand_path(options.fetch(:root))
         if command == "plan"
           manifest = JSON.parse(File.read(argv.fetch(0)))
+          manifest = ExperimentManifest.new(manifest, catalog: read_catalog(options[:model_catalog])).data if options[:model_catalog]
           puts JSON.pretty_generate({"status" => "plan_only", "provider_requests_performed" => false,
                                      "manifest" => manifest, "authorization_required" => true,
                                      "financial_ceiling" => nil, "usage_coverage" => "partial_cli_events"})
@@ -30,7 +33,7 @@ module AgentRuntime
         raise ArgumentError, "live authorization required" unless options[:authorization]
         authorization_data = JSON.parse(File.read(options.fetch(:authorization)))
         authorization = Execution::LiveAuthorization.new(**authorization_data.slice("scope", "expires_at", "financial_exposure").transform_keys(&:to_sym))
-        manifest = ExperimentManifest.new(JSON.parse(File.read(argv.fetch(0))))
+        manifest = ExperimentManifest.new(JSON.parse(File.read(argv.fetch(0))), catalog: read_catalog(options[:model_catalog]))
         raise ArgumentError, "live manifest required" unless manifest.data.fetch("execution_mode") == "live"
         execute(command, manifest, authorization, root)
       rescue ArgumentError, KeyError, SystemCallError, AgentRuntime::Error, JSON::ParserError, OptionParser::ParseError => error
@@ -43,17 +46,23 @@ module AgentRuntime
 
       private
 
+      def read_catalog(path)
+        Execution::ModelCatalog.new(JSON.parse(File.read(path))) if path
+      end
+
       def execute(command, manifest, authorization, root)
         unsupported = manifest.data.fetch("limits").keys - %w[timeout max_concurrent_sessions max_attempts max_parallelism]
         raise ArgumentError, "unsupported_hard_limit" unless unsupported.empty?
         Execution::Budget::AdmissionConfig.new(wall_seconds: manifest.data.fetch("limits").fetch("timeout"),
           max_concurrent_sessions: manifest.data.fetch("limits").fetch("max_concurrent_sessions"),
           max_attempts: manifest.data.fetch("limits")["max_attempts"])
-        profile = manifest.data.fetch("models").fetch(0).fetch("model_profile")
+        model_entry = manifest.data.fetch("models").fetch(0)
+        profile = model_entry.fetch("model_profile")
         Execution::Budget::ModelProfile.new(**profile.slice("id", "provider", "model", "execution_kind", "tool_policy").transform_keys(&:to_sym))
         policy = profile.fetch("tool_policy")
-        unless profile.values_at("provider", "model", "execution_kind") == ["omniroute", "cx/gpt-6-luna-low", "real_provider"] &&
-            policy.values_at("endpoint", "route", "model_fallback") == [Execution::OpenCodeLaunch::ENDPOINT, "cx/gpt-6-luna-low", false]
+        historical_route = profile.values_at("provider", "model", "execution_kind") == ["omniroute", "cx/gpt-6-luna-low", "real_provider"] &&
+          policy.values_at("endpoint", "route", "model_fallback") == [Execution::OpenCodeLaunch::ENDPOINT, "cx/gpt-6-luna-low", false]
+        unless model_entry["model_resolution"] || historical_route
           raise ArgumentError, "live model, endpoint, route, or fallback mismatch"
         end
         scope = {"experiment_digest" => manifest.digest,
@@ -64,8 +73,10 @@ module AgentRuntime
         authorization.preflight!(scope: scope)
         credential = ENV["OMNIROUTE_API_KEY"]
         raise ArgumentError, "credential unavailable: OMNIROUTE_API_KEY" unless credential.is_a?(String) && !credential.empty?
+        resolved_launch = model_entry["model_resolution"] ?
+          {model_profile: profile, model_resolution: model_entry.fetch("model_resolution")} : {}
         launch = Execution::OpenCodeLaunch.new(executable: policy.fetch("executable"),
-          executable_sha256: policy.fetch("executable_sha256"), credential: credential)
+          executable_sha256: policy.fetch("executable_sha256"), credential: credential, **resolved_launch)
         raise ArgumentError, "resolved launch scope mismatch" unless launch.scope.all? { |key, value| scope.fetch(key) == value }
         store = Store.new(root)
         adapter = audited_adapter(store)
@@ -124,12 +135,26 @@ module AgentRuntime
         executor = AgentRuntime::Adapters::OpenCodeCLI.new(executable: launch.executable,
           live: true, budget: coordinator, scopes: scopes, authorization: authorization,
           authorization_scope: scope, launch_config: launch)
-        solver = Solvers::OpenCode.new(adapter: executor, live: true)
+        solver_id = manifest.data.fetch("solver_ids").fetch(0)
+        solver = live_solver(solver_id, store: store, executor: executor)
         runner = ExperimentRunner.new(store: store, root: File.join(root, "live"),
-          registry: {"nl2repo" => adapter}, solvers: {"single-agent" => solver})
+          registry: {"nl2repo" => adapter}, solvers: {solver_id => solver})
         report = runner.run(manifest: manifest, live_authorization: authorization)
         puts JSON.pretty_generate(report)
         0
+      end
+
+      def live_solver(id, store:, executor:)
+        case id
+        when "single-agent"
+          Solvers::OpenCode.new(adapter: executor, live: true)
+        when "fixed-workflow"
+          Solvers::FixedWorkflow.new(store: store, adapter: executor, live: true)
+        when "dsl"
+          Solvers::ComparativeDSL.new(store: store, adapter: executor, live: true)
+        else
+          raise ArgumentError, "unsupported live solver: #{id}"
+        end
       end
 
       def persist_preflight(root, decision)

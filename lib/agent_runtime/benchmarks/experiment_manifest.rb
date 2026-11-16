@@ -6,8 +6,22 @@ module AgentRuntime
       FIELDS = %w[schema_version experiment_id benchmark solver_ids models repetitions limits execution_mode subset_role].freeze
       attr_reader :data, :digest
 
-      def initialize(value)
+      def initialize(value, catalog: nil)
         normalized = IR.normalize_json(value)
+        if catalog
+          normalized["models"].each do |model|
+            snapshot = catalog.resolve(model.fetch("catalog_route"))
+            model["model_resolution"] = snapshot
+            profile = model.fetch("model_profile")
+            route = snapshot.fetch("route")
+            raise ArgumentError, "catalog route mismatch" unless profile["provider"] == route["provider"] && profile["model"] == route["wire_id"]
+            raise ArgumentError, "catalog endpoint mismatch" unless profile.dig("tool_policy", "endpoint") == route["endpoint"]
+            raise ArgumentError, "catalog inference parameters mismatch" unless profile.fetch("inference_parameters", {}) == snapshot.fetch("variant").fetch("parameters")
+            if !snapshot.fetch("variant").fetch("parameters").empty? && route["parameter_delivery"] != "wire_id"
+              raise ArgumentError, "unsupported catalog inference parameter delivery"
+            end
+          end
+        end
         validate!(normalized)
         @data = Adapter.freeze_json(JSON.parse(IR.dump(normalized)))
         @digest = IR.digest(@data).freeze
@@ -55,7 +69,7 @@ module AgentRuntime
         raise ArgumentError, "limits must be positive finite numbers" unless limits.is_a?(Hash) && !limits.empty? && limits.values.all? { |limit| limit.is_a?(Numeric) && limit.finite? && limit.positive? }
         raise ArgumentError, "execution_mode must be offline or live" unless %w[offline live].include?(value["execution_mode"])
         if value["execution_mode"] == "live"
-          raise ArgumentError, "live pilot requires retrying and single-agent" unless benchmark["name"] == "nl2repo" && benchmark["task_ids"] == ["retrying"] && value["solver_ids"] == ["single-agent"]
+          raise ArgumentError, "live pilot requires retrying and one reviewed architecture" unless benchmark["name"] == "nl2repo" && benchmark["task_ids"] == ["retrying"] && value["solver_ids"].length == 1 && %w[single-agent fixed-workflow dsl].include?(value["solver_ids"].first)
           raise ArgumentError, "live pilot requires one explicit real-provider model" unless models.length == 1 && models.first.dig("model_profile", "execution_kind") == "real_provider"
           raise ArgumentError, "live execution requires a finite timeout and sequential cells" unless limits["timeout"] && limits.fetch("max_parallelism", 1) == 1
         end

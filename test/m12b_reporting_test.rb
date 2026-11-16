@@ -5,6 +5,37 @@ require_relative "../lib/agent_runtime/execution/summary"
 # Native step_finish has no provider/model/route observation. Requested profile
 # and adapter-authored normalized copies cannot establish observed identity.
 class M12bReportingTest < Minitest::Test
+  def test_identity_evidence_and_accounting_scope_are_explicit_and_additive
+    events = [
+      {"type" => "step_finish", "part" => {"providerID" => "gateway", "modelID" => "alias"}},
+      {"type" => "step_finish", "part" => {"modelID" => "other"}},
+      {"type" => "tool_use", "part" => {"tool" => "read"}},
+      {"type" => "tool_use", "part" => {"tool" => "read"}}
+    ]
+    summary = AgentRuntime::Execution::Summary.telemetry({"model_profile" => {"provider" => "requested", "model" => "configured"}}, events)
+    evidence = summary.fetch("model_identity_evidence")
+    assert_equal "model_profile", evidence.dig("requested", "source")
+    assert_equal "configured", evidence.dig("requested", "identity", "model")
+    assert_equal "native_root_step", evidence.dig("cli_observed", "source")
+    assert_equal ["alias", "other"], evidence.dig("cli_observed", "observations").map { |item| item["model"] }
+    %w[gateway_resolved served_attested].each do |layer|
+      assert_equal({"status" => "unknown", "source" => "unavailable", "identity" => nil}, evidence.fetch(layer))
+    end
+    assert_equal 2, summary.dig("counts", "root_step_observations")
+    assert_equal 2, summary.dig("counts", "tool_event_observations")
+    assert_equal "unknown", summary.dig("identity", "verification")
+    assert_equal "solver_only", summary.dig("accounting_coverage", "usage_scope")
+    assert_equal "unknown", summary.dig("accounting_coverage", "grader_overhead")
+    assert_equal "unavailable_in_execution_evidence", summary.dig("accounting_coverage", "grader_overhead_source")
+  end
+
+  def test_empty_identity_evidence_does_not_invent_observations
+    summary = AgentRuntime::Execution::Summary.telemetry({}, [])
+    assert_equal "unknown", summary.dig("model_identity_evidence", "requested", "status")
+    assert_equal "unknown", summary.dig("model_identity_evidence", "cli_observed", "status")
+    assert_empty summary.dig("model_identity_evidence", "cli_observed", "observations")
+  end
+
   def test_requested_identity_is_not_reported_as_actual_observed_identity
     with_summary do |summary|
       assert_equal({"provider" => "omniroute", "model" => "cx/gpt-6-luna-low", "route" => "cx/gpt-6-luna-low", "endpoint" => "http://127.0.0.1:4141/v1"}, summary.dig("identity", "requested"))

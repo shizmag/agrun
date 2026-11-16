@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "status": "BLOCKED",
+  "authorized": false,
+  "scope": "fresh-comparison-not-historical-rerun",
+  "baseline": {
+    "runtime_commit": "c06e2430d336065a0bc71dcb05fc5942106d06dc",
+    "documentation_commit": "e0136b9",
+    "release_digest": "b517baf67713b6a4ac128eb6c59ffa411cc5f0a88047b76f7f12e63770dec9f9",
+    "agent_image": "sha256:cbc8bd81c7ede30f09de318df230452f4d3a05e1e8aa9f08a4d46b7f24f437f1"
+  },
+  "candidate_release": null,
+  "transport_image": null,
+  "provider": {
+    "name": "omniroute",
+    "requested_wire_model": "cx/gpt-6-luna-low",
+    "catalog_route": "omniroute-luna-low",
+    "upstream_origin": null,
+    "gateway_resolved_model": null,
+    "served_model_attestation": null,
+    "inference_configuration_digest": null,
+    "fallback": false,
+    "automatic_transport_retries": 0,
+    "pricing": null
+  },
+  "benchmark": {
+    "name": "NL2RepoBench",
+    "revision": "781a1da1ee41fb8edb0bed22f586d69111610edf",
+    "task": "retrying",
+    "grader": "nl2repo-audited-v2",
+    "task_digest": null,
+    "grader_digest": null,
+    "independent_regrades_per_submission": 1
+  },
+  "schedule": {
+    "repetitions": 3,
+    "planned_solver_executions": 9,
+    "order": [
+      ["single-agent", "fixed-workflow", "dsl"],
+      ["fixed-workflow", "dsl", "single-agent"],
+      ["dsl", "single-agent", "fixed-workflow"]
+    ],
+    "max_parallel_cells": 1,
+    "max_concurrent_provider_requests": 1,
+    "cell_deadline_seconds": 600,
+    "grading_deadline_seconds": 120,
+    "regrading_deadline_seconds": 120,
+    "automatic_cell_retries": 0
+  },
+  "resources_per_cell": {
+    "cpus": 1,
+    "memory_bytes": 1073741824,
+    "pids": 128,
+    "tmpfs_bytes": 134217728,
+    "hard_token_cap": null,
+    "hard_request_cap": null,
+    "hard_currency_cap": null
+  },
+  "interpretation": {
+    "primary": "equal-tools-and-configuration-total-architecture-performance-and-consumption",
+    "equal_compute": "separate-future-preregistration-required",
+    "causal_superiority_under_unequal_compute": false,
+    "mock_model_quality_inference": false
+  },
+  "required_gates": {
+    "reviewed_live_transport": false,
+    "positive_negative_network_controls": false,
+    "credential_separation": false,
+    "deadline_and_quiescent_export": false,
+    "request_session_accounting": false,
+    "frozen_architecture_manifests": false,
+    "independent_mock_parity": false,
+    "grader_artifact_bindings": false,
+    "resource_failure_controls": false,
+    "independent_security_review": false,
+    "operator_scope_authorization": false
+  }
+}
