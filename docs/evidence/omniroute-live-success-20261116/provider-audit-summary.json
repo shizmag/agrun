@@ -1,0 +1,21 @@
+{
+  "audit_rows": 143,
+  "requests": 101,
+  "http_200": 101,
+  "event_types": {
+    "request": 101,
+    "gateway_lifecycle": 21,
+    "gateway_process": 21
+  },
+  "heartbeat_count": 141,
+  "heartbeat_variants": {
+    "early_startup": 116,
+    "timestamped_empty": 25
+  },
+  "known_observed_usage": {
+    "prompt_tokens": 1298702,
+    "completion_tokens": 37324,
+    "total_tokens": 1336026
+  },
+  "accounting_complete_requests": 0
+}

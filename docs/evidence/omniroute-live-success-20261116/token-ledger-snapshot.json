@@ -1,0 +1,14 @@
+{
+  "source": ".agru/luna-live-periodic-fixed-console.log",
+  "scope": "console end-of-run cumulative ledger; includes earlier attempts, not nine-cell-only consumption",
+  "token_ledger": {
+    "total_tokens": 1000000000,
+    "reserved_tokens": 869393920,
+    "request_count": 418,
+    "known_usage_tokens": 4905689,
+    "unknown_usage_count": 1,
+    "unknown_model_count": 1,
+    "unresolved_violations": [],
+    "halted": false
+  }
+}
