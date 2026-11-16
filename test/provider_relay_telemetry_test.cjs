@@ -68,7 +68,7 @@ test('response model is reported identity, not requested route or served attesta
       assert.equal(record.response_model, fixture.model || null);
       assert.equal(record.served_model, null);
       assert.equal(record.run_id, 'trusted-run');
-      assert.deepEqual(record.usage, fixture.interim ? {prompt_tokens: 0, completion_tokens: 0, total_tokens: 0} : fixture.usage?.total_tokens !== undefined ? fixture.usage : null);
+      assert.deepEqual(record.usage, fixture.usage?.total_tokens !== undefined ? fixture.usage : null);
       assert.equal(record.accounting_complete, false);
       assert.ok(record.accounting_issues.includes('served_identity_unattested'));
     }
@@ -84,10 +84,11 @@ test('response model is reported identity, not requested route or served attesta
     assert.equal(records[1].observed_usage, null);
     assert.ok(!JSON.stringify(records).includes('must-not-log'));
     assert.deepEqual(records[3].stream_diagnostic.malformed_reasons, ['usage_invalid_counts']);
-    assert.deepEqual(records[4].stream_diagnostic.malformed_reasons, ['usage_conflict']);
+    assert.deepEqual(records[4].stream_diagnostic.malformed_reasons, []);
     assert.equal(records[4].stream_diagnostic.usage_observation_count, 2);
     assert.deepEqual(records[4].stream_diagnostic.usage_totals_distinct, [0, 18]);
-    assert.equal(records[4].error, 'upstream_protocol');
+    assert.equal(records[4].error, null);
+    assert.equal(records[4].usage_reporting_semantics, 'cumulative_observed');
   } finally {
     await new Promise(resolve => relay.close(resolve));
     await new Promise(resolve => provider.close(resolve));
