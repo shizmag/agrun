@@ -1,6 +1,15 @@
 # Controlled HTTPS pilot
 
-Use the corrected `v2/` freeze. The original top-level freeze is retained as
+The newest execution is `rc/` (`rc-nine-20261116`), with updated DSL usage
+aggregation. Its freeze SHA256 is
+`415017ede1f43a20da44f2c3351e5ac8ad5a906a91b1dd25e888ff7b6a36fbcd`.
+`rc-independent-verification.log` records verification without the original Store;
+`rc-portable-regrade.json` records nine matching fresh-store audited evaluations.
+CLI-observed cache/reasoning zeros in the RC report are explicit installed-client
+observations, not independently reported provider measurements: the simulator
+reports only input, output and total tokens. Accounting remains incomplete.
+
+The corrected `v2/` freeze is also retained. The original top-level freeze is retained as
 historical evidence; it predates frozen-contract and verifier hardening.
 
 Execution `https-bound-nine-20261116` ran installed OpenCode in pinned Docker

@@ -39,6 +39,8 @@ class ComparativeSolversTest < Minitest::Test
       assert_equal false, result.dig("usage", "coverage", "complete")
       assert_nil result.dig("usage", "tokens", "input", "total")
       assert_nil result.dig("usage", "tokens", "reasoning", "known_subtotal")
+      assert_nil result.dig("usage", "tokens", "cache_read", "known_subtotal")
+      assert_nil result.dig("usage", "tokens", "cache_write", "known_subtotal")
       assert_nil result["cost"]
     end
   end

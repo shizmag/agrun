@@ -47,6 +47,7 @@ module AgentRuntime
           "* Different inference-stage counts confound operational quality/resource comparisons. An equal-compute study must freeze aggregate request/token caps across all stages; per-stage limits alone are insufficient. Do not interpret greater inference expenditure as architectural improvement.",
           "* Model nondeterminism remains even with frozen requested inference settings. Provider route identity is not actual served-model attestation.",
           "* Provider telemetry can be incomplete; unknown tokens, reasoning, cache usage and prices prevent complete compute/cost comparisons. Missing usage counts above do not imply every non-null usage record is complete.",
+          "* Client-emitted zero cache/reasoning observations are not independently verified provider measurements. The controlled simulator reports only input, output and total tokens.",
           "* The audited grader is a trusted evaluator with its own environment and trust boundary; solver-directory separation alone is not a security sandbox.",
           "* Role prompts, textual handoffs, deterministic inventory and validation overhead are architecture-specific confounders. No claim is made about all possible agent architectures.",
           "* A hash freeze detects alteration relative to its recorded digest, not authenticity against an attacker able to replace both evidence and digest.", ""]
