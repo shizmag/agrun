@@ -1,0 +1,1050 @@
+[
+  {
+    "request_id": "6e45bd18-9e33-4126-a013-2ceb67203dcb",
+    "trusted_cell_id": "7e29596aecee18ab99c0b72bcc9cd1f3b0bef1b583e16719a8dea5bd3e4831ef",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 6789,
+      "completion_tokens": 9,
+      "total_tokens": 6798
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "25bf9a7a-770e-4290-bcd2-dd0f764a13ac",
+    "trusted_cell_id": "7e29596aecee18ab99c0b72bcc9cd1f3b0bef1b583e16719a8dea5bd3e4831ef",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10583,
+      "completion_tokens": 101,
+      "total_tokens": 10684,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "c5227c57-e0ae-4344-a852-c41440adbc9d",
+    "trusted_cell_id": "7e29596aecee18ab99c0b72bcc9cd1f3b0bef1b583e16719a8dea5bd3e4831ef",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10928,
+      "completion_tokens": 3013,
+      "total_tokens": 13941
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "454055ac-ffe6-4e77-bfb4-daa014713a74",
+    "trusted_cell_id": "7e29596aecee18ab99c0b72bcc9cd1f3b0bef1b583e16719a8dea5bd3e4831ef",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 13962,
+      "completion_tokens": 1758,
+      "total_tokens": 15720,
+      "prompt_tokens_details": {
+        "cached_tokens": 10752
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "dbd4a822-96f6-4f54-bd7a-95ebaa895ebe",
+    "trusted_cell_id": "7e29596aecee18ab99c0b72bcc9cd1f3b0bef1b583e16719a8dea5bd3e4831ef",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [],
+    "response_model": null,
+    "status": 429,
+    "error": "aggregate_budget_exhausted",
+    "usage": null,
+    "accounting_issues": [
+      "usage_not_reported",
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": false
+  },
+  {
+    "request_id": "49bcd7f6-77f2-42b3-97df-fa1ab1bbed26",
+    "trusted_cell_id": "6328a359a670fbdf5c50b5809fd8c18128510a6dc95ec2be036ab94fc116f48f",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 6812,
+      "completion_tokens": 9,
+      "total_tokens": 6821,
+      "prompt_tokens_details": {
+        "cached_tokens": 6656
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "e60fd73f-1712-4b61-9a3f-39435fd28ff4",
+    "trusted_cell_id": "6328a359a670fbdf5c50b5809fd8c18128510a6dc95ec2be036ab94fc116f48f",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10607,
+      "completion_tokens": 18,
+      "total_tokens": 10625
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "fe6561a6-1ef9-408d-83df-05f21aad919c",
+    "trusted_cell_id": "6328a359a670fbdf5c50b5809fd8c18128510a6dc95ec2be036ab94fc116f48f",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10653,
+      "completion_tokens": 18,
+      "total_tokens": 10671,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "e0f9740e-3c0c-41e2-9a00-9d3f91d7658b",
+    "trusted_cell_id": "6328a359a670fbdf5c50b5809fd8c18128510a6dc95ec2be036ab94fc116f48f",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10689,
+      "completion_tokens": 1204,
+      "total_tokens": 11893,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "bf844bac-6dba-444c-ab3f-92b7108d8c9b",
+    "trusted_cell_id": "6328a359a670fbdf5c50b5809fd8c18128510a6dc95ec2be036ab94fc116f48f",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [],
+    "response_model": null,
+    "status": 429,
+    "error": "aggregate_budget_exhausted",
+    "usage": null,
+    "accounting_issues": [
+      "usage_not_reported",
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": false
+  },
+  {
+    "request_id": "ed0660e1-693a-4a77-8f86-148bd308752a",
+    "trusted_cell_id": "eba68826fc46c32a5c5301a7efdd68b9c89815694894353145266a21f10cd0ef",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 6812,
+      "completion_tokens": 9,
+      "total_tokens": 6821
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "e795d4be-4def-41bf-a675-31076a94f8fe",
+    "trusted_cell_id": "eba68826fc46c32a5c5301a7efdd68b9c89815694894353145266a21f10cd0ef",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10607,
+      "completion_tokens": 26,
+      "total_tokens": 10633
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "963f9131-3c58-4dc9-b5d4-9855f0e103d0",
+    "trusted_cell_id": "eba68826fc46c32a5c5301a7efdd68b9c89815694894353145266a21f10cd0ef",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10644,
+      "completion_tokens": 27,
+      "total_tokens": 10671,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "4ba4fd89-38a0-4be9-848a-510d404aa64a",
+    "trusted_cell_id": "eba68826fc46c32a5c5301a7efdd68b9c89815694894353145266a21f10cd0ef",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10699,
+      "completion_tokens": 22,
+      "total_tokens": 10721,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "a2345f62-70dc-43c4-a3b4-ee56d067b9af",
+    "trusted_cell_id": "eba68826fc46c32a5c5301a7efdd68b9c89815694894353145266a21f10cd0ef",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [],
+    "response_model": null,
+    "status": 429,
+    "error": "aggregate_budget_exhausted",
+    "usage": null,
+    "accounting_issues": [
+      "usage_not_reported",
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": false
+  },
+  {
+    "request_id": "1c78bf2e-e089-411e-bcf6-9e69534f5814",
+    "trusted_cell_id": "70151c112de3ae7f16fdc88a76ca540fa77e2f1f01ae8cc6b273918cb7ec1d94",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 6812,
+      "completion_tokens": 9,
+      "total_tokens": 6821,
+      "prompt_tokens_details": {
+        "cached_tokens": 6656
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "b6b1a32e-4e14-47f5-b79b-ad86f9fac69a",
+    "trusted_cell_id": "70151c112de3ae7f16fdc88a76ca540fa77e2f1f01ae8cc6b273918cb7ec1d94",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10607,
+      "completion_tokens": 18,
+      "total_tokens": 10625,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "d63f6912-51b8-4ad8-945d-86c8e70e5188",
+    "trusted_cell_id": "70151c112de3ae7f16fdc88a76ca540fa77e2f1f01ae8cc6b273918cb7ec1d94",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10643,
+      "completion_tokens": 1381,
+      "total_tokens": 12024,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "b35a7845-4812-42f9-9385-cf37f210c8f1",
+    "trusted_cell_id": "70151c112de3ae7f16fdc88a76ca540fa77e2f1f01ae8cc6b273918cb7ec1d94",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 12046,
+      "completion_tokens": 38,
+      "total_tokens": 12084,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "1b58c94d-05fc-486f-9fd9-a136e7186f21",
+    "trusted_cell_id": "6e8cb47c19451fd7861b5e5315d7855eaa9fa40a4054bbb07662a41681b96039",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 6812,
+      "completion_tokens": 9,
+      "total_tokens": 6821,
+      "prompt_tokens_details": {
+        "cached_tokens": 6656
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "4dc50e31-675d-48a9-8471-79a1940cb139",
+    "trusted_cell_id": "6e8cb47c19451fd7861b5e5315d7855eaa9fa40a4054bbb07662a41681b96039",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10607,
+      "completion_tokens": 1046,
+      "total_tokens": 11653,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "b0781ef5-9823-4d71-aab9-547f9383460d",
+    "trusted_cell_id": "6e8cb47c19451fd7861b5e5315d7855eaa9fa40a4054bbb07662a41681b96039",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 11675,
+      "completion_tokens": 156,
+      "total_tokens": 11831,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "baf9f8a8-5529-4729-9563-e044bf45c314",
+    "trusted_cell_id": "6e8cb47c19451fd7861b5e5315d7855eaa9fa40a4054bbb07662a41681b96039",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 6845,
+      "completion_tokens": 9,
+      "total_tokens": 6854,
+      "prompt_tokens_details": {
+        "cached_tokens": 6656
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "d9554f3e-a281-4660-b33b-66ed3e93c4ab",
+    "trusted_cell_id": "6e8cb47c19451fd7861b5e5315d7855eaa9fa40a4054bbb07662a41681b96039",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10640,
+      "completion_tokens": 27,
+      "total_tokens": 10667,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "4c5190fd-8adc-46f5-b926-3fb40df43644",
+    "trusted_cell_id": "6e8cb47c19451fd7861b5e5315d7855eaa9fa40a4054bbb07662a41681b96039",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10695,
+      "completion_tokens": 21,
+      "total_tokens": 10716,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "bedfebef-6d4c-4e26-bdee-7d1c5911bdf9",
+    "trusted_cell_id": "6e8cb47c19451fd7861b5e5315d7855eaa9fa40a4054bbb07662a41681b96039",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10801,
+      "completion_tokens": 23,
+      "total_tokens": 10824,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "4b4f2954-7eb5-4171-8e76-70c8f529e4f1",
+    "trusted_cell_id": "6e8cb47c19451fd7861b5e5315d7855eaa9fa40a4054bbb07662a41681b96039",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [],
+    "response_model": null,
+    "status": 429,
+    "error": "aggregate_budget_exhausted",
+    "usage": null,
+    "accounting_issues": [
+      "usage_not_reported",
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": false
+  },
+  {
+    "request_id": "39caece6-e0e0-4e09-8df6-c2f4c0e757f1",
+    "trusted_cell_id": "ff2b5bfc25962b8680c5d482780cc71361407ca8e32af49f2d06e05bf7069e9e",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 6789,
+      "completion_tokens": 8,
+      "total_tokens": 6797
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "c0d4c58e-9032-49c3-ad9e-8cf86eb61249",
+    "trusted_cell_id": "ff2b5bfc25962b8680c5d482780cc71361407ca8e32af49f2d06e05bf7069e9e",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10583,
+      "completion_tokens": 57,
+      "total_tokens": 10640,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "be64f5c9-e1d2-4b41-a53c-bdefef06542f",
+    "trusted_cell_id": "ff2b5bfc25962b8680c5d482780cc71361407ca8e32af49f2d06e05bf7069e9e",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10668,
+      "completion_tokens": 21,
+      "total_tokens": 10689,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "66157d1b-e2d6-4cde-a0ad-365b2ce654f0",
+    "trusted_cell_id": "ff2b5bfc25962b8680c5d482780cc71361407ca8e32af49f2d06e05bf7069e9e",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10751,
+      "completion_tokens": 3232,
+      "total_tokens": 13983,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "e84e5ff1-5685-4aeb-838a-292d899e335a",
+    "trusted_cell_id": "ff2b5bfc25962b8680c5d482780cc71361407ca8e32af49f2d06e05bf7069e9e",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [],
+    "response_model": null,
+    "status": 429,
+    "error": "aggregate_budget_exhausted",
+    "usage": null,
+    "accounting_issues": [
+      "usage_not_reported",
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": false
+  },
+  {
+    "request_id": "e515a8e1-1cb8-4bf2-9e31-dde657b326e3",
+    "trusted_cell_id": "8650f2d3ffaedcfc8d09cb3323c320d9e3a696a82640a6be4634d6e6c8d80d93",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 6812,
+      "completion_tokens": 10,
+      "total_tokens": 6822,
+      "prompt_tokens_details": {
+        "cached_tokens": 6656
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "151b3d70-0180-4cb7-9545-44d22d964ea0",
+    "trusted_cell_id": "8650f2d3ffaedcfc8d09cb3323c320d9e3a696a82640a6be4634d6e6c8d80d93",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10607,
+      "completion_tokens": 1328,
+      "total_tokens": 11935,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "85befa50-4459-4d4c-9e1c-bb4fc1bdac8e",
+    "trusted_cell_id": "8650f2d3ffaedcfc8d09cb3323c320d9e3a696a82640a6be4634d6e6c8d80d93",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 11957,
+      "completion_tokens": 85,
+      "total_tokens": 12042,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "041dade0-f282-4b1d-bbfb-e637ca08a8d5",
+    "trusted_cell_id": "8b47028b49c669f45ce35e99e3f87fc6805244070b9a63e667658d31523a9b43",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 6789,
+      "completion_tokens": 9,
+      "total_tokens": 6798,
+      "prompt_tokens_details": {
+        "cached_tokens": 6656
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "eac44c8f-254e-46c1-bc57-bbc9c4acb470",
+    "trusted_cell_id": "8b47028b49c669f45ce35e99e3f87fc6805244070b9a63e667658d31523a9b43",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10583,
+      "completion_tokens": 18,
+      "total_tokens": 10601,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "7b375693-e90c-4b77-85d1-8f74c29e7180",
+    "trusted_cell_id": "8b47028b49c669f45ce35e99e3f87fc6805244070b9a63e667658d31523a9b43",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10629,
+      "completion_tokens": 21,
+      "total_tokens": 10650,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "30d89221-ba33-414f-8207-bfb97d6617d1",
+    "trusted_cell_id": "8b47028b49c669f45ce35e99e3f87fc6805244070b9a63e667658d31523a9b43",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10712,
+      "completion_tokens": 2937,
+      "total_tokens": 13649,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "94ccb47b-2f97-49e1-b8be-7da7f1a49caa",
+    "trusted_cell_id": "8b47028b49c669f45ce35e99e3f87fc6805244070b9a63e667658d31523a9b43",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [],
+    "response_model": null,
+    "status": 429,
+    "error": "aggregate_budget_exhausted",
+    "usage": null,
+    "accounting_issues": [
+      "usage_not_reported",
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": false
+  },
+  {
+    "request_id": "08b3b04a-15b3-4739-a3df-83b0f07ff1cc",
+    "trusted_cell_id": "09439088c28fae44b5b6fb69e9bae7bc5f42bf061f80ffa1a70a70e38b06eb6f",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 6812,
+      "completion_tokens": 9,
+      "total_tokens": 6821,
+      "prompt_tokens_details": {
+        "cached_tokens": 6656
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "0357929d-df60-4c4e-a6cc-9f92e2474594",
+    "trusted_cell_id": "09439088c28fae44b5b6fb69e9bae7bc5f42bf061f80ffa1a70a70e38b06eb6f",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10607,
+      "completion_tokens": 18,
+      "total_tokens": 10625,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "a6c7e514-cfe3-424e-8e74-72b60e50870b",
+    "trusted_cell_id": "09439088c28fae44b5b6fb69e9bae7bc5f42bf061f80ffa1a70a70e38b06eb6f",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10681,
+      "completion_tokens": 27,
+      "total_tokens": 10708
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "e3e86902-b8c4-4129-b5d6-a22513e3c087",
+    "trusted_cell_id": "09439088c28fae44b5b6fb69e9bae7bc5f42bf061f80ffa1a70a70e38b06eb6f",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [
+      "gpt-6-luna"
+    ],
+    "response_model": "gpt-6-luna",
+    "status": 200,
+    "error": null,
+    "usage": {
+      "prompt_tokens": 10736,
+      "completion_tokens": 21,
+      "total_tokens": 10757,
+      "prompt_tokens_details": {
+        "cached_tokens": 10496
+      }
+    },
+    "accounting_issues": [
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": true
+  },
+  {
+    "request_id": "81c99547-7300-46de-81e1-26ee70d5033b",
+    "trusted_cell_id": "09439088c28fae44b5b6fb69e9bae7bc5f42bf061f80ffa1a70a70e38b06eb6f",
+    "trusted_stage": 1,
+    "requested_model": "cx/gpt-6-luna-low",
+    "response_models": [],
+    "response_model": null,
+    "status": 429,
+    "error": "aggregate_budget_exhausted",
+    "usage": null,
+    "accounting_issues": [
+      "usage_not_reported",
+      "session_unobservable",
+      "served_identity_unattested"
+    ],
+    "upstream_attempted": false
+  }
+]

@@ -1,0 +1,21 @@
+{
+  "verification": {
+    "integrity_verified": true,
+    "experiment_id": "research-omniroute-token-operational-v1-d03025578fd3e148",
+    "regrades_verified": false,
+    "evidence_kind": "live_provider",
+    "sha256": "f03a94f0f6ea909986bb73fc37aa4cc7753f2504f9b894044db6388533937164"
+  },
+  "report_path": "/Users/vladimirkasterin/ruby/agru/.agru/luna-live-retry-20261116/local-token-comparison/research-omniroute-token-operational-v1-d03025578fd3e148/report.md",
+  "execution_statuses": [
+    "error",
+    "error",
+    "error",
+    "error",
+    "error",
+    "error",
+    "error",
+    "error",
+    "error"
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "schema": "agru-comparative-freeze-v1",
+  "experiment_id": "research-omniroute-token-operational-v1-d03025578fd3e148",
+  "evidence_kind": "live_provider",
+  "report_digest": "6657b0d0f4b1107a8ce681fd22894117adc0fd16e0ca898e62f633c5d3f3f81a",
+  "provider_evidence": true,
+  "checks": [
+    {
+      "cell_id": "7e29596aecee18ab99c0b72bcc9cd1f3b0bef1b583e16719a8dea5bd3e4831ef",
+      "status": "unavailable",
+      "reason": "no persisted submission"
+    },
+    {
+      "cell_id": "6328a359a670fbdf5c50b5809fd8c18128510a6dc95ec2be036ab94fc116f48f",
+      "status": "unavailable",
+      "reason": "no persisted submission"
+    },
+    {
+      "cell_id": "eba68826fc46c32a5c5301a7efdd68b9c89815694894353145266a21f10cd0ef",
+      "status": "unavailable",
+      "reason": "no persisted submission"
+    },
+    {
+      "cell_id": "70151c112de3ae7f16fdc88a76ca540fa77e2f1f01ae8cc6b273918cb7ec1d94",
+      "status": "unavailable",
+      "reason": "no persisted submission"
+    },
+    {
+      "cell_id": "6e8cb47c19451fd7861b5e5315d7855eaa9fa40a4054bbb07662a41681b96039",
+      "status": "unavailable",
+      "reason": "no persisted submission"
+    },
+    {
+      "cell_id": "ff2b5bfc25962b8680c5d482780cc71361407ca8e32af49f2d06e05bf7069e9e",
+      "status": "unavailable",
+      "reason": "no persisted submission"
+    },
+    {
+      "cell_id": "8650f2d3ffaedcfc8d09cb3323c320d9e3a696a82640a6be4634d6e6c8d80d93",
+      "status": "unavailable",
+      "reason": "no persisted submission"
+    },
+    {
+      "cell_id": "8b47028b49c669f45ce35e99e3f87fc6805244070b9a63e667658d31523a9b43",
+      "status": "unavailable",
+      "reason": "no persisted submission"
+    },
+    {
+      "cell_id": "09439088c28fae44b5b6fb69e9bae7bc5f42bf061f80ffa1a70a70e38b06eb6f",
+      "status": "unavailable",
+      "reason": "no persisted submission"
+    }
+  ],
+  "verified": false
+}

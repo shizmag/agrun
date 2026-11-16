@@ -1,0 +1,119 @@
+[
+  {
+    "id": "7e29596aecee18ab99c0b72bcc9cd1f3b0bef1b583e16719a8dea5bd3e4831ef",
+    "solver_id": "single-agent",
+    "repetition": 1,
+    "execution_status": "error",
+    "solver_status": "failure",
+    "error": {
+      "classification": "executor",
+      "message": "\"\\xE2\" from ASCII-8BIT to UTF-8"
+    },
+    "score": null,
+    "verdict": null,
+    "submission_persisted": false,
+    "grading_attempt_count": 0
+  },
+  {
+    "id": "6328a359a670fbdf5c50b5809fd8c18128510a6dc95ec2be036ab94fc116f48f",
+    "solver_id": "fixed-workflow",
+    "repetition": 1,
+    "execution_status": "error",
+    "solver_status": "failure",
+    "error": null,
+    "score": null,
+    "verdict": null,
+    "submission_persisted": false,
+    "grading_attempt_count": 0
+  },
+  {
+    "id": "eba68826fc46c32a5c5301a7efdd68b9c89815694894353145266a21f10cd0ef",
+    "solver_id": "dsl",
+    "repetition": 1,
+    "execution_status": "error",
+    "solver_status": "failure",
+    "error": null,
+    "score": null,
+    "verdict": null,
+    "submission_persisted": false,
+    "grading_attempt_count": 0
+  },
+  {
+    "id": "70151c112de3ae7f16fdc88a76ca540fa77e2f1f01ae8cc6b273918cb7ec1d94",
+    "solver_id": "fixed-workflow",
+    "repetition": 2,
+    "execution_status": "error",
+    "solver_status": "failure",
+    "error": null,
+    "score": null,
+    "verdict": null,
+    "submission_persisted": false,
+    "grading_attempt_count": 0
+  },
+  {
+    "id": "6e8cb47c19451fd7861b5e5315d7855eaa9fa40a4054bbb07662a41681b96039",
+    "solver_id": "dsl",
+    "repetition": 2,
+    "execution_status": "error",
+    "solver_status": "failure",
+    "error": null,
+    "score": null,
+    "verdict": null,
+    "submission_persisted": false,
+    "grading_attempt_count": 0
+  },
+  {
+    "id": "ff2b5bfc25962b8680c5d482780cc71361407ca8e32af49f2d06e05bf7069e9e",
+    "solver_id": "single-agent",
+    "repetition": 2,
+    "execution_status": "error",
+    "solver_status": "failure",
+    "error": {
+      "classification": "executor",
+      "message": "\"\\xE2\" from ASCII-8BIT to UTF-8"
+    },
+    "score": null,
+    "verdict": null,
+    "submission_persisted": false,
+    "grading_attempt_count": 0
+  },
+  {
+    "id": "8650f2d3ffaedcfc8d09cb3323c320d9e3a696a82640a6be4634d6e6c8d80d93",
+    "solver_id": "dsl",
+    "repetition": 3,
+    "execution_status": "error",
+    "solver_status": "failure",
+    "error": null,
+    "score": null,
+    "verdict": null,
+    "submission_persisted": false,
+    "grading_attempt_count": 0
+  },
+  {
+    "id": "8b47028b49c669f45ce35e99e3f87fc6805244070b9a63e667658d31523a9b43",
+    "solver_id": "single-agent",
+    "repetition": 3,
+    "execution_status": "error",
+    "solver_status": "failure",
+    "error": {
+      "classification": "executor",
+      "message": "\"\\xE2\" from ASCII-8BIT to UTF-8"
+    },
+    "score": null,
+    "verdict": null,
+    "submission_persisted": false,
+    "grading_attempt_count": 0
+  },
+  {
+    "id": "09439088c28fae44b5b6fb69e9bae7bc5f42bf061f80ffa1a70a70e38b06eb6f",
+    "solver_id": "fixed-workflow",
+    "repetition": 3,
+    "execution_status": "error",
+    "solver_status": "failure",
+    "error": null,
+    "score": null,
+    "verdict": null,
+    "submission_persisted": false,
+    "grading_attempt_count": 0
+  }
+]
