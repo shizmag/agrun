@@ -94,6 +94,8 @@ test('offline HTTPS enforces TLS, rejects redirects and parses CR-framed SSE', a
     mode = 'redirect';
     const redirected = await exchange(true);
     assert.equal(redirected.status, 502); assert.equal(redirected.record.error, 'upstream_redirect');
+    assert.equal(redirected.record.upstream_attempted, true);
+    assert.equal(redirected.record.upstream_response_status, 307);
     assert.equal(hits, 2);
     mode = 'sse';
     const tool = {type: 'function', function: {name: 'read_file', parameters: {type: 'object'}}};
@@ -179,6 +181,8 @@ test('configuration fails closed and rejected requests are attributable without 
     assert.equal(status, 403);
     assert.equal(records.length, 1);
     assert.equal(records[0].run_id, 'offline');
+    assert.equal(records[0].upstream_attempted, false);
+    assert.equal(records[0].upstream_response_status, null);
     for (const extra of [{}, {messages: []}, {messages: [null]},
       {messages: [{}], stream_options: {include_usage: false}},
       {messages: [{}], tools: {}}, {messages: [{}], temperature: 0.5}]) {
