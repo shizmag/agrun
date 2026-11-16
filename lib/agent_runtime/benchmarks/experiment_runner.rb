@@ -257,6 +257,7 @@ module AgentRuntime
         end
         attempt["raw"] = raw
         normalized = raw.dup
+        normalized["evaluator_execution_status"] = raw["execution_status"] if raw.key?("execution_status")
         status = raw["execution_status"] || raw.fetch("status")
         # Successful evaluator execution is not an available evaluation verdict.
         status = raw["status"] if %w[unavailable error timeout cancelled].include?(raw["status"])

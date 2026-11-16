@@ -4,6 +4,24 @@ require_relative "../lib/agent_runtime/benchmarks/reports"
 require_relative "../lib/agent_runtime/benchmarks/registry"
 
 class ExperimentRunnerTest < Minitest::Test
+  def test_unavailable_verdict_preserves_successful_evaluator_execution_without_score
+    in_tmp do |root|
+      store, runner, manifest = setup_runner(root)
+      adapter = runner.instance_variable_get(:@registry).fetch("fixture")
+      adapter.define_singleton_method(:grade_submission) do |_|
+        {"status" => "unavailable", "execution_status" => "success", "score" => nil, "reason" => "incomplete candidate"}
+      end
+      report = runner.run(manifest: manifest)
+      cell = store.report(report.fetch("run_id")).fetch("cells").find { |entry| entry["submission"] }
+      attempt = cell.fetch("grading_attempts").first
+      assert_equal "success", attempt.fetch("raw").fetch("execution_status")
+      assert_equal "success", attempt.fetch("result").fetch("evaluator_execution_status")
+      assert_equal "unavailable", attempt.fetch("result").fetch("execution_status")
+      assert_nil cell["score"]
+      refute attempt.key?("error")
+    end
+  end
+
   def test_execution_identity_does_not_change_definition_identity
     in_tmp do |root|
       _, runner, manifest = setup_runner(root)

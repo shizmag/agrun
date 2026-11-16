@@ -22,3 +22,19 @@ so it was not copied wholesale without a complete body-level disclosure audit.
 This archive contains selected accounting fields, outcomes, evaluator results,
 and report only; no task repositories or hidden procedure files are copied.
 Parent session supplies cumulative authorization-ledger counters separately.
+
+Portable comparison details: cells `c2c4d1b0cfdea2d77504c7294783b2113617fd947cafbef8ae5081e51ea7d1b4`
+and `96987c79d7be8a72a12b81ed3f2aa64671a1d340768fee23c05e205c70b17295`
+match their original 14/23 and 17/23 results. Cell
+`2a5d0fba603b48225c0b8c5b18b6be754cfd9da84f35f2813edb4ef9fd825d28`
+returns `unavailable`, no score, and does not match an original normalized result
+because the original normalization raised before persisting one. Overall false
+is therefore not disagreement about either available numeric score.
+
+Disclosure audit is incomplete: `experiment.json` includes report and summary
+execution envelopes in addition to submission manifests and frozen contract.
+Those envelopes have not been proven free of embedded agent/provider text.
+Consequently this archive deliberately does not claim to contain a portable,
+byte-identical freeze. The original private freeze is unchanged and remains the
+source used for portable regrade. Exact historical 403 request bodies were not
+recorded, so their rejected message shape cannot be reconstructed honestly.
