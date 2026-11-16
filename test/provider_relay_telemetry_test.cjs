@@ -23,7 +23,8 @@ test('response model is reported identity, not requested route or served attesta
     {model: 'gpt-6.1', usage},
     {model: 'gpt-6.1'},
     {usage},
-    {model: 'gpt-6.1', usage: {prompt_tokens: 11}}
+    {model: 'gpt-6.1', usage: {prompt_tokens: 12, private_text: 'must-not-log',
+      completion_tokens_details: {reasoning_tokens: 4, secret: 'must-not-log'}}}
   ];
   let index = 0;
   const provider = https.createServer({key: fs.readFileSync(key), cert: fs.readFileSync(cert)}, (req, res) => {
@@ -66,6 +67,13 @@ test('response model is reported identity, not requested route or served attesta
     assert.ok(!JSON.stringify(records).includes('private-prompt-never-log'));
     assert.ok(records[1].accounting_issues.includes('usage_not_reported'));
     assert.ok(records[3].accounting_issues.includes('usage_invalid_or_conflicting'));
+    assert.equal(records[3].usage, null);
+    assert.equal(records[3].observed_usage.prompt_tokens, 12);
+    assert.equal(records[3].observed_usage.completion_tokens, null);
+    assert.equal(records[3].observed_usage.total_tokens, null);
+    assert.equal(records[3].observed_usage.completion_tokens_details.reasoning_tokens, 4);
+    assert.equal(records[1].observed_usage, null);
+    assert.ok(!JSON.stringify(records).includes('must-not-log'));
   } finally {
     await new Promise(resolve => relay.close(resolve));
     await new Promise(resolve => provider.close(resolve));
