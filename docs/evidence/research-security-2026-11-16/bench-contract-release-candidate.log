@@ -1,0 +1,10 @@
+[bench-contract] $ bundle exec ruby -Itest -e 'Dir["test/benchmark/registry_test.rb", "test/benchmark/experiment_manifest_test.rb", "test/benchmark/fixture_adapter_test.rb"].sort.each { |file| require_relative file }'
+Run options: --seed 37664
+
+# Running:
+
+...............
+
+Finished in 0.076222s, 196.7936 runs/s, 1889.2183 assertions/s.
+
+15 runs, 144 assertions, 0 failures, 0 errors, 0 skips

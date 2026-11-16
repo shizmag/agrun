@@ -1,5 +1,5 @@
 require_relative "test_helper"
-require "open3"
+require_relative "../lib/agent_runtime/adapters/process_runner"
 
 # Local HTTPS adversary only; never contacts a provider or uses real credentials.
 class ResearchAdversarialControlsTest < Minitest::Test
@@ -59,8 +59,9 @@ class ResearchAdversarialControlsTest < Minitest::Test
       })().then(()=>process.exit(0)).catch(e=>{console.error(e);process.exit(1)});
     JS
     node = ENV.fetch("AGRU_RESEARCH_NODE", File.executable?("/opt/homebrew/bin/node") ? "/opt/homebrew/bin/node" : "node")
-    stdout, stderr, status = Open3.capture3(node, "-e", script, chdir: File.expand_path("..", __dir__))
-    assert status.success?, "#{stdout}\n#{stderr}"
+    result = AgentRuntime::Adapters::ProcessRunner.new.call(argv: [node, "-e", script], cwd: File.expand_path("..", __dir__), timeout: 15)
+    stdout = result.fetch("stdout")
+    assert_equal "success", result.fetch("status"), "#{stdout}\n#{result.fetch("stderr")}"
     %w[truncated oversize stall].each { |scenario| assert_includes stdout, "#{scenario}: rejected/incomplete, credential absent" }
   end
 end

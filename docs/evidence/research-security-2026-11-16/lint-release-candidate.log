@@ -1,0 +1,5 @@
+[lint] $ bundle exec standardrb
+standard: Use Ruby Standard Style (https://github.com/standardrb/standard)
+  lib/agent_runtime/benchmarks/authorized_comparison.rb:15:16: Style/TernaryParentheses: Use parentheses for ternary expressions with complex conditions.
+standard: Run `standardrb --fix` to potentially fix one problem.
+[lint] ERROR task failed

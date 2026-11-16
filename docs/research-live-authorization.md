@@ -69,9 +69,7 @@ No provider request was authorized or performed during this implementation.
 Offline fake-launcher tests cover lifecycle reuse and failure cleanup; they are
 not external provider reachability, billing, or model-quality evidence.
 
-## Historical proposal appendix — legacy LiveCLI only
-
-### Non-authorizing numeric schema example
+## Non-authorizing numeric schema example
 
 This wrapper is deliberately **NOT AUTHORIZED** and is not accepted as an
 authorization file. All numbers are dummy examples, not provider pricing or
@@ -110,6 +108,8 @@ the contract digest must be computed from the reviewed replacement object.
   }
 }
 ```
+
+## Historical proposal appendix — legacy LiveCLI only
 
 The remaining sections describe the older proposal manifests and legacy
 single-cell LiveCLI restrictions, not missing features of the implemented
