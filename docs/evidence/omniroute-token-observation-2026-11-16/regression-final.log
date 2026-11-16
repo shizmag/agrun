@@ -1,0 +1,30 @@
+[test] $ bundle exec ruby -Itest -e 'Dir["test/**/*_test.rb"].sort.each { |file| require_relative file }'
+Run options: --seed 9148
+
+# Running:
+
+SS..........................................................................................................S............./Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+/Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+/Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+/Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+/Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+/Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+........../Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+/Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+/Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+/Users/vladimirkasterin/ruby/agru/.bundle/gems/ruby/4.0.0/gems/sqlite3-2.10.2-arm64-darwin/lib/sqlite3/fork_safety.rb:43: warning: Writable sqlite database connection(s) were inherited from a forked process. This is unsafe and the connections are being closed to prevent possible data corruption. Please close writable sqlite database connections before forking.
+..............SSSSSSSSSS.............................REJECT missing release (outer checksum recomputed)
+REJECT corrupt release (outer checksum recomputed)
+REJECT different valid release (outer checksum recomputed)
+REJECT duplicate checks (outer checksum recomputed)
+REJECT wrong named pair (outer checksum recomputed)
+REJECT missing submission (outer checksum recomputed)
+REJECT duplicate submission (outer checksum recomputed)
+REJECT byte tamper (original checksum)
+........SSSSSSSSSSSSSSSS........S.........................................S....................................................................SS.........................................S.........................SSS...............................................................................................................................................................................................................................................S.SS..S.SS.S...S..................S.S.S...S.........................S.....SSSSSSSSSSSSSSSSSSSSSSSS......................................................................................................................................................................................................................S.......
+
+Finished in 106.114420s, 9.0374 runs/s, 53.9229 assertions/s.
+
+959 runs, 5722 assertions, 0 failures, 0 errors, 75 skips
+
+You have skipped tests. Run with --verbose for details.

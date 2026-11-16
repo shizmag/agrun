@@ -1,0 +1,30 @@
+{
+  "git_revision": "2db067f62c209ecf5c03ab12fe214553759337b5",
+  "image": "sha256:cbc8bd81c7ede30f09de318df230452f4d3a05e1e8aa9f08a4d46b7f24f437f1",
+  "implementation_sha256": {
+    "scripts/omniroute_token_smoke.rb": "d745830688bd32bdbe42783d5a3114ac0c0c08e86e507d3482102f879bd78187",
+    "scripts/local_gateway_smoke.cjs": "55e675998c0df87f08329d2db99e8bb5b190c511002d1109cebb948acc92bf36",
+    "lib/agent_runtime/execution/provider_relay.cjs": "a977b5505e48b942884b899bb42ccd0085df7a850ba8530234a13a6b2de41a99",
+    "lib/agent_runtime/execution/local_gateway_launcher.cjs": "4345e533ef897881633970368a3461fbefaf0db0e3a19a9c67c92b57a78c34d2",
+    "lib/agent_runtime/execution/local_gateway_stdio.cjs": "938fa186df0e68643cfb0cf91a3bb2e1e8226ac4faeed5a67f8c83f81025310d",
+    "lib/agent_runtime/execution/loopback_bridge.cjs": "1aec59ffced180da414d17f579dfdec235024d17891f021c080dfbdcb0386f18"
+  },
+  "intent_digest": "6181aa58919012b51d9e3da65175e106a540a0fca602b66d3d71368206ba8e35",
+  "ledger_path": "/Users/vladimirkasterin/ruby/agru/.agru/authorizations/omniroute-luna6-20261116.tokens.jsonl",
+  "tool_policy": {
+    "allow_tools": true,
+    "schema_validation": "strict bounded",
+    "requested_disabled": [
+      "*",
+      "skill"
+    ]
+  },
+  "limits": {
+    "requests": 1,
+    "body_bytes": 1048576,
+    "reserved_input_tokens": 2048576,
+    "completion_tokens": 128,
+    "aggregate_reserved_tokens": 1000000000,
+    "timeout_seconds": 120
+  }
+}
