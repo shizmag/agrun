@@ -85,4 +85,10 @@ Dir.mktmpdir("agru-trusted-") do |trusted|
 end
 puts JSON.generate({evidence: evidence, request_id: id, solver_executed: true,
                     upstream_response_succeeded: records.any? { |r| r.dig("audit", "status") == 200 },
-                    upstream_attempt_status: (records.any? { |r| r.dig("audit", "status") == 200 }) ? "response_observed" : "unknown"})
+                    upstream_attempt_status: if records.any? { |r| r.dig("audit", "upstream_attempted") == true }
+                                               "attempted"
+                                             elsif !records.empty? && records.all? { |r| r.dig("audit", "upstream_attempted") == false }
+                                               "not_attempted"
+                                             else
+                                               "unknown"
+                                             end})
