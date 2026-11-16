@@ -130,8 +130,13 @@ module AgentRuntime
       end
 
       def result(status, stdout, stderr, exit_code, started, truncated = false, stdout_truncated = false, stderr_truncated = false)
-        {"status" => status, "stdout" => stdout.dup.force_encoding(Encoding::UTF_8).scrub,
-         "stderr" => stderr.dup.force_encoding(Encoding::UTF_8).scrub, "exit_code" => exit_code, "truncated" => truncated,
+        streams = {"stdout" => stdout, "stderr" => stderr}
+        invalid = streams.reject { |_, bytes| bytes.dup.force_encoding(Encoding::UTF_8).valid_encoding? }
+        evidence = invalid.transform_values { |bytes| [bytes].pack("m0") }
+        {"status" => invalid.empty? ? status : "failure", "stdout" => invalid.key?("stdout") ? "" : stdout.dup.force_encoding(Encoding::UTF_8),
+         "stderr" => invalid.key?("stderr") ? "" : stderr.dup.force_encoding(Encoding::UTF_8),
+         "encoding_error" => invalid.empty? ? nil : "invalid_utf8_output", "binary_output_base64" => evidence,
+         "exit_code" => exit_code, "truncated" => truncated,
          "stdout_truncated" => stdout_truncated, "stderr_truncated" => stderr_truncated,
          "duration" => Process.clock_gettime(Process::CLOCK_MONOTONIC) - started}
       end

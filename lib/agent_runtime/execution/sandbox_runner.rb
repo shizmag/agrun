@@ -127,7 +127,16 @@ module AgentRuntime
               output = SandboxArchiveTransport.new.call(argv: ["docker", "exec", "--user", "0:0", name, "/bin/cat", "/control/agent.#{stream}"], cwd: root, path: path, deadline: deadline, max_bytes: 1_048_576)
               raise SandboxDeadline::Exceeded.new(status: output["status"], phase: "export #{stream}") if %w[timeout cancelled].include?(output["status"])
               require_success!(output, "agent #{stream}")
-              result[stream] = File.binread(path)
+              bytes = File.binread(path)
+              text = bytes.dup.force_encoding(Encoding::UTF_8)
+              if text.valid_encoding?
+                result[stream] = text
+              else
+                result["status"] = "failure"
+                result["error"] = "invalid_utf8_output"
+                (result["binary_output_base64"] ||= {})[stream] = [bytes].pack("m0")
+                result[stream] = ""
+              end
             end
             if result["status"] == "success"
               finished = docker(["docker", "inspect", name], root, 10, cancellation, deadline: deadline)

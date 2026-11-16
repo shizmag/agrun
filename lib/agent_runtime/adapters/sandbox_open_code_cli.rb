@@ -27,11 +27,16 @@ module AgentRuntime
           exit_code: execution["exit_code"], process_status: status, identity: @launch.to_h)
         normalized = Execution::Usage.normalize(requests: observations.fetch("requests"), complete: observations.dig("completion", "accounting_complete") == true)
         observations["usage"] = normalized
+        diagnostic = if status != "success"
+          provider_status = execution.fetch("stdout", "").scan(/Provider request failed with HTTP (\d{3})/).flatten.last
+          {"type" => "sandbox", "message" => provider_status ? "provider_http_#{provider_status}" : execution["error"] || "sandbox_execution_#{status}"}
+        end
         Result.new(status: status, outputs: (status == "success") ? {"repository" => exported} : {},
           duration: execution["duration"], usage: normalized["usage"], session_id: observations["session_id"],
-          error: (status == "blocked") ? {"type" => "sandbox", "message" => "sandbox_evidence_incomplete"} : nil,
+          error: (status == "blocked") ? {"type" => "sandbox", "message" => "sandbox_evidence_incomplete"} : diagnostic,
           logs: {"sandbox" => evidence, "launch" => @launch.to_h, "execution" => observations,
                  "partial_export" => (status == "success") ? nil : execution["export"],
+                 "binary_output_base64" => execution["binary_output_base64"],
                  "stdout" => execution["stdout"], "stderr" => execution["stderr"], "error" => execution["error"]}, retry_safe: false)
       rescue ArgumentError, KeyError, SystemCallError => error
         Result.new(status: "blocked", outputs: {}, error: {"type" => "sandbox", "message" => error.class.name}, logs: {}, retry_safe: false)
