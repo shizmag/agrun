@@ -57,6 +57,10 @@ test('response model is reported identity, not requested route or served attesta
       assert.equal(record.requested_model, 'cx/gpt-6-luna-low');
       assert.equal(record.upstream_attempted, true);
       assert.equal(record.upstream_response_status, 200);
+      assert.equal(record.stream_diagnostic.streaming, true);
+      assert.equal(record.stream_diagnostic.seen_done, true);
+      assert.equal(record.stream_diagnostic.finish_seen, false);
+      assert.equal(record.stream_diagnostic.stream_ended, true);
       assert.equal(record.provider_route, 'OmniRoute');
       assert.equal(record.response_model, fixture.model || null);
       assert.equal(record.served_model, null);
