@@ -32,6 +32,8 @@ module AgentRuntime
           artifact = @store.put(type: "repository", value: Solvers.task_repository(task, workspace), run_id: run_id, step_id: "input", attempt: 0)
           report = {"run_id" => run_id, "status" => "running", "started_at" => Time.now.utc.iso8601(6), "steps" => {}, "outputs" => {}}
           @store.save_report(report)
+          tracing = @store.tracing
+          architecture_trace = tracing&.start("architecture", attributes: {"run_id" => run_id, "architecture" => "fixed-workflow", "planned_steps" => %w[planner coder reviewer]})
           %w[planner coder reviewer].each do |role|
             directory = File.join(workspace, "workflow", role)
             repository = File.join(directory, "repository")
@@ -43,6 +45,11 @@ module AgentRuntime
             request = Request.new(run_id: run_id, step_id: role, attempt: 1, inputs: {"repository" => repository}, config: config,
               workspace: directory, timeout: budget.fetch("timeout", 120), cancellation: Cancellation.new)
             @store.save_attempt(run_id, role, 1, {"attempt" => 1, "status" => "running", "request" => {"config" => config, "inputs" => {"repository" => artifact}}})
+            stage_trace = tracing&.start("stage", parent: architecture_trace, attributes: {"run_id" => run_id, "stage" => role, "input_contract" => {"repository" => "preceding.repository"}, "output_contract" => {"repository" => "repository"}})
+            attempt_trace = tracing&.start("attempt", parent: stage_trace, attributes: {"run_id" => run_id, "stage" => role, "attempt" => 1})
+            tracing&.handoff(parent: attempt_trace, inputs: {"repository" => artifact}, contract: {"repository" => "repository"}, direction: "input")
+            tracing&.checkpoint(parent: attempt_trace, repository: repository, run_id: run_id, stage: role, attempt: 1, boundary: "before")
+            request.config["trace_attempt_id"] = attempt_trace if attempt_trace
             begin
               result = Timeout.timeout(adapter.remaining + 1) { adapter.execute(request) }
             rescue Timeout::Error
@@ -58,6 +65,13 @@ module AgentRuntime
             end
             artifact = @store.put(type: "repository", value: result.outputs&.fetch("repository", nil) || repository, run_id: run_id, step_id: role, attempt: 1, inputs: [artifact.fetch("id")], metadata: {"partial" => result.status != "success"})
             outputs = {"repository" => artifact}
+            if tracing
+              tracing.execution(parent: attempt_trace, logs: result.logs, error: result.error)
+              tracing.handoff(parent: attempt_trace, inputs: outputs, contract: {"repository" => "repository"}, direction: "output", validation: result.error)
+              tracing.checkpoint(parent: attempt_trace, repository: @store.value(artifact), run_id: run_id, stage: role, attempt: 1, boundary: "after")
+              tracing.finish(attempt_trace, result.status, data.slice("usage", "duration", "error"))
+              tracing.finish(stage_trace, result.status)
+            end
             data["partial_outputs"] = outputs unless result.status == "success"
             @store.save_attempt(run_id, role, 1, data)
             report["steps"][role] = {"status" => result.status, "attempts" => [data], "outputs" => (result.status == "success") ? outputs : {}}
@@ -67,6 +81,7 @@ module AgentRuntime
           end
           report["outputs"] = {"repository" => artifact} if report["status"] == "success"
           report["finished_at"] = Time.now.utc.iso8601(6)
+          tracing&.finish(architecture_trace, report["status"], {"actual_steps" => report["steps"].keys})
           @store.save_report(report)
           summary = Execution::Summary.from_run(store: @store, run_id: run_id)
           {"status" => report["status"], "repository" => @store.value(artifact), "partial_repository_artifact" => (artifact unless report["status"] == "success"),

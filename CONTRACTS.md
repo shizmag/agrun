@@ -261,3 +261,28 @@ as `invalid_utf8_output`, not successful replacement-character text. The affecte
 text field is empty and its exact bytes are retained in `binary_output_base64`
 under the stream name. Evidence consumers must not interpret empty text in that
 case as absence of output. Capture truncation remains separately recorded.
+
+## Research tracing (M2)
+
+Tracing is opt-in and host-owned. `AgentRuntime::Store#tracing` may hold a
+`Tracing::Session`; `Request` and `Result` contracts are unchanged. Runtime,
+fixed-workflow and experiment instrumentation preserve the existing execution
+status versus grading-verdict distinction. A regrade is a new grading observation
+linked to the original cell, not a child execution that retroactively extends it.
+
+`Tracing::Store` uses an independently versioned SQLite WAL database and compressed,
+SHA-256-addressed JSON blobs. Schema migrations are transactional. Trace IDs identify
+observations, not model identity attestations. Native OpenCode message IDs are not
+provider request IDs; unproven tool/request associations remain explicitly unknown.
+Verification separates structural integrity (`valid`) from observation completeness
+(`complete`). A valid historical or sanitized archive can remain incomplete.
+Export/import transport valid incomplete evidence; only verify/analyze gate
+completeness. Final verification must run after writers have quiesced.
+
+Raw capture requires explicit host configuration/CLI authorization. The default
+records metadata only. Raw bodies, native tool content and repository snapshots
+remain sensitive even after recursive credential-key redaction: free-text secrets
+cannot be reliably removed. Provider headers are never captured. Raw export is
+separately opt-in; default export omits raw blobs and marks unavailable references.
+Local filesystem permission separation is not a sandbox, and evidence digests
+prove byte identity rather than authenticity against a malicious host.

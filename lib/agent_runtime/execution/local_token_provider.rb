@@ -14,8 +14,10 @@ module AgentRuntime
     class LocalTokenProvider
       IMAGE = "node@sha256:d6aa754f16b3197301076f047b5def2f02ea1dbbc2ca920407d46d7ec7f87b20".freeze
       attr_reader :process_diagnostics
-      def initialize(root:, ledger:, credential:, audit_path:, offline: false)
+      def initialize(root:, ledger:, credential:, audit_path:, offline: false, trace_capture: nil)
         @root, @ledger, @credential, @audit_path = root, ledger, credential, audit_path
+        @trace_capture = trace_capture
+        @capture_directories = []
         @stage = 0
         @offline = offline
       end
@@ -34,6 +36,13 @@ module AgentRuntime
                                 "route" => "local-token", "identity" => {"run_id" => cell_id, "architecture" => "local-token", "step_id" => attempt_id, "attempt" => @stage},
                                 "timeoutMs" => 110000, "maxBodyBytes" => 1048576, "allowTools" => true, "allowNoTools" => true,
                                 "inference" => {"max_completion_tokens" => 32000, "stream" => true, "stream_options" => {"include_usage" => true}}}}
+        if @trace_capture
+          directory = File.realpath(@trace_capture.fetch(:directory))
+          raise ArgumentError, "trace capture directory must be private" unless File.directory?(directory) && (File.stat(directory).mode & 0o077).zero?
+          @capture_directories << Dir.mktmpdir("provider-", directory)
+          config["gateway"]["identity"]["trace_id"] = @trace_capture[:trace_id] if @trace_capture[:trace_id]
+          config["gateway"]["traceCapture"] = {"directory" => @capture_directories.last, "rawAuthorized" => @trace_capture[:raw_authorized] == true}
+        end
         File.write(File.join(@directory, "credential"), @credential, perm: 0o600)
         path = File.join(@directory, "config.json")
         File.write(path, JSON.generate(config), perm: 0o600)
@@ -62,6 +71,12 @@ module AgentRuntime
       rescue
         close
         raise
+      end
+
+      def trace_capture_records
+        @capture_directories.flat_map do |directory|
+          Dir.glob(File.join(directory, "*.json")).sort.map { |path| JSON.parse(File.read(path)) }
+        end
       end
 
       def close

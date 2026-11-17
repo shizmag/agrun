@@ -57,6 +57,8 @@ module AgentRuntime
         end
         report.merge!(execution_metadata(manifest, report.fetch("cells")))
         @store.save_report(report)
+        tracing = @store.tracing
+        experiment_trace = tracing&.start("experiment", attributes: {"experiment_id" => report["run_id"], "manifest_digest" => report["manifest_digest"], "planned_cells" => report["cells"].map { |cell| cell["id"] }})
         report.fetch("cells").each do |cell|
           if cancellation&.cancelled?
             cell["status"] = cell["execution_status"] = "cancelled"
@@ -64,8 +66,16 @@ module AgentRuntime
             @store.save_report(report)
             next
           end
-          execute_cell(report, cell, adapter)
+          if tracing
+            attrs = {"experiment_id" => report["run_id"], "cell_id" => cell["id"], "architecture" => cell["solver_id"], "repetition" => cell["repetition"], "configured_model" => cell["model_id"]}
+            cell_trace = tracing.start("cell", parent: experiment_trace, attributes: attrs)
+            tracing.within(cell_trace, attrs) { execute_cell(report, cell, adapter) }
+            tracing.finish(cell_trace, cell["execution_status"], {"submission" => cell["submission"], "partial_submission" => cell["partial_submission"], "grading_attempts" => cell["grading_attempts"], "score" => cell["score"], "verdict" => cell["verdict"], "error" => cell["error"]})
+          else
+            execute_cell(report, cell, adapter)
+          end
         end
+        tracing&.finish(experiment_trace, "completed", {"actual_cells" => report["cells"].map { |cell| cell["id"] }})
         @store.report(report.fetch("run_id"))
       end
 
@@ -82,7 +92,16 @@ module AgentRuntime
         end
         validate_identity!(report.fetch("manifest"), adapter)
         task = Adapter.public_task(adapter.load_task(cell.fetch("task_id")))
-        grade(report, cell, adapter, task, limits || report.fetch("manifest").fetch("limits"), regrade: true)
+        if (tracing = @store.tracing)
+          cell_trace = tracing.trace.entities("kind" => "cell", "experiment_id" => experiment_id, "cell_id" => cell_id).last
+          if cell_trace
+            tracing.within(nil, cell_trace.fetch("attributes").merge("linked_cell_trace" => cell_trace.fetch("id"))) { grade(report, cell, adapter, task, limits || report.fetch("manifest").fetch("limits"), regrade: true) }
+          else
+            grade(report, cell, adapter, task, limits || report.fetch("manifest").fetch("limits"), regrade: true)
+          end
+        else
+          grade(report, cell, adapter, task, limits || report.fetch("manifest").fetch("limits"), regrade: true)
+        end
         @store.report(experiment_id)
       end
 
@@ -232,6 +251,7 @@ module AgentRuntime
           cell["error"] = nil
         end
         attempt = {"attempt_id" => SecureRandom.uuid, "execution_status" => "not_started"}
+        grading_trace = @store.tracing&.start("grading", attributes: {"grading_attempt_id" => attempt["attempt_id"], "regrade" => regrade, "submission" => cell["submission"]})
         (cell["grading_attempts"] ||= []) << attempt
         transition(report, cell, "grading")
         raise Error, "missing original grading request" if regrade && !original_request
@@ -282,7 +302,9 @@ module AgentRuntime
         cell["score"] = (status == "success") ? score : nil
         cell["verdict"] = nil unless status == "success"
         transition(report, cell, "completed", execution_status: status)
+        @store.tracing&.finish(grading_trace, status, {"request" => request, "result" => normalized, "implementation_fingerprint" => attempt["implementation_fingerprint"]})
       rescue => error
+        @store.tracing&.finish(grading_trace, "failure", {"error" => error.message}) if grading_trace
         attempt["execution_status"] = "error" if attempt
         attempt["error"] = "#{error.class}: #{error.message}" if attempt
         cell["error"] = "#{error.class}: #{error.message}"

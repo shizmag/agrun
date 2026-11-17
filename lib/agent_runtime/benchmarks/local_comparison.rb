@@ -1,6 +1,8 @@
 require_relative "authorized_comparison"
 require_relative "../execution/local_token_provider"
 require_relative "scientific_report"
+require_relative "../tracing/session"
+require "tmpdir"
 
 module AgentRuntime
   module Benchmarks
@@ -51,7 +53,7 @@ module AgentRuntime
         @test_ledger_path = test_ledger_path
       end
 
-      def run(authorization_path:, credential_file:, allow_live: false)
+      def run(authorization_path:, credential_file:, allow_live: false, trace_root: nil, raw_content: false)
         raise ArgumentError, "explicit local live opt-in required" unless allow_live
         authorization = JSON.parse(File.read(authorization_path))
         raise ArgumentError, "local token authorization mismatch" unless authorization.fetch("bindings") == self.class.bindings(assets: @assets)
@@ -73,17 +75,25 @@ module AgentRuntime
         directory = File.join(@root, "local-token-comparison", execution_id)
         FileUtils.mkdir_p(directory, mode: 0o700)
         store = Store.new(File.join(@root, "store"))
+        trace_store = Tracing::Store.new(trace_root, raw_content: raw_content) if trace_root
+        store.tracing = Tracing::Session.new(trace: trace_store, artifacts: store, raw_content: raw_content) if trace_store
         grader = NL2RepoAuditedGrader.new(store: store, root: @assets)
         adapter = Adapters::NL2Repo.new(store: store, root: @assets, audited_grader: grader)
         registry = Registry.new
         registry.register("nl2repo", adapter)
-        factory = @provider_factory ? -> { @provider_factory.call(ledger_options, directory) } : -> {
-          Execution::LocalTokenProvider.new(root: ROOT, ledger: ledger_options,
-            credential: credential, audit_path: File.join(directory, "provider-audit.jsonl"))
+        factory = ->(trace_capture: nil) {
+          # Keep the legacy injected factory signature when tracing is disabled.
+          capture_options = trace_capture ? {trace_capture: trace_capture} : {}
+          if @provider_factory
+            @provider_factory.call(ledger_options, directory, **capture_options)
+          else
+            Execution::LocalTokenProvider.new(root: ROOT, ledger: ledger_options,
+              credential: credential, audit_path: File.join(directory, "provider-audit.jsonl"), **capture_options)
+          end
         }
         solvers = AuthorizedComparison::ARMS.to_h do |arm|
           runtime_adapter = AttemptAdapter.new(provider_factory: factory, directory: directory,
-            model_profile: manifest.data.fetch("models").first.fetch("model_profile"))
+            model_profile: manifest.data.fetch("models").first.fetch("model_profile"), tracing: store.tracing)
           solver = case arm
           when "single-agent" then Solvers::OpenCode.new(store: store, adapter: runtime_adapter, live: true)
           when "fixed-workflow" then Solvers::FixedWorkflow.new(store: store, adapter: runtime_adapter, live: true)
@@ -103,11 +113,13 @@ module AgentRuntime
         File.write(File.join(directory, "report.md"), ScientificReport.new(store: store).render(experiment_id: execution_id, evidence_kind: @provider_factory ? "local_transport_simulation" : "live_provider"))
         File.write(File.join(directory, "report.json"), JSON.pretty_generate(report) + "\n")
         {"execution_id" => execution_id, "verification" => path, "bundle" => bundle, "report" => report, "token_ledger" => ledger.snapshot}
+      ensure
+        trace_store&.close
       end
 
       class AttemptAdapter
-        def initialize(provider_factory:, directory:, model_profile:)
-          @factory, @directory, @profile = provider_factory, directory, model_profile
+        def initialize(provider_factory:, directory:, model_profile:, tracing: nil)
+          @factory, @directory, @profile, @tracing = provider_factory, directory, model_profile, tracing
         end
 
         def execute(request)
@@ -121,7 +133,14 @@ module AgentRuntime
           request.config = request.config.merge("prompt" => request.config.fetch("prompt") +
             "\n\nYou have at most #{steps} inference turns including your final response. Batch independent tools in one turn. Reserve the final turn for an honest handoff; do not claim tests or changes not actually completed.")
           request.timeout = [request.timeout || remaining, remaining].min
-          provider = @factory.call
+          if @tracing
+            capture_directory = Dir.mktmpdir("provider-capture-", @tracing.trace.root)
+            capture = {directory: capture_directory, raw_authorized: @tracing.raw_content,
+                       trace_id: request.config["trace_attempt_id"]}
+            provider = @factory.call(trace_capture: capture)
+          else
+            provider = @factory.call
+          end
           stage_options = provider.is_a?(Execution::LocalTokenProvider) ? {timeout: request.timeout} : {}
           relay = provider.start(attempt_id: "#{request.run_id}:#{request.step_id}:#{request.attempt}",
             cell_id: cell_id, model_profile: @profile, **stage_options)
@@ -138,7 +157,15 @@ module AgentRuntime
           File.open(File.join(@directory, "sandbox-diagnostics.jsonl"), "a", 0o600) { |file| file.puts(JSON.generate("cell_id" => cell_id, "status" => result.status, "error" => result.error, "logs" => result.logs)) }
           result
         ensure
-          provider&.close
+          begin
+            provider&.close
+          ensure
+            if @tracing && (attempt_id = request.config&.fetch("trace_attempt_id", nil))
+              records = provider&.respond_to?(:trace_capture_records) ? provider.trace_capture_records : []
+              @tracing.provider_records(parent: attempt_id, records: records)
+              @tracing.event("capture_gap", parent: attempt_id, attributes: {"reason" => "provider_capture_unavailable"}) if records.empty?
+            end
+          end
         end
       end
 

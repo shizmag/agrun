@@ -11,7 +11,10 @@ module AgentRuntime
       IMAGE = "node@sha256:d6aa754f16b3197301076f047b5def2f02ea1dbbc2ca920407d46d7ec7f87b20".freeze
       attr_reader :relay_volume, :image
 
-      def initialize
+      def initialize(trace_capture: nil, scenario: nil)
+        raise ArgumentError, "unknown simulated provider scenario" unless [nil, "tracing_tools", :tracing_tools].include?(scenario)
+        @scenario = scenario&.to_s
+        @trace_capture = trace_capture
         @image = IMAGE
         @prefix = "agru-simulated-#{SecureRandom.hex(8)}"
         @relay_volume = "#{@prefix}-relay"
@@ -47,6 +50,17 @@ module AgentRuntime
                   model: model, route: "simulated-offline", timeoutMs: 10000, identity: identity,
                   inference: {max_completion_tokens: 32000, stream: true, stream_options: {include_usage: true}},
                   allowTools: true, credentialFile: "/secret/credential", caFile: "/secret/cert.pem"}
+        config[:simulatorScenario] = @scenario if @scenario
+        trace_mount = []
+        if @trace_capture
+          directory = File.realpath(@trace_capture.fetch(:directory))
+          raise ArgumentError, "trace capture directory must be private" unless File.directory?(directory) && (File.stat(directory).mode & 0o077).zero?
+          # This private host directory is never mounted in solver space.
+          @capture_directory = Dir.mktmpdir("provider-", directory)
+          config[:traceCapture] = {directory: "/trace", rawAuthorized: @trace_capture[:raw_authorized] == true}
+          config[:identity][:trace_id] = @trace_capture[:trace_id] if @trace_capture[:trace_id]
+          trace_mount = ["--mount", "type=bind,src=#{@capture_directory},dst=/trace"]
+        end
         {"credential" => "simulated-only-#{SecureRandom.hex(16)}", "key.pem" => key.to_pem,
          "cert.pem" => cert.to_pem, "config.json" => JSON.generate(config)}.each do |name, value|
           File.write(File.join(@root, name), value, perm: 0o444)
@@ -54,12 +68,13 @@ module AgentRuntime
         command("volume", "create", @relay_volume)
         @volumes << @relay_volume
         command(*(base + ["--rm", "--cap-add=CHOWN", "-v", "#{@relay_volume}:/relay", @image,
-          "node", "-e", "require('fs').chmodSync('/relay',0o700);require('fs').chownSync('/relay',65534,65534)"]))
+          "node", "-e", @capture_directory ? "require('fs').chmodSync('/relay',0o711);require('fs').chownSync('/relay',0,0)" : "require('fs').chmodSync('/relay',0o700);require('fs').chownSync('/relay',65534,65534)"]))
         name = "#{@prefix}-relay"
         @containers << name
-        command(*(base + ["-d", "--name", name, "--user", "65534:65534", "-v", "#{@relay_volume}:/relay",
+        command(*(base + (@capture_directory ? ["--cap-add=CHOWN", "--cap-add=DAC_OVERRIDE"] : []) + ["-d", "--name", name, "--user", @capture_directory ? "0:0" : "65534:65534", "-v", "#{@relay_volume}:/relay",
           "--mount", "type=bind,src=#{@root},dst=/secret,readonly",
-          "--mount", "type=bind,src=#{File.join(__dir__, "provider_relay.cjs")},dst=/provider_relay.cjs,readonly",
+          *trace_mount,
+          *%w[provider_relay.cjs trace_capture.cjs observed_usage.cjs cumulative_usage.cjs gateway_heartbeat.cjs].flat_map { |file| ["--mount", "type=bind,src=#{File.join(__dir__, file)},dst=/#{file},readonly"] },
           "--mount", "type=bind,src=#{File.join(__dir__, "simulated_provider.cjs")},dst=/simulator.cjs,readonly",
           @image, "node", "/simulator.cjs"]))
         deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + 15
@@ -76,6 +91,12 @@ module AgentRuntime
       def logs(role = "relay")
         raise ArgumentError, "unknown simulator role" unless role == "relay"
         command("logs", "#{@prefix}-relay")
+      end
+
+      # Private host evidence remains available before and after relay cleanup.
+      def trace_capture_records
+        return [] unless @capture_directory
+        Dir.glob(File.join(@capture_directory, "*.json")).sort.map { |path| JSON.parse(File.read(path)) }
       end
 
       def close

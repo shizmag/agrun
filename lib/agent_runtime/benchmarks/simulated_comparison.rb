@@ -53,15 +53,18 @@ module AgentRuntime
       private_constant :Runner
 
       class AttemptAdapter
-        def initialize(root:, image:, evidence:)
-          @root, @image, @evidence = root, image, evidence
+        def initialize(root:, image:, evidence:, tracing: nil)
+          @root, @image, @evidence, @tracing = root, image, evidence, tracing
         end
 
         def execute(request)
           attempt_id = "#{request.run_id}:#{request.step_id}:#{request.attempt}"
           report_path = File.join(@root, "active-cell.json")
           cell_id = File.file?(report_path) ? JSON.parse(File.read(report_path)).fetch("cell_id") : request.run_id
-          provider = Execution::SimulatedProvider.new
+          capture_directory = File.join(@root, "provider-captures", Digest::SHA256.hexdigest(attempt_id))
+          FileUtils.mkdir_p(capture_directory, mode: 0o700) if @tracing
+          capture = @tracing ? {directory: capture_directory, raw_authorized: @tracing.raw_content, trace_id: request.config["trace_attempt_id"]} : nil
+          provider = Execution::SimulatedProvider.new(trace_capture: capture, scenario: @tracing ? "tracing_tools" : nil)
           provider.start(attempt_id: attempt_id, cell_id: cell_id, model_profile: "cx/gpt-6-luna-low")
           helper = File.expand_path("../execution/loopback_bridge.cjs", __dir__)
           policy = Execution::SandboxRunner::MockRelayPolicy.new(volume: provider.relay_volume, helper: helper, helper_sha256: Digest::SHA256.file(helper).hexdigest)
@@ -73,6 +76,11 @@ module AgentRuntime
         ensure
           if provider
             begin
+              if @tracing && request.config["trace_attempt_id"]
+                records = provider.trace_capture_records
+                @tracing.provider_records(parent: request.config.fetch("trace_attempt_id"), records: records)
+                @tracing.event("capture_gap", parent: request.config.fetch("trace_attempt_id"), attributes: {"reason" => "provider_capture_unavailable"}) if records.empty?
+              end
               logs = provider.logs("relay")
               @evidence << {"attempt_id" => attempt_id, "cell_id" => cell_id, "runtime_run_id" => request.run_id, "relay_log" => logs, "relay_log_sha256" => Digest::SHA256.hexdigest(logs)}
             ensure
@@ -95,12 +103,14 @@ module AgentRuntime
          "evidence_kind" => "simulated_relay", "error" => result["stderr"]}
       end
 
-      def run(root:, assets:, destination:, experiment_id: "simulated-comparison", image: IMAGE)
+      def run(root:, assets:, destination:, experiment_id: "simulated-comparison", image: IMAGE, trace_root: nil, raw_content: false)
         root = File.expand_path(root)
         FileUtils.mkdir_p(root)
         store = Store.new(File.join(root, "store"))
+        trace_store = Tracing::Store.new(trace_root, raw_content: raw_content) if trace_root
+        store.tracing = Tracing::Session.new(trace: trace_store, artifacts: store, raw_content: raw_content) if trace_store
         evidence = []
-        adapter = AttemptAdapter.new(root: root, image: image, evidence: evidence)
+        adapter = AttemptAdapter.new(root: root, image: image, evidence: evidence, tracing: store.tracing)
         solvers = {"single-agent" => Solvers::OpenCode.new(live: true, store: store, adapter: adapter),
                    "fixed-workflow" => Solvers::FixedWorkflow.new(live: true, store: store, adapter: adapter),
                    "dsl" => Solvers::ComparativeDSL.new(live: true, store: store, adapter: adapter)}
@@ -124,6 +134,7 @@ module AgentRuntime
         File.write(File.join(root, "report.md"), ScientificReport.new(store: store).render(experiment_id: experiment_id, evidence_kind: "simulated_relay"))
         experiment.freeze(experiment_id: experiment_id, destination: destination, verification: verification)
       ensure
+        trace_store&.close
         store&.close if store.respond_to?(:close)
       end
     end

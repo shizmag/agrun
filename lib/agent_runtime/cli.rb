@@ -13,10 +13,17 @@ module AgentRuntime
     def run(argv)
       command = argv.shift
       return Benchmarks::CLI.new.run(argv) if command == "bench"
+      if command == "trace"
+        require_relative "tracing/cli"
+        return Tracing::CLI.new.run(argv)
+      end
       options = {root: ".agru", suite: "demo", live: false, solver: "good"}
       parser = OptionParser.new do |opts|
         opts.on("--offline") { options[:live] = false }
         opts.on("--live") { options[:live] = true }
+        opts.on("--trace-root PATH") { |v| options[:trace_root] = v }
+        opts.on("--trace-raw") { options[:trace_raw] = true }
+        opts.on("--authorize-raw") { options[:authorize_raw] = true }
         opts.on("--root PATH") { |v| options[:root] = v }
         opts.on("--suite NAME") { |v| options[:suite] = v }
         opts.on("--solver NAME") { |v| options[:solver] = v }
@@ -26,6 +33,7 @@ module AgentRuntime
         opts.on("--repetitions N", Integer) { |v| options[:repetitions] = v }
       end
       parser.parse!(argv)
+      raise ArgumentError, "--trace-raw requires --authorize-raw and --trace-root" if options[:trace_raw] && (!options[:authorize_raw] || !options[:trace_root])
       root = File.expand_path(options[:root])
       case command
       when "doctor"
@@ -44,6 +52,10 @@ module AgentRuntime
         0
       when "run"
         store = Store.new(File.join(root, "store"))
+        if options[:trace_root]
+          trace_store = Tracing::Store.new(options[:trace_root], raw_content: !!options[:trace_raw])
+          store.tracing = Tracing::Session.new(trace: trace_store, artifacts: store, raw_content: !!options[:trace_raw])
+        end
         ir = AgentRuntime.compile(argv.shift || options[:program] || default_program)
         gate_live!(ir, options[:live])
         inputs = options[:inputs] ? JSON.parse(File.read(options[:inputs])) : fixture_inputs(root)
@@ -53,6 +65,10 @@ module AgentRuntime
       when "benchmark"
         raise ArgumentError, "unknown suite: #{options[:suite]}" unless options[:suite] == "demo"
         store = Store.new(File.join(root, "store"))
+        if options[:trace_root]
+          trace_store = Tracing::Store.new(options[:trace_root], raw_content: !!options[:trace_raw])
+          store.tracing = Tracing::Session.new(trace: trace_store, artifacts: store, raw_content: !!options[:trace_raw])
+        end
         task = fixture(root)
         if options[:solver] == "all"
           solvers = {"fake-good" => Benchmarks::Solvers::Fake.new, "fake-bad" => Benchmarks::Solvers::Fake.new(good: false), "dsl" => Benchmarks::Solvers::DSL.new(program: options[:program] || default_program, store: store)}
@@ -88,6 +104,8 @@ module AgentRuntime
     rescue => error
       warn "#{error.class}: #{error.message}"
       1
+    ensure
+      trace_store&.close
     end
 
     private

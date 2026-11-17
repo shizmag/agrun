@@ -12,6 +12,8 @@ module AgentRuntime
       raise Error, "concurrency must be 1..32" unless concurrency.is_a?(Integer) && concurrency.between?(1, 32)
       cancellation ||= Cancellation.new
       run_id = SecureRandom.uuid
+      tracing = @store.tracing
+      architecture_trace = tracing&.start("architecture", attributes: {"run_id" => run_id, "architecture" => tracing.context.fetch(:attributes, {}).fetch("architecture", ir["name"]), "program" => ir["name"], "ir_digest" => IR.digest(ir), "planned_steps" => ir["steps"].map { |step| step.slice("id", "needs", "inputs", "outputs") }})
       workspace ||= File.join(@store.root, "workspaces", run_id)
       FileUtils.mkdir_p(workspace)
       report = {"run_id" => run_id, "status" => "running", "ir_digest" => IR.digest(ir), "started_at" => Time.now.utc.iso8601(6), "steps" => {}, "outputs" => {}}
@@ -33,11 +35,15 @@ module AgentRuntime
           pending.delete(step)
           if cancellation.cancelled? || dependencies.any? { |id| report["steps"][id]["status"] != "success" }
             report["steps"][step["id"]] = {"status" => "cancelled", "attempts" => [], "error" => "cancelled or dependency failed"}
+            if tracing
+              skipped_trace = tracing.start("stage", parent: architecture_trace, attributes: {"run_id" => run_id, "stage" => step["id"], "skipped" => true, "reason" => "cancelled or dependency failed"})
+              tracing.finish(skipped_trace, "cancelled")
+            end
             next
           end
           snapshot = bindings.dup
           active[step["id"]] = Thread.new do
-            result = execute_step(ir, step, snapshot, workspace, run_id, cancellation)
+            result = execute_step(ir, step, snapshot, workspace, run_id, cancellation, architecture_trace)
             completions << [step, result]
           rescue => e
             completions << [step, {"status" => "failure", "attempts" => [], "outputs" => {}, "error" => {"classification" => "runtime", "message" => e.message}}]
@@ -57,9 +63,11 @@ module AgentRuntime
         ir["outputs"].each { |name, ref| report["outputs"][name] = bindings.fetch(ref) }
       end
       report["ended_at"] = Time.now.utc.iso8601(6)
+      tracing&.finish(architecture_trace, report["status"], {"actual_steps" => report["steps"].keys, "outputs" => report["outputs"]})
       @store.save_report(report)
     rescue => e
       if report
+        tracing&.finish(architecture_trace, "failure", {"error" => e.message}) if architecture_trace
         report["status"] = "failure"
         report["error"] = {"classification" => "runtime", "message" => e.message}
         report["ended_at"] = Time.now.utc.iso8601(6)
@@ -84,9 +92,11 @@ module AgentRuntime
       end
     end
 
-    def execute_step(ir, step, bindings, workspace, run_id, cancellation)
+    def execute_step(ir, step, bindings, workspace, run_id, cancellation, architecture_trace = nil)
       attempts = []
       outputs = {}
+      tracing = @store.tracing
+      stage_trace = tracing&.start("stage", parent: architecture_trace, attributes: {"run_id" => run_id, "stage" => step["id"], "input_contract" => step["inputs"], "output_contract" => step["outputs"], "needs" => step["needs"]})
       executor = ir["executors"].fetch(step["executor"])
       config = executor.fetch("config", {}).merge(step.fetch("config", {}))
       (step["retries"] + 1).times do |index|
@@ -113,6 +123,10 @@ module AgentRuntime
         request = Request.new(run_id: run_id, step_id: step["id"], attempt: attempt, inputs: values, config: config, workspace: directory, timeout: step["timeout"], cancellation: cancellation)
         @store.save_attempt(run_id, step["id"], attempt, {"attempt" => attempt, "status" => "running", "started_at" => Time.now.utc.iso8601(6)})
         started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+        attempt_trace = tracing&.start("attempt", parent: stage_trace, attributes: {"run_id" => run_id, "stage" => step["id"], "attempt" => attempt})
+        tracing&.handoff(parent: attempt_trace, inputs: input_artifacts, contract: step["inputs"], direction: "input")
+        values.each_value { |value| tracing&.checkpoint(parent: attempt_trace, repository: value, run_id: run_id, stage: step["id"], attempt: attempt, boundary: "before") if value.is_a?(String) && File.directory?(value) }
+        request.config = request.config.merge("trace_attempt_id" => attempt_trace) if attempt_trace
         begin
           selected_adapter = adapter(executor["adapter"])
           grace = selected_adapter.respond_to?(:timeout_cleanup_grace) ? selected_adapter.timeout_cleanup_grace : 0.1
@@ -159,11 +173,20 @@ module AgentRuntime
             outputs = {}
           end
         end
+        if tracing
+          tracing.execution(parent: attempt_trace, logs: result.logs, error: data["error"])
+          tracing.handoff(parent: attempt_trace, inputs: outputs.merge(data.fetch("partial_outputs", {})), contract: step["outputs"], direction: "output", validation: data["error"])
+          outputs.merge(data.fetch("partial_outputs", {})).each_value do |artifact|
+            tracing.checkpoint(parent: attempt_trace, repository: @store.value(artifact), run_id: run_id, stage: step["id"], attempt: attempt, boundary: "after") if artifact["type"] == "repository"
+          end
+          tracing.finish(attempt_trace, data["status"], data.slice("error", "duration", "usage", "model"))
+        end
         attempts << data
         @store.save_attempt(run_id, step["id"], attempt, data)
         # Transport classification alone cannot establish that replay is safe.
         break unless data["status"] == "failure" && data["error"].is_a?(Hash) && data.dig("error", "classification") == "transport" && result.retry_safe == true && index < step["retries"] && !cancellation.cancelled?
       end
+      tracing&.finish(stage_trace, attempts.last["status"])
       {"status" => attempts.last["status"], "attempts" => attempts, "outputs" => outputs}
     end
   end

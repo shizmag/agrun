@@ -12,7 +12,8 @@ module AgentRuntime
     class AuthorizedProviderLauncher
       attr_reader :relay_volume, :image, :logs
 
-      def initialize(provider:, authorization:, quota:, ledger:)
+      def initialize(provider:, authorization:, quota:, ledger:, trace_capture: nil)
+        @trace_capture = trace_capture
         @provider = provider
         @authorization = JSON.parse(JSON.generate(authorization))
         @quota = JSON.parse(JSON.generate(quota))
@@ -48,7 +49,7 @@ module AgentRuntime
         end
         @root = Dir.mktmpdir("agru-authorized-provider-")
         File.chmod(0o700, @root)
-        %w[provider_relay.cjs authorized_provider_relay.cjs].each do |name|
+        %w[provider_relay.cjs authorized_provider_relay.cjs trace_capture.cjs observed_usage.cjs cumulative_usage.cjs gateway_heartbeat.cjs].each do |name|
           File.write(File.join(@root, name), File.read(File.join(__dir__, name)), perm: 0o600)
         end
         credential = File.expand_path(config.fetch("credentialFile"))
@@ -56,6 +57,15 @@ module AgentRuntime
           "reviewedContract" => @authorization.fetch("reviewed_contract"),
           "reviewedContractDigest" => @authorization.fetch("reviewed_contract_digest"),
           "socket" => "/relay/provider.sock")
+        trace_mount = []
+        if @trace_capture
+          directory = File.realpath(@trace_capture.fetch(:directory))
+          raise ArgumentError, "trace capture directory must be private" unless File.directory?(directory) && (File.stat(directory).mode & 0o077).zero?
+          @capture_directory = Dir.mktmpdir("provider-", directory)
+          config["traceCapture"] = {"directory" => "/trace", "rawAuthorized" => @trace_capture[:raw_authorized] == true}
+          config["identity"]["trace_id"] = @trace_capture[:trace_id] if @trace_capture[:trace_id]
+          trace_mount = ["--mount", "type=bind,src=#{@capture_directory},dst=/trace"]
+        end
         File.write(File.join(@root, "relay.json"), JSON.generate(config), perm: 0o600)
         docker!("volume", "create", @relay_volume)
         @volume_created = true
@@ -67,7 +77,7 @@ module AgentRuntime
           "--mount", "type=bind,src=#{@root},dst=/trusted,readonly",
           "--mount", "type=bind,src=#{credential},dst=/credential,readonly",
           "--mount", "type=volume,src=#{@relay_volume},dst=/relay",
-          @image, "node", "/trusted/authorized_provider_relay.cjs", "/trusted/relay.json")
+          *trace_mount, *(@capture_directory ? ["--cap-add=DAC_OVERRIDE"] : []), @image, "node", "/trusted/authorized_provider_relay.cjs", "/trusted/relay.json")
         @container_created = true
         50.times do
           result = docker("exec", @prefix, "test", "-S", "/relay/provider.sock")
@@ -96,6 +106,11 @@ module AgentRuntime
         end
         docker("volume", "rm", "--force", @relay_volume) if @volume_created
         FileUtils.remove_entry(@root) if @root && File.directory?(@root)
+      end
+
+      def trace_capture_records
+        return [] unless @capture_directory
+        Dir.glob(File.join(@capture_directory, "*.json")).sort.map { |path| JSON.parse(File.read(path)) }
       end
 
       def audit_records = Array(@audit)

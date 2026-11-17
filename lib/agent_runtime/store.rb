@@ -3,6 +3,7 @@ require "sqlite3"
 module AgentRuntime
   class Store
     attr_reader :root
+    attr_accessor :tracing
 
     def initialize(root)
       @root = File.expand_path(root)

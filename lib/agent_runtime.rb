@@ -37,3 +37,5 @@ require_relative "agent_runtime/language"
 require_relative "agent_runtime/store"
 require_relative "agent_runtime/adapters/fake"
 require_relative "agent_runtime/runtime"
+
+require_relative "agent_runtime/tracing/session"

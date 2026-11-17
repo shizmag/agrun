@@ -111,7 +111,21 @@ module AgentRuntime
             inputs: {"repository" => repository}, config: {"live" => true, "model" => model,
                                                            "prompt" => Solvers.task_instruction(task), "budget" => budget}, workspace: repository,
             timeout: budget.fetch("timeout", 120), cancellation: nil)
+          tracing = @store&.tracing
+          architecture_trace = tracing&.start("architecture", attributes: {"run_id" => request.run_id, "architecture" => "single-agent", "planned_steps" => ["solve"]})
+          stage_trace = tracing&.start("stage", parent: architecture_trace, attributes: {"run_id" => request.run_id, "stage" => "solve"})
+          attempt_trace = tracing&.start("attempt", parent: stage_trace, attributes: {"run_id" => request.run_id, "stage" => "solve", "attempt" => 1})
+          tracing&.checkpoint(parent: attempt_trace, repository: repository, run_id: request.run_id, stage: "solve", attempt: 1, boundary: "before")
+          request.config["trace_attempt_id"] = attempt_trace if attempt_trace
           result = adapter.execute(request)
+          if tracing
+            tracing.execution(parent: attempt_trace, logs: result.logs, error: result.error)
+            output_repository = result.outputs&.fetch("repository", nil)
+            tracing.checkpoint(parent: attempt_trace, repository: output_repository, run_id: request.run_id, stage: "solve", attempt: 1, boundary: "after") if output_repository
+            tracing.finish(attempt_trace, result.status, {"error" => result.error, "usage" => result.usage})
+            tracing.finish(stage_trace, result.status)
+            tracing.finish(architecture_trace, result.status, {"actual_steps" => ["solve"]})
+          end
           outputs = result.outputs || {}
           {"status" => result.status, "repository" => outputs["repository"],
            "patch" => outputs["patch"], "usage" => result.usage, "cost" => result.cost,
