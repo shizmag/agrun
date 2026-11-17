@@ -1,0 +1,1 @@
+{"content_digest":"5a1b79f27759a3b1f4157177a6b5c8d953a0f258d1792881ab230c93492e9ccf","entries":[{"kind":"directory","mode":493,"path":"."},{"kind":"file","mode":292,"path":"retrying.py"},{"kind":"file","mode":292,"path":"s2-coder.txt"},{"kind":"file","mode":292,"path":"s2-planner.txt"},{"kind":"file","mode":292,"path":"s2-reviewer.txt"}],"schema":"submission-modes-v1"}

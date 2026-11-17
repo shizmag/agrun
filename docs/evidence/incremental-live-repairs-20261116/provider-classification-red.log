@@ -1,0 +1,14 @@
+Run options: --seed 6178
+
+# Running:
+
+.F...
+
+Finished in 0.003731s, 1340.1233 runs/s, 7504.6904 assertions/s.
+
+  1) Failure:
+M12cSandboxOpenCodeTest#test_provider_http_failures_are_not_sandbox_failures [test/m12c_sandbox_opencode_test.rb:103]:
+Expected: "provider"
+  Actual: "sandbox"
+
+5 runs, 28 assertions, 1 failures, 0 errors, 0 skips

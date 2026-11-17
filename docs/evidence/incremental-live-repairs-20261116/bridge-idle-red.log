@@ -1,0 +1,29 @@
+✖ private bridge preserves HTTP connection across an upstream idle-close window (1145.050833ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1209.154583
+
+✖ failing tests:
+
+test at test/local_gateway_docker_test.cjs:8:1
+✖ private bridge preserves HTTP connection across an upstream idle-close window (1145.050833ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/Users/vladimirkasterin/ruby/agru/test/local_gateway_docker_test.cjs:23:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

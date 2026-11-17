@@ -1,0 +1,30 @@
+✔ durable subprocess ledger halts on wrong-then-right streamed model (691.456625ms)
+✖ offline gateway accepts tool call and tool result across sequential requests (12.825208ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 768.375167
+
+✖ failing tests:
+
+test at test/local_token_gateway_integration_test.cjs:40:1
+✖ offline gateway accepts tool call and tool result across sequential requests (12.825208ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  403 !== 200
+  
+      at TestContext.<anonymous> (/Users/vladimirkasterin/ruby/agru/test/local_token_gateway_integration_test.cjs:74:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 403,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

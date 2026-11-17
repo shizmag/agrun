@@ -1,0 +1,1 @@
+{"content_digest":"b1e0fbcdd2c83a591ef32803e017988a40412ee8d5822e32093ba7db6a88106c","entries":[{"kind":"directory","mode":493,"path":"."},{"kind":"file","mode":420,"path":"retrying.py"},{"kind":"file","mode":420,"path":"s2-single.txt"}],"schema":"submission-modes-v1"}
